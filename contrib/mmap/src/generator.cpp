@@ -16,6 +16,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <sstream>
+
 #include "MMapCommon.h"
 #include "MapBuilder.h"
 
@@ -61,9 +63,9 @@ bool checkDirectories(bool debugOutput)
 void printUsage()
 {
     printf("Generator command line args\n\n");
-    printf("-? or /? or -h : This help\n");
-    printf("[#] : Build only the map specified by #.\n");
-    printf("--maxAngle [#] : Max walkable inclination angle\n");
+    printf("-? or /? or -h : Show this help\n");
+    printf("\"[#]\" : Build maps using specified map IDs.\n");
+	printf("--maxAngle [#] : Max walkable inclination angle\n");
     printf("--tile [#,#] : Build the specified tile\n");
     printf("--skipLiquid [true|false] : liquid data for maps\n");
     printf("--skipContinents [true|false] : skip continents\n");
@@ -73,14 +75,15 @@ void printUsage()
     printf("--bigBaseUnit [true|false] : Generate tile/map using bigger basic unit.\n");
     printf("--silent : Make script friendly. No wait for user input, error, completion.\n");
     printf("--offMeshInput [file.*] : Path to file containing off mesh connections data.\n\n");
+    printf("--threads [#]: specifies number of threads to use for maps processing\n\n");
     printf("Example:\nmovemapgen (generate all mmap with default arg\n"
-        "movemapgen 0 (generate map 0)\n"
-        "movemapgen 0 --tile 34,46 (builds only tile 34,46 of map 0)\n\n");
+           "movemapgen \"1 0 169\" (generate maps 1, 0 and 169)\n"
+           "movemapgen 0 --tile 34,46 (builds only tile 34,46 of map 0)\n\n");
     printf("Please read readme file for more information and examples.\n");
 }
 
 bool handleArgs(int argc, char** argv,
-                int& mapnum,
+                std::vector<uint32>& mapIds,
                 int& tileX,
                 int& tileY,
                 float& maxAngle,
@@ -89,9 +92,11 @@ bool handleArgs(int argc, char** argv,
                 bool& skipJunkMaps,
                 bool& skipBattlegrounds,
                 bool& debugOutput,
+				bool& bigBaseUnit,
                 bool& silent,
-                bool& bigBaseUnit,
-                char*& offMeshInputPath)
+                char*& offMeshInputPath,
+                int& threads)
+
 {
     char* param = NULL;
     for (int i = 1; i < argc; ++i)
@@ -220,6 +225,25 @@ bool handleArgs(int argc, char** argv,
 
             offMeshInputPath = param;
         }
+        else if (strcmp(argv[i], "--threads") == 0)
+        {
+            param = argv[++i];
+            if (!param)
+                return false;
+
+            threads = 0;
+            try
+            {
+                threads = std::stoi(param);
+            }
+            catch (std::invalid_argument& e) {}
+            catch (std::out_of_range& e) {}
+            if (threads <= 0)
+            {
+                printf("Invalid number of threads.\n");
+                return false;
+            }
+        }
         else if ((strcmp(argv[i], "-?") == 0) || (strcmp(argv[i], "/?") == 0) || (strcmp(argv[i], "-h") == 0))
         {
             printUsage();
@@ -227,12 +251,18 @@ bool handleArgs(int argc, char** argv,
         }
         else
         {
-            int map = atoi(argv[i]);
-            if (map > 0 || (map == 0 && (strcmp(argv[i], "0") == 0)))
-                mapnum = map;
-            else
-            {
-                printf("invalid map id\n");
+            std::istringstream iss(argv[i]);
+            std::string token;
+            while (std::getline(iss, token, ' ')) {
+                try
+                {
+                    mapIds.push_back(std::stoi(token));
+                }
+                catch (std::invalid_argument& e) {}
+                catch (std::out_of_range& e) {}
+            }
+            if (!mapIds.size()) {
+                printf("Invalid map IDs provided.\n");
                 return false;
             }
         }
@@ -241,59 +271,64 @@ bool handleArgs(int argc, char** argv,
     return true;
 }
 
-int finish(const char* message, int returnValue)
-{
-    printf("%s", message);
-    getchar();
-    return returnValue;
-}
-
 int main(int argc, char** argv)
 {
-    int mapnum = -1;
     float maxAngle = 60.0f;
+    std::vector<uint32> mapIds;
+    int threads = -1;
     int tileX = -1, tileY = -1;
     bool skipLiquid = false,
          skipContinents = false,
          skipJunkMaps = true,
          skipBattlegrounds = false,
-         debugOutput = false,
+         debug = false,
          silent = false,
          bigBaseUnit = false;
-    char* offMeshInputPath = NULL;
-
-    bool validParam = handleArgs(argc, argv, mapnum,
+    char* offMeshInputPath = "offmesh.txt";
+    bool validParam = handleArgs(argc, argv, mapIds,
                                  tileX, tileY, maxAngle,
                                  skipLiquid, skipContinents, skipJunkMaps, skipBattlegrounds,
-                                 debugOutput, silent, bigBaseUnit, offMeshInputPath);
-
+                                 debug, silent, bigBaseUnit, offMeshInputPath, threads);
+    
     if (!validParam)
-        return silent ? -1 : finish("You have specified invalid parameters (use -? for more help)", -1);
+    {
+        if (!silent)
+        {
+            printf("You have specified invalid parameters (use -? for more help)");
+            printUsage();
+        }
+        return -1;
+    }
 
-    if (mapnum == -1 && debugOutput)
+    if (threads == -1) {
+        threads = std::thread::hardware_concurrency();
+    }
+
+    if ((mapIds.size() == 0) && debug)
     {
         if (silent)
             return -2;
 
-        printf("You have specifed debug output, but didn't specify a map to generate.\n");
+        printf("You have specified debug output, but didn't specify maps to generate.\n");
         printf("This will generate debug output for ALL maps.\n");
         printf("Are you sure you want to continue? (y/n) ");
         if (getchar() != 'y')
             return 0;
     }
 
-    if (!checkDirectories(debugOutput))
-        return silent ? -3 : finish("Press any key to close...", -3);
+    if (!checkDirectories(debug))
+        return -3;
 
-    MapBuilder builder(maxAngle, skipLiquid, skipContinents, skipJunkMaps,
-                       skipBattlegrounds, debugOutput, bigBaseUnit, offMeshInputPath);
+    MapBuilder builder(threads, maxAngle, skipLiquid, skipContinents, skipJunkMaps,
+                       skipBattlegrounds, debug, bigBaseUnit, offMeshInputPath);
 
-    if (tileX > -1 && tileY > -1 && mapnum >= 0)
-        builder.buildSingleTile(mapnum, tileX, tileY);
-    else if (mapnum >= 0)
-        builder.buildMap(uint32(mapnum));
+    if (mapIds.size() == 1 && tileX > -1 && tileY > -1)
+        builder.buildSingleTile(mapIds.front(), tileX, tileY);
     else
-        builder.buildAllMaps();
+        builder.BuildMaps(mapIds);
 
-    return silent ? 1 : finish("Movemap build is complete!", 1);
+    if (!silent)
+        printf("Movemap build is complete!\n");
+
+    return 0;
 }

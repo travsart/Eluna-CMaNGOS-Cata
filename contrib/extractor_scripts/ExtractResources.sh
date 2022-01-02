@@ -12,13 +12,10 @@
 
 ## Expected param 1 to be 'a' for all, else ask some questions
 
-## Normal log file (if not overwritten by second param
+## Normal log file (if not overwritten by second param)
 LOG_FILE="MaNGOSExtractor.log"
 ## Detailed log file
 DETAIL_LOG_FILE="MaNGOSExtractor_detailed.log"
-
-## Change this to a value fitting for your sys!
-NUM_CPU="2"
 
 ## ! Use below only for finetuning or if you know what you are doing !
 
@@ -27,6 +24,9 @@ USE_VMAPS="0"
 USE_MMAPS="0"
 USE_MMAPS_OFFMESH="0"
 USE_MMAPS_DELAY=""
+AD_RES=""
+VMAP_RES=""
+NUM_THREAD=""
 
 if [ "$1" = "a" ]
 then
@@ -39,7 +39,7 @@ else
   ## do some questioning!
   echo
   echo "Welcome to helper script to extract required dataz for MaNGOS!"
-  echo "Should all dataz (dbc, maps, vmaps and mmaps be extracted? (y/n)"
+  echo "Should all dataz (dbc, maps, vmaps and mmaps) be extracted? (y/n)"
   read line
   if [ "$line" = "y" ]
   then
@@ -60,7 +60,7 @@ else
 
     echo
     echo "Should mmaps be extracted? (y/n)"
-    echo "WARNING! This will take several hours! (you can later tell to start delayed)"
+    echo "WARNING! This may take several hours with small number of CPU threads!"
     read line
     if [ "$line" = "y" ]
     then
@@ -79,7 +79,7 @@ fi
 ## Special case: Only reextract offmesh tiles
 if [ "$USE_MMAPS_OFFMESH" = "1" ]
 then
-  echo "Only extracting offmesh meshes"
+  echo "Only extracting offmesh tiles"
   MoveMapGen.sh offmesh $LOG_FILE $DETAIL_LOG_FILE
   exit 0
 fi
@@ -88,15 +88,18 @@ fi
 if [ "$USE_MMAPS" = "1" ]
 then
   ## Obtain number of processes
-  echo "How many CPUs should be used for extracting mmaps? (1, 2, 4, 8)"
+  echo "How many CPU threads should be used for extracting mmaps? (leave empty to use all available threads)"
   read line
   echo
-  if [[ ($line == 1) || ($line == 2) || ($line == 4) || ($line == 8) ]]
-  then
-    NUM_CPU=$line
+  if [[ ! -z $line ]]; then
+    if [[ $line =~ ^[1-9+]$ ]]; then
+      NUM_THREAD=$line
+    else
+      echo "Only numbers are allowed!"
+      exit 1
+    fi
   else
-    echo "Only numbers 1,2,4 and 8 are supported!"
-    exit 1
+    NUM_THREAD="all"
   fi
   ## Extract MMaps delayed?
   if [ "$USE_MMAPS_DELAY" != "no" ]; then
@@ -140,13 +143,13 @@ else
 fi
 if [ "$USE_MMAPS" = "1" ]
 then
-  echo "Mmaps will be extracted with $NUM_CPU processes" | tee -a $LOG_FILE
+  echo "Mmaps will be extracted using $NUM_THREAD CPU threads" | tee -a $LOG_FILE
 else
   echo "Mmaps files won't be extracted!" | tee -a $LOG_FILE
 fi
 echo | tee -a $LOG_FILE
 
-echo "`date`: Start extracting dataz for MaNGOS, DBCs/maps $USE_AD, vmaps $USE_VMAPS, mmaps $USE_MMAPS on $NUM_CPU processes" | tee $DETAIL_LOG_FILE
+echo "$(date): Start extracting MaNGOS data: DBCs/maps $USE_AD, vmaps $USE_VMAPS, mmaps $USE_MMAPS using $NUM_THREAD CPU threads" | tee $DETAIL_LOG_FILE
 echo | tee -a $DETAIL_LOG_FILE
 
 ## Extract dbcs and maps
@@ -182,5 +185,5 @@ then
     echo "Current time: $(date)"
     sleep $USE_MMAPS_DELAY
   fi
-  sh MoveMapGen.sh $NUM_CPU $LOG_FILE $DETAIL_LOG_FILE
+  sh MoveMapGen.sh "maps" $LOG_FILE $DETAIL_LOG_FILE $NUM_THREAD
 fi

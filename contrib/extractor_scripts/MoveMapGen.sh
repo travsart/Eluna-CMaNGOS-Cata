@@ -11,16 +11,13 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 ## Syntax of this helper
-## First param must be number of to be used CPUs (only 1, 2, 3, 4 supported) or "offmesh" to recreate the special tiles from the OFFMESH_FILE
-## Second param can be an additional filename for storing log
-## Third param can be an addition filename for storing detailed log
+## 1st param must be "maps" to generate the maps and offmesh or "offmesh" to recreate the special tiles from the OFFMESH_FILE
+## 2nd param may be an additional filename for storing log
+## 3rd param may be an addition filename for storing detailed log
+## 4th param may be a number of threads to use for maps processing
 
 ## Additional Parameters to be forwarded to MoveMapGen, see mmaps/readme for instructions
-PARAMS="--silent"
-
-## Already a few map extracted, and don't care anymore
-EXCLUDE_MAPS=""
-#EXCLUDE_MAPS="0 1 530 571" # example to exclude the continents
+PARAMS="--silent" --configInputPath config.json"
 
 ## Offmesh file
 OFFMESH_FILE="offmesh.txt"
@@ -30,31 +27,27 @@ LOG_FILE="MoveMapGen.log"
 ## Detailed log file
 DETAIL_LOG_FILE="MoveMapGen_detailed.log"
 
-## ! Use below only for finetuning or if you know what you are doing !
-
-## All maps
-MAP_LIST_A="1 37 543 595 289 572 529 562 531 269 47 649 650 599 548 559 429 230 573 349 13 25 409 229 43 48 546 553 547 604 545 90 576 742 743 746 747 748 749 750 762 763 764 765 766 767 859 861 930 938 939 940 980"
-MAP_LIST_B="571 628 560 509 723 532 607 600 668 33 585 566 389 601 369 129 550 189 542 70 109 554 632 552 555 540 598 450 558 249 35 624 557 659 660 661 662 719 720 721 731 732 734 736 738 739 740 741 951 967 969"
-MAP_LIST_C="0 631 609 534 533 619 469 602 329 580 615 578 36 556 44 565 544 34 617 608 618 449 616 42 451 582 584 586 587 588 589 590 591 592 643 644 645 646 648 627 637 638 669 670 671 674 725 726 727 728 730"
-MAP_LIST_D="530 169 575 603 309 574 30 564 568 209 724 658 489 593 594 596 597 605 606 610 612 613 614 620 621 622 623 641 642 647 672 673 712 713 718 651 654 655 656 657 751 752 753 754 755 757 759 760 761 974 977"
-MAP_LIST_D1="209 724 658 489 606 610 612 613 614 620 621 754 755 757 759 760 761"
-MAP_LIST_D2="169 575 603 309 574 30 564 568 622 623 641 642 647 672 673 712 713"
-MAP_LIST_D3="530 593 594 596 597 605 651 654 655 656 657 751 752 753 974 977 718"
-
 badParam()
 {
-  echo "ERROR! Bad arguments!"
-  echo "You can (re)extract mmaps with this helper script,"
-  echo "or recreate only the tiles from the offmash file"
-  echo
-  echo "Call with number of processes (1 - 4) to create mmaps"
-  echo "Call with 'offmesh' to reextract the tiles from offmash file"
-  echo
-  echo "For further fine-tuning edit this helper script"
-  echo
+ echo "ERROR! Bad arguments!"
+ echo "You can (re)extract mmaps with this helper script,"
+ echo "or recreate only the tiles from the offmash file"
+ echo
+ echo "Call with 'maps' to create mmaps"
+ echo "Call with 'offmesh' to reextract the tiles from offmash file"
+ echo "Example: ./MoveMapGen.sh 8"
+ echo
 }
 
-if [ "$#" = "3" ]
+if [ "$#" = "4" ]
+then
+  LOG_FILE=$2
+  DETAIL_LOG_FILE=$3
+  if [ "$4" != "all" ]
+  then
+    PARAMS="${PARAMS} --threads $4"
+  fi
+elif [ "$#" = "3" ]
 then
   LOG_FILE=$2
   DETAIL_LOG_FILE=$3
@@ -77,23 +70,6 @@ then
   fi
 fi
 
-# Function to process a list
-createMMaps()
-{
-  for i in $@
-  do
-    for j in $EXCLUDE_MAPS
-    do
-      if [ "$i" = "$j" ]
-      then
-        continue 2
-      fi
-    done
-    ./MoveMapGen $PARAMS $OFFMESH $i | tee -a $DETAIL_LOG_FILE
-    echo "`date`: (Re)created map $i" | tee -a $LOG_FILE
-  done
-}
-
 createHeader()
 {
   echo "`date`: Start creating MoveMaps" | tee -a $LOG_FILE
@@ -101,7 +77,7 @@ createHeader()
   echo "Detailed log can be found in $DETAIL_LOG_FILE" | tee -a $LOG_FILE
   echo "Start creating MoveMaps" | tee -a $DETAIL_LOG_FILE
   echo
-  echo "Be PATIENT - This will take a long time and might also have gaps between visible changes on the console."
+  echo "Be PATIENT - This may take a long time with small number of threads and might also have gaps between visible changes on the console."
   echo "WAIT until you are informed that 'creating MoveMaps' is 'finished'!"
 }
 
@@ -113,41 +89,23 @@ fi
 
 # Param control
 case "$1" in
-  "1" )
-    createHeader $1
-    createMMaps $MAP_LIST_A $MAP_LIST_B $MAP_LIST_C $MAP_LIST_D &
-    ;;
-  "2" )
-    createHeader $1
-    createMMaps $MAP_LIST_A $MAP_LIST_D &
-    createMMaps $MAP_LIST_B $MAP_LIST_C &
-    ;;
-  "3" )
-    createHeader $1
-    createMMaps $MAP_LIST_A $MAP_LIST_D1&
-    createMMaps $MAP_LIST_B $MAP_LIST_D2&
-    createMMaps $MAP_LIST_C $MAP_LIST_D3&
-    ;;
-  "4" )
-    createHeader $1
-    createMMaps $MAP_LIST_A &
-    createMMaps $MAP_LIST_B &
-    createMMaps $MAP_LIST_C &
-    createMMaps $MAP_LIST_D &
-    ;;
-  "offmesh" )
-    echo "`date`: Recreate offmeshs from file $OFFMESH_FILE" | tee -a $LOG_FILE
-    echo "Recreate offmeshs from file $OFFMESH_FILE" | tee -a $DETAIL_LOG_FILE
-    while read map tile line
-    do
-      ./MoveMapGen $PARAMS $OFFMESH $map --tile $tile | tee -a $DETAIL_LOG_FILE
-      echo "`date`: Recreated $map $tile from $OFFMESH_FILE" | tee -a $LOG_FILE
-    done < $OFFMESH_FILE &
-    ;;
-  * )
-    badParam
-    exit 1
-    ;;
+ "maps" )
+    createHeader
+    ./MoveMapGen $PARAMS $OFFMESH --buildGameObjects | tee -a $DETAIL_LOG_FILE
+   ;;
+ "offmesh" )
+   echo "`date`: Recreate offmeshes from file $OFFMESH_FILE" | tee -a $LOG_FILE
+   echo "Recreate offmeshes from file $OFFMESH_FILE" | tee -a $DETAIL_LOG_FILE
+   while read map tile line
+   do
+     ./MoveMapGen $PARAMS $OFFMESH $map --tile $tile | tee -a $DETAIL_LOG_FILE
+     echo "`date`: Recreated $map $tile from $OFFMESH_FILE" | tee -a $LOG_FILE
+   done < $OFFMESH_FILE &
+   ;;
+ * )
+   badParam
+   exit 1
+   ;;
 esac
 
 wait
