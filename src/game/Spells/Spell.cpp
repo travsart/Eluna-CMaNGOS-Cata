@@ -1722,7 +1722,7 @@ bool Spell::IsAliveUnitPresentInTargetList()
 // Spell target first
 // Raidmates then descending by injury suffered (MaxHealth - Health)
 // Other players/mobs then descending by injury suffered (MaxHealth - Health)
-struct ChainHealingOrder : public std::binary_function<const Unit*, const Unit*, bool>
+struct ChainHealingOrder
 {
     const Unit* MainTarget;
     ChainHealingOrder(Unit const* Target) : MainTarget(Target) {};
@@ -1748,7 +1748,7 @@ struct ChainHealingOrder : public std::binary_function<const Unit*, const Unit*,
     }
 };
 
-class ChainHealingFullHealth: std::unary_function<const Unit*, bool>
+class ChainHealingFullHealth
 {
     public:
         const Unit* MainTarget;

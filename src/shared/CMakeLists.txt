@@ -153,13 +153,6 @@ if(WIN32)
       ServiceWin32.cpp
       ServiceWin32.h
      )
-  if(MSVC)
-    set(LIBRARY_SRCS
-      ${LIBRARY_SRCS}
-      WheatyExceptionReport.cpp
-      WheatyExceptionReport.h
-     )
-  endif()
 else()
   set(LIBRARY_SRCS
       ${LIBRARY_SRCS}
@@ -168,47 +161,47 @@ else()
      )
 endif()
 
-# include external dependencies without warnings
-include_directories(SYSTEM
-  ${OPENSSL_INCLUDE_DIR}
-)
-
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_BINARY_DIR}
-)
-
-if(POSTGRESQL AND POSTGRESQL_FOUND AND NOT WIN32)
-  include_directories(SYSTEM ${PostgreSQL_INCLUDE_DIRS})
-else()
-  include_directories(SYSTEM ${MYSQL_INCLUDE_DIR})
-endif()
-
 add_library(${LIBRARY_NAME} STATIC
   ${LIBRARY_SRCS}
 )
 
-target_link_libraries(${LIBRARY_NAME}
-  PUBLIC framework
-  PUBLIC utf8cpp
-  PUBLIC ${OPENSSL_LIBRARIES}
-)
-
 target_include_directories(${LIBRARY_NAME}
-  INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+  PUBLIC ${Boost_INCLUDE_DIRS}
   PUBLIC ${OPENSSL_INCLUDE_DIR}
+  PUBLIC "${CMAKE_SOURCE_DIR}/src/game"
 )
 
-if(POSTGRESQL AND POSTGRESQL_FOUND AND NOT WIN32)
-  target_include_directories(${LIBRARY_NAME} PUBLIC ${PostgreSQL_INCLUDE_DIRS})
+if(UNIX)
+  target_link_libraries(${LIBRARY_NAME}
+    PUBLIC framework
+    PUBLIC utf8cpp
+    PUBLIC dl
+    PUBLIC ${Boost_LIBRARIES}
+    PUBLIC ${OPENSSL_LIBRARIES}
+  )
 else()
-  target_include_directories(${LIBRARY_NAME} PUBLIC ${MYSQL_INCLUDE_DIR})
+  target_link_libraries(${LIBRARY_NAME}
+    PUBLIC framework
+    PUBLIC ${Boost_LIBRARIES}
+    PUBLIC ${OPENSSL_LIBRARIES}
+    PUBLIC utf8cpp
+  )
 endif()
 
-add_custom_command(TARGET ${LIBRARY_NAME} PRE_BUILD
-      COMMAND RevisionGenerator ${CMAKE_SOURCE_DIR}
-      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/shared
-      DEPENDS RevisionGenerator)
+if(POSTGRESQL AND POSTGRESQL_FOUND)
+  target_include_directories(${LIBRARY_NAME} PUBLIC ${PostgreSQL_INCLUDE_DIRS})
+  target_link_libraries(${LIBRARY_NAME} PUBLIC ${PostgreSQL_LIBRARIES})
+else()
+  target_include_directories(${LIBRARY_NAME} PUBLIC ${MYSQL_INCLUDE_DIR})
+  target_link_libraries(${LIBRARY_NAME} PUBLIC ${MYSQL_LIBRARY})
+  if (WIN32)
+    # Add provided dependency lib to dev folder
+    string(REGEX REPLACE "/" "\\\\" LibFolder ${DEV_PROVIDED_LIBS_FOLDER})
+    add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD
+      COMMAND xcopy /Y \"${LibFolder}\\*.dll\" \"${DEV_BIN_DIR}\\*.dll\")
+  endif()
+endif()
 
 # Mark the revision header as being generated.
 set_source_files_properties(${CMAKE_SOURCE_DIR}/src/shared/revision.h

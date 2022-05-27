@@ -2372,8 +2372,8 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2) cons
             if (classOptions2 && classOptions2->SpellFamilyName == SPELLFAMILY_DRUID )
             {
                 //Omen of Clarity and Blood Frenzy
-                if ((classOptions1 && (classOptions1->SpellFamilyFlags == uint64(0x0) && spellInfo_1->SpellIconID == 108) && (classOptions2->SpellFamilyFlags & uint64(0x20000000000000))) ||
-                    ((classOptions2->SpellFamilyFlags == uint64(0x0) && spellInfo_2->SpellIconID == 108) && (classOptions1->SpellFamilyFlags & uint64(0x20000000000000))))
+                if ((classOptions1 && (classOptions1->SpellFamilyFlags.Empty() && spellInfo_1->SpellIconID == 108) && (classOptions2->SpellFamilyFlags.Flags & uint64(0x20000000000000))) ||
+                    ((classOptions2->SpellFamilyFlags.Empty() && spellInfo_2->SpellIconID == 108) && (classOptions1->SpellFamilyFlags.Flags & uint64(0x20000000000000))))
                     return false;
 
                 //  Tree of Life (Shapeshift) and 34123 Tree of Life (Passive)

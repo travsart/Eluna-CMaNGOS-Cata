@@ -23,6 +23,7 @@
 #include "Globals/SharedDefines.h"
 #include "Server/SQLStorages.h"
 #include "Entities/ObjectGuid.h"
+#include "Spells/SpellAuraDefines.h"
 
 #include "DBCfmt.h"
 

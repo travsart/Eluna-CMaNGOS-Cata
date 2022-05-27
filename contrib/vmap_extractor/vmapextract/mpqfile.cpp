@@ -10,9 +10,13 @@ MPQFile::MPQFile(HANDLE mpq, const char* filename):
     size(0)
 {
     HANDLE file;
-    if (!SFileOpenFileEx(mpq, filename, SFILE_OPEN_PATCHED_FILE, &file))
+    if (!SFileOpenFileEx(mpq, filename, SFILE_OPEN_FROM_MPQ, &file))
     {
-        fprintf(stderr, "Can't open %s, err=%u!\n", filename, GetLastError());
+        int error = GetLastError();
+        if ( error != ERROR_FILE_NOT_FOUND )
+        {
+            fprintf(stderr, "Can't open %s, err=%u!\n", filename, GetLastError());
+        }
         eof = true;
         return;
     }
@@ -30,7 +34,7 @@ MPQFile::MPQFile(HANDLE mpq, const char* filename):
 
     if (size <= 1)
     {
-        fprintf(stderr, "Can't open %s, size = %u!\n", filename, size);
+        fprintf(stderr, "Can't open %s, size = %zu!\n", filename, size);
         SFileCloseFile(file);
         eof = true;
         return;
@@ -40,7 +44,7 @@ MPQFile::MPQFile(HANDLE mpq, const char* filename):
     buffer = new char[size];
     if (!SFileReadFile(file, buffer, size, &read, NULL) || size != read)
     {
-        fprintf(stderr, "Can't read %s, size=%u read=%u!\n", filename, size, read);
+        fprintf(stderr, "Can't read %s, size=%zu read=%u!\n", filename, size, read);
         SFileCloseFile(file);
         eof = true;
         return;

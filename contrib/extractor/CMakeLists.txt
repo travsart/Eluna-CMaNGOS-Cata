@@ -18,18 +18,23 @@ cmake_minimum_required (VERSION 3.0)
 set(EXECUTABLE_NAME "ad")
 
 list(APPEND AD_SOURCE
-     loadlib/loadlib.cpp
-     loadlib/adt.cpp
-     loadlib/wdt.cpp
+     ${CMAKE_SOURCE_DIR}/dep/loadlib/loadlib.cpp
+	 ${CMAKE_SOURCE_DIR}/dep/loadlib/adt.cpp
+	 ${CMAKE_SOURCE_DIR}/dep/loadlib/wdt.cpp
      dbcfile.cpp
      System.cpp
 )
 
-include_directories(loadlib)
+include_directories(${CMAKE_SOURCE_DIR}/dep/loadlib)
 
 add_executable(${EXECUTABLE_NAME} ${AD_SOURCE})
 
-target_link_libraries(${EXECUTABLE_NAME} storm)
+target_link_libraries(${EXECUTABLE_NAME} stormlib)
+
+include_directories(
+    ${CMAKE_SOURCE_DIR}/dep/StormLib/src
+	${CMAKE_SOURCE_DIR}/dep/loadlib
+)
 
 if(MSVC)
   # Define OutDir to source/bin/(platform)_(configuaration) folder.

@@ -153,7 +153,7 @@ struct boss_moroesAI : public ScriptedAI
             for (uint8 i = 0; i < MAX_GUESTS; ++i)
                 m_vGuestsEntryList[i] = auiGuests[i];
 
-            std::random_shuffle(m_vGuestsEntryList.begin(), m_vGuestsEntryList.end());
+            std::shuffle(m_vGuestsEntryList.begin(), m_vGuestsEntryList.end(), *GetRandomGenerator());
 
             // Summon the 4 entries
             for (uint8 i = 0; i < MAX_ACTIVE_GUESTS; ++i)

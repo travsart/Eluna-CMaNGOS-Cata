@@ -72,17 +72,12 @@ target_link_libraries(${LIBRARY_NAME}
   PUBLIC shared
   PUBLIC g3dlite
   PRIVATE detour
+  PRIVATE zlib
 )
-
-if(WIN32)
-  target_link_libraries(${LIBRARY_NAME} PUBLIC z)
-endif()
 
 target_include_directories(${LIBRARY_NAME}
   INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
-add_dependencies(${LIBRARY_NAME} RevisionGenerator)
 
 if(UNIX)
   # Both systems don't have libdl and don't need them

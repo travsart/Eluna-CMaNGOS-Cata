@@ -38,6 +38,7 @@
 #include "Globals/SharedDefines.h"
 #include "Chat/Chat.h"
 #include "Server/SQLStorages.h"
+#include "Server/DBCStores.h"
 
 #include<vector>
 

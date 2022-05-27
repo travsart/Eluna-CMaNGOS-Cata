@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_DEPRECATE
 
 #include "dbcfile.h"
-#include "loadlib/loadlib.h"
+#include "loadlib.h"
 
 DBCFile::DBCFile(const std::string& filename):
     filename(filename),
