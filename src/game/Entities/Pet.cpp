@@ -1146,6 +1146,7 @@ void Pet::InitStatsForLevel(uint32 petlevel)
                     health = (hMaxLevel - ((hMaxLevel - hMinLevel) / 2)) * petlevel;
                     mana = (mMaxLevel - ((mMaxLevel - mMinLevel) / 2)) * petlevel;
                 }
+                armor = cInfo->Armor;
 
                 sLog.outErrorDb("Pet::InitStatsForLevel> Error trying to set stats for creature %s (entry: %u) using ClassLevelStats; not enough data to do it!", GetGuidStr().c_str(), cInfo->Entry);
 
