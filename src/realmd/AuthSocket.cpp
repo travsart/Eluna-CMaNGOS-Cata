@@ -366,7 +366,7 @@ bool AuthSocket::_HandleLogonChallenge()
                           "(unbandate = bandate OR unbandate > UNIX_TIMESTAMP()) AND ip = '%s'", m_address.c_str());
     if (result)
     {
-        pkt << (uint8)WOW_FAIL_BANNED;
+        pkt << (uint8)AUTH_LOGON_FAILED_BANNED;
         BASIC_LOG("[AuthChallenge] Banned ip %s tries to login!", m_address.c_str());
         delete result;
     }
@@ -387,7 +387,7 @@ bool AuthSocket::_HandleLogonChallenge()
                 if (strcmp((*result)[3].GetString(), m_address.c_str()))
                 {
                     DEBUG_LOG("[AuthChallenge] Account IP differs");
-                    pkt << (uint8) WOW_FAIL_SUSPENDED;
+                    pkt << (uint8)AUTH_LOGON_FAILED_SUSPENDED;
                     locked = true;
                 }
                 else
@@ -409,12 +409,12 @@ bool AuthSocket::_HandleLogonChallenge()
                 {
                     if ((*banresult)[0].GetUInt64() == (*banresult)[1].GetUInt64())
                     {
-                        pkt << (uint8) WOW_FAIL_BANNED;
+                        pkt << (uint8)AUTH_LOGON_FAILED_BANNED;
                         BASIC_LOG("[AuthChallenge] Banned account %s tries to login!", _login.c_str());
                     }
                     else
                     {
-                        pkt << (uint8) WOW_FAIL_SUSPENDED;
+                        pkt << (uint8)AUTH_LOGON_FAILED_SUSPENDED;
                         BASIC_LOG("[AuthChallenge] Temporarily banned account %s tries to login!", _login.c_str());
                     }
 
@@ -450,7 +450,7 @@ bool AuthSocket::_HandleLogonChallenge()
                     unk3.SetRand(16 * 8);
 
                     ///- Fill the response packet with the result
-                    pkt << uint8(WOW_SUCCESS);
+                    pkt << uint8(AUTH_LOGON_SUCCESS);
 
                     // B may be calculated < 32B so we force minimal length to 32B
                     pkt.append(B.AsByteArray(32), 32);      // 32 bytes
@@ -500,7 +500,7 @@ bool AuthSocket::_HandleLogonChallenge()
         }
         else                                                // no account
         {
-            pkt << (uint8) WOW_FAIL_UNKNOWN_ACCOUNT;
+            pkt << (uint8)AUTH_LOGON_FAILED_UNKNOWN_ACCOUNT;
         }
     }
     Write((const char *)pkt.contents(), pkt.size());
@@ -527,7 +527,7 @@ bool AuthSocket::_HandleLogonProof()
         ByteBuffer pkt;
         pkt << (uint8) CMD_AUTH_LOGON_CHALLENGE;
         pkt << (uint8) 0x00;
-        pkt << (uint8) WOW_FAIL_VERSION_INVALID;
+        pkt << (uint8) AUTH_LOGON_FAILED_VERSION_INVALID;
         DEBUG_LOG("[AuthChallenge] %u is not a valid client version!", _build);
         Write((const char *)pkt.contents(), pkt.size());
         return true;
@@ -636,13 +636,13 @@ bool AuthSocket::_HandleLogonProof()
     {
         if (_build > 6005)                                  // > 1.12.2
         {
-            const char data[4] = { CMD_AUTH_LOGON_PROOF, WOW_FAIL_UNKNOWN_ACCOUNT, 3, 0};
+            const char data[4] = { CMD_AUTH_LOGON_PROOF, AUTH_LOGON_FAILED_UNKNOWN_ACCOUNT, 3, 0};
             Write(data, sizeof(data));
         }
         else
         {
             // 1.x not react incorrectly at 4-byte message use 3 as real error
-            const char data[2] = { CMD_AUTH_LOGON_PROOF, WOW_FAIL_UNKNOWN_ACCOUNT};
+            const char data[2] = { CMD_AUTH_LOGON_PROOF, AUTH_LOGON_FAILED_UNKNOWN_ACCOUNT};
             Write(data, sizeof(data));
         }
         BASIC_LOG("[AuthChallenge] account %s tried to login with wrong password!", _login.c_str());
