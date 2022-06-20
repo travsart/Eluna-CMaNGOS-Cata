@@ -56,7 +56,7 @@ void npc_escortAI::Aggro(Unit* /*pEnemy*/) {}
 // see followerAI
 bool npc_escortAI::AssistPlayerInCombat(Unit* pWho)
 {
-    if (!pWho->getVictim())
+    if (!pWho->GetVictim())
         return false;
 
     // experimental (unknown) flag not present
@@ -68,7 +68,7 @@ bool npc_escortAI::AssistPlayerInCombat(Unit* pWho)
         return false;
 
     // victim of pWho is not a player
-    if (!pWho->getVictim()->GetBeneficiaryPlayer())
+    if (!pWho->GetVictim()->GetBeneficiaryPlayer())
         return false;
 
     // never attack friendly
@@ -79,7 +79,7 @@ bool npc_escortAI::AssistPlayerInCombat(Unit* pWho)
     if (m_creature->IsWithinDistInMap(pWho, MAX_PLAYER_DISTANCE) && m_creature->IsWithinLOSInMap(pWho))
     {
         // already fighting someone?
-        if (!m_creature->getVictim())
+        if (!m_creature->GetVictim())
         {
             AttackStart(pWho);
             return true;
@@ -114,7 +114,7 @@ void npc_escortAI::MoveInLineOfSight(Unit* pWho)
             float fAttackRadius = m_creature->GetAttackDistance(pWho);
             if (m_creature->IsWithinDistInMap(pWho, fAttackRadius) && m_creature->IsWithinLOSInMap(pWho))
             {
-                if (!m_creature->getVictim())
+                if (!m_creature->GetVictim())
                 {
                     pWho->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
                     AttackStart(pWho);
@@ -190,7 +190,7 @@ bool npc_escortAI::IsPlayerOrGroupInRange()
 void npc_escortAI::UpdateAI(const uint32 uiDiff)
 {
     // Check if player or any member of his group is within range
-    if (HasEscortState(STATE_ESCORT_ESCORTING) && m_playerGuid && !m_creature->getVictim() && !HasEscortState(STATE_ESCORT_RETURNING))
+    if (HasEscortState(STATE_ESCORT_ESCORTING) && m_playerGuid && !m_creature->GetVictim() && !HasEscortState(STATE_ESCORT_RETURNING))
     {
         if (m_uiPlayerCheckTimer < uiDiff)
         {
@@ -221,7 +221,7 @@ void npc_escortAI::UpdateAI(const uint32 uiDiff)
 void npc_escortAI::UpdateEscortAI(const uint32 /*uiDiff*/)
 {
     // Check if we have a current target
-    if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+    if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
         return;
 
     DoMeleeAttackIfReady();
@@ -293,7 +293,7 @@ void npc_escortAI::SetRun(bool bRun)
 // TODO: get rid of this many variables passed in function.
 void npc_escortAI::Start(bool bRun, const Player* pPlayer, const Quest* pQuest, bool bInstantRespawn, bool bCanLoopPath)
 {
-    if (m_creature->getVictim())
+    if (m_creature->GetVictim())
     {
         script_error_log("EscortAI attempt to Start while in combat.");
         return;

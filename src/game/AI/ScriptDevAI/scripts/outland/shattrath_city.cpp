@@ -93,7 +93,7 @@ struct npc_dirty_larryAI : public ScriptedAI
 
         if (bReset)
         {
-            if (!pCreature->IsInEvadeMode() && pCreature->isAlive())
+            if (!pCreature->IsInEvadeMode() && pCreature->IsAlive())
                 pCreature->AI()->EnterEvadeMode();
 
             pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -104,7 +104,7 @@ struct npc_dirty_larryAI : public ScriptedAI
             pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
 
-            if (!pCreature->isAlive())
+            if (!pCreature->IsAlive())
                 return;
 
             pCreature->SetStandState(UNIT_STAND_STATE_STAND);
@@ -113,7 +113,7 @@ struct npc_dirty_larryAI : public ScriptedAI
             {
                 if (Player* pPlayer = m_creature->GetMap()->GetPlayer(m_playerGuid))
                 {
-                    if (pPlayer->isAlive())
+                    if (pPlayer->IsAlive())
                         pCreature->AI()->AttackStart(pPlayer);
                 }
             }
@@ -162,7 +162,7 @@ struct npc_dirty_larryAI : public ScriptedAI
             case 4: DoScriptText(SAY_COUNT_2, m_creature, pPlayer); return 3000;
             case 5: DoScriptText(SAY_ATTACK, m_creature, pPlayer);  return 3000;
             case 6:
-                if (!m_creature->isInCombat() && pPlayer->isAlive())
+                if (!m_creature->IsInCombat() && pPlayer->IsAlive())
                     AttackStart(pPlayer);
 
                 SetRuffies(m_creepjackGuid, true, false);
@@ -176,7 +176,7 @@ struct npc_dirty_larryAI : public ScriptedAI
 
     void AttackedBy(Unit* pAttacker) override
     {
-        if (m_creature->getVictim())
+        if (m_creature->GetVictim())
             return;
 
         if (!bActiveAttack)
@@ -217,7 +217,7 @@ struct npc_dirty_larryAI : public ScriptedAI
                 m_uiSayTimer -= diff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         DoMeleeAttackIfReady();
@@ -583,12 +583,12 @@ struct npc_salsalabimAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiMagneticPullTimer < uiDiff)
         {
-            DoCastSpellIfCan(m_creature->getVictim(), SPELL_MAGNETIC_PULL);
+            DoCastSpellIfCan(m_creature->GetVictim(), SPELL_MAGNETIC_PULL);
             m_uiMagneticPullTimer = 15000;
         }
         else

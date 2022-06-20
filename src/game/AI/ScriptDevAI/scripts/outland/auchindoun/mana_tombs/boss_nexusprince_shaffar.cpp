@@ -112,7 +112,7 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiFrostNovaTimer < uiDiff)
@@ -125,7 +125,7 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
 
         if (m_uiFrostboltTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_FROSTBOLT) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_FROSTBOLT) == CAST_OK)
                 m_uiFrostboltTimer = urand(3000, 8000);
         }
         else
@@ -133,7 +133,7 @@ struct boss_nexusprince_shaffarAI : public ScriptedAI
 
         if (m_uiFireBallTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_FIREBALL) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_FIREBALL) == CAST_OK)
                 m_uiFireBallTimer = urand(3000, 8000);
         }
         else

@@ -242,7 +242,7 @@ struct boss_aranAI : public ScriptedAI
                         if (DoCastSpellIfCan(m_creature, SPELL_PYROBLAST) == CAST_OK)
                         {
                             SetCombatMovement(true);
-                            DoStartMovement(m_creature->getVictim());
+                            DoStartMovement(m_creature->GetVictim());
                             m_creature->SetStandState(UNIT_STAND_STATE_STAND);
 
                             m_uiManaRecoveryTimer = 2000;
@@ -259,7 +259,7 @@ struct boss_aranAI : public ScriptedAI
             return;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Normal spell casts

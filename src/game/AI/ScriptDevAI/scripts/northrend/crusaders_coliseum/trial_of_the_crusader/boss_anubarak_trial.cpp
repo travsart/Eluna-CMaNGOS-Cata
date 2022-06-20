@@ -175,7 +175,7 @@ struct boss_anubarak_trialAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* pWho) override
     {
-        if (!m_bDidIntroYell && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->isGameMaster() &&
+        if (!m_bDidIntroYell && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->IsGameMaster() &&
                 !m_creature->IsInEvadeMode() && pWho->IsWithinDistInMap(m_creature, 100) && pWho->IsWithinLOSInMap(m_creature))
         {
             DoScriptText(SAY_INTRO, m_creature);
@@ -249,7 +249,7 @@ struct boss_anubarak_trialAI : public ScriptedAI
                 // no break here
             case NPC_NERUBIAN_BURROWER:
             case NPC_SCARAB:
-                pSummoned->AI()->AttackStart(m_creature->getVictim());
+                pSummoned->AI()->AttackStart(m_creature->GetVictim());
                 break;
         }
     }
@@ -281,7 +281,7 @@ struct boss_anubarak_trialAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         switch (m_Phase)
@@ -319,7 +319,7 @@ struct boss_anubarak_trialAI : public ScriptedAI
 
                 if (m_uiFreezingSlashTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_FREEZING_SLASH) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_FREEZING_SLASH) == CAST_OK)
                         m_uiFreezingSlashTimer = 20000;
                 }
                 else
@@ -472,7 +472,7 @@ struct npc_anubarak_trial_spikeAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_PhaseSwitchTimer)

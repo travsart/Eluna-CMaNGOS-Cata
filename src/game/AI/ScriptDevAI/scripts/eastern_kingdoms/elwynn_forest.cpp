@@ -81,7 +81,7 @@ struct npc_hoggerAI : public ScriptedAI
         }
         else
         {
-            if (m_creature->isAlive())
+            if (m_creature->IsAlive())
                 m_creature->GetMotionMaster()->MoveTargetedHome();
 
             Reset();
@@ -102,7 +102,7 @@ struct npc_hoggerAI : public ScriptedAI
     void JustSummoned(Creature* pSummoned) override
     {
         if (pSummoned->GetEntry() == NPC_MINION_OF_HOOGER)
-            pSummoned->AI()->AttackStart(m_creature->getVictim());
+            pSummoned->AI()->AttackStart(m_creature->GetVictim());
     }
 
     void DamageTaken(Unit* pDealer, uint32& uiDamage, DamageEffectType /*damagetype*/) override
@@ -147,7 +147,7 @@ struct npc_hoggerAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // resume combat after eat
@@ -156,7 +156,7 @@ struct npc_hoggerAI : public ScriptedAI
             if (m_uiEatingEndTimer <= uiDiff)
             {
                 SetCombatMovement(true);
-                DoStartMovement(m_creature->getVictim());
+                DoStartMovement(m_creature->GetVictim());
                 m_uiEatingEndTimer = 0;
             }
             else
@@ -178,7 +178,7 @@ struct npc_hoggerAI : public ScriptedAI
 
         if (m_uiViciousSliceTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_VICIOUS_SLICE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_VICIOUS_SLICE) == CAST_OK)
                 m_uiViciousSliceTimer = urand(15000, 20000);
         }
         else

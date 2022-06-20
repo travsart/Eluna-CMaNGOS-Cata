@@ -153,7 +153,7 @@ struct npc_queen_lanathel_introAI : public ScriptedAI, private DialogueHelper
     void MoveInLineOfSight(Unit* pWho) override
     {
         // The range distance is not sure
-        if (!m_bEventStarted && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->isGameMaster() &&
+        if (!m_bEventStarted && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->IsGameMaster() &&
                 pWho->IsWithinDistInMap(m_creature, 100.0f) && pWho->IsWithinLOSInMap(m_creature))
         {
             StartNextDialogueText(SAY_COUNCIL_INTRO_1);
@@ -349,7 +349,7 @@ struct npc_dark_nucleusAI : public ScriptedAI
 
     void DamageTaken(Unit* pDealer, uint32& /*uiDamage*/, DamageEffectType /*damagetype*/) override
     {
-        if (m_creature->getVictim() && pDealer != m_creature->getVictim())
+        if (m_creature->GetVictim() && pDealer != m_creature->GetVictim())
         {
             DoResetThreat();
             m_creature->AddThreat(pDealer, 100000.0f);
@@ -359,13 +359,13 @@ struct npc_dark_nucleusAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiDistanceCheck < uiDiff)
         {
-            if (m_creature->GetDistance(m_creature->getVictim()) < 15.0f)
-                DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHADOW_RESONANCE_BUFF);
+            if (m_creature->GetDistance(m_creature->GetVictim()) < 15.0f)
+                DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SHADOW_RESONANCE_BUFF);
 
             m_uiDistanceCheck = 1000;
         }
@@ -433,7 +433,7 @@ struct npc_blood_orb_controlAI : public Scripted_NoMovementAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // every 30 seconds cast Invocation of Blood on random prince
@@ -556,7 +556,7 @@ struct blood_prince_council_baseAI : public ScriptedAI
                 m_uiResetTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Invocation of Blood
@@ -640,7 +640,7 @@ struct boss_valanar_iccAI : public blood_prince_council_baseAI
     {
         blood_prince_council_baseAI::UpdateAI(uiDiff);
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiSphereTimer < uiDiff)
@@ -737,7 +737,7 @@ struct boss_keleseth_iccAI : public blood_prince_council_baseAI
     {
         blood_prince_council_baseAI::UpdateAI(uiDiff);
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiSphereTimer < uiDiff)
@@ -750,7 +750,7 @@ struct boss_keleseth_iccAI : public blood_prince_council_baseAI
 
         if (m_uiShadowLanceTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), m_uiEmpowermentTimer ? SPELL_EMP_SHADOW_LANCE : SPELL_SHADOW_LANCE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), m_uiEmpowermentTimer ? SPELL_EMP_SHADOW_LANCE : SPELL_SHADOW_LANCE) == CAST_OK)
             {
                 if (m_uiEmpowermentTimer && !m_bIsSaidSpecial)
                 {
@@ -822,7 +822,7 @@ struct boss_taldaram_iccAI : public blood_prince_council_baseAI
     {
         blood_prince_council_baseAI::UpdateAI(uiDiff);
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiSphereTimer < uiDiff)

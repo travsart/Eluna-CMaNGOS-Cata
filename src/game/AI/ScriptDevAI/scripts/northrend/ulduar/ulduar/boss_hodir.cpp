@@ -159,7 +159,7 @@ struct boss_hodirAI : public ScriptedAI
         m_creature->DeleteThreatList();
         m_creature->CombatStop(true);
 
-        if (m_creature->isAlive() && !m_bEventFinished)
+        if (m_creature->IsAlive() && !m_bEventFinished)
             m_creature->GetMotionMaster()->MoveTargetedHome();
 
         m_creature->SetLootRecipient(NULL);
@@ -243,7 +243,7 @@ struct boss_hodirAI : public ScriptedAI
                 m_uiEpilogueTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiBerserkTimer)
@@ -337,7 +337,7 @@ struct npc_flash_freezeAI : public Scripted_NoMovementAI
             if (Creature* pHodir = m_pInstance->GetSingleCreatureFromStorage(NPC_HODIR))
             {
                 // ignore if event already completed
-                if (pHodir->getFaction() == FACTION_ID_FRIENDLY)
+                if (pHodir->GetFaction() == FACTION_ID_FRIENDLY)
                     return;
 
                 if (Creature* pSummoner = m_creature->GetMap()->GetCreature(m_creature->GetSummonerGuid()))
@@ -412,7 +412,7 @@ bool ProcessEventId_event_boss_hodir(uint32 uiEventId, Object* pSource, Object* 
             if (Creature* pHodir = pInstance->GetSingleCreatureFromStorage(NPC_HODIR))
             {
                 // ignore if event already completed
-                if (pHodir->getFaction() == FACTION_ID_FRIENDLY)
+                if (pHodir->GetFaction() == FACTION_ID_FRIENDLY)
                     return true;
 
                 pHodir->SetInCombatWithZone();

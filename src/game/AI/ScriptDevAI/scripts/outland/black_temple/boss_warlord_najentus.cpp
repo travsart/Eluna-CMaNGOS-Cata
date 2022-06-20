@@ -108,8 +108,8 @@ struct boss_najentusAI : public ScriptedAI
             m_bIsShielded = false;
 
             SetCombatMovement(true);
-            if (m_creature->getVictim())
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+            if (m_creature->GetVictim())
+                m_creature->GetMotionMaster()->MoveChase(m_creature->GetVictim());
         }
     }
 
@@ -123,7 +123,7 @@ struct boss_najentusAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // If shield expired after 45s, attack again
@@ -132,7 +132,7 @@ struct boss_najentusAI : public ScriptedAI
             m_bIsShielded = false;
 
             SetCombatMovement(true);
-            m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+            m_creature->GetMotionMaster()->MoveChase(m_creature->GetVictim());
         }
 
         if (m_uiEnrageTimer < uiDiff)
@@ -159,7 +159,7 @@ struct boss_najentusAI : public ScriptedAI
             Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1, SPELL_IMPALING_SPINE, SELECT_FLAG_PLAYER);
 
             if (!pTarget)
-                pTarget = m_creature->getVictim();
+                pTarget = m_creature->GetVictim();
 
             if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
             {

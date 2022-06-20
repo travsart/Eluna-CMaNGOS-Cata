@@ -32,6 +32,9 @@
 #include "Tools/Formulas.h"
 #include "Grids/GridNotifiersImpl.h"
 #include "Chat/Chat.h"
+#ifdef BUILD_ELUNA
+#include "LuaEngine/LuaEngine.h"
+#endif
 
 namespace MaNGOS
 {
@@ -403,6 +406,11 @@ void BattleGround::Update(uint32 diff)
             m_Events |= BG_STARTING_EVENT_4;
 
             StartingEventOpenDoors();
+			
+#ifdef BUILD_ELUNA
+            if (Eluna* e = GetBgMap()->GetEluna())
+                e->OnBGStart(this, GetTypeId(), GetInstanceID());
+#endif
 
             SendMessageToAll(m_StartMessageIds[BG_STARTING_EVENT_FOURTH], CHAT_MSG_BG_SYSTEM_NEUTRAL);
             SetStatus(STATUS_IN_PROGRESS);
@@ -645,6 +653,11 @@ void BattleGround::UpdateWorldStateForPlayer(uint32 Field, uint32 Value, Player*
 
 void BattleGround::EndBattleGround(Team winner)
 {
+#ifdef BUILD_ELUNA
+    if (Eluna* e = GetBgMap()->GetEluna())
+        e->OnBGEnd(this, GetTypeId(), GetInstanceID(), winner);
+#endif
+
     this->RemoveFromBGFreeSlotQueue();
 
     ArenaTeam* winner_arena_team = nullptr;
@@ -761,7 +774,7 @@ void BattleGround::EndBattleGround(Team winner)
         if (plr->HasAuraType(SPELL_AURA_SPIRIT_OF_REDEMPTION))
             plr->RemoveSpellsCausingAura(SPELL_AURA_MOD_SHAPESHIFT);
 
-        if (!plr->isAlive())
+        if (!plr->IsAlive())
         {
             plr->ResurrectPlayer(1.0f);
             plr->SpawnCorpseBones();
@@ -1048,7 +1061,7 @@ void BattleGround::RemovePlayerAtLeave(ObjectGuid guid, bool Transport, bool Sen
         plr->RemoveAurasDueToSpell(isArena() ? SPELL_ARENA_DAMPENING : SPELL_BATTLEGROUND_DAMPENING);
         plr->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
 
-        if (!plr->isAlive())                                // resurrect on exit
+        if (!plr->IsAlive())                                // resurrect on exit
         {
             plr->ResurrectPlayer(1.0f);
             plr->SpawnCorpseBones();
@@ -1194,6 +1207,11 @@ void BattleGround::StartBattleGround()
     // This must be done here, because we need to have already invited some players when first BG::Update() method is executed
     // and it doesn't matter if we call StartBattleGround() more times, because m_BattleGrounds is a map and instance id never changes
     sBattleGroundMgr.AddBattleGround(GetInstanceID(), GetTypeID(), this);
+
+#ifdef BUILD_ELUNA
+    if (Eluna* e = GetBgMap()->GetEluna())
+        e->OnBGCreate(this, GetTypeId(), GetInstanceID());
+#endif
 }
 
 void BattleGround::StartTimedAchievement(AchievementCriteriaTypes type, uint32 entry)
@@ -1431,7 +1449,7 @@ void BattleGround::DoorClose(ObjectGuid guid)
     if (obj)
     {
         // if doors are open, close it
-        if (obj->getLootState() == GO_ACTIVATED && obj->GetGoState() != GO_STATE_READY)
+        if (obj->GetLootState() == GO_ACTIVATED && obj->GetGoState() != GO_STATE_READY)
         {
             // change state to allow door to be closed
             obj->SetLootState(GO_READY);
@@ -1570,7 +1588,7 @@ void BattleGround::SpawnBGObject(ObjectGuid guid, uint32 respawntime)
     if (respawntime == 0)
     {
         // we need to change state from GO_JUST_DEACTIVATED to GO_READY in case battleground is starting again
-        if (obj->getLootState() == GO_JUST_DEACTIVATED)
+        if (obj->GetLootState() == GO_JUST_DEACTIVATED)
             obj->SetLootState(GO_READY);
         obj->SetRespawnTime(0);
         map->Add(obj);
@@ -1665,7 +1683,7 @@ buffs are in their positions when battleground starts
 void BattleGround::HandleTriggerBuff(ObjectGuid go_guid)
 {
     GameObject* obj = GetBgMap()->GetGameObject(go_guid);
-    if (!obj || obj->GetGoType() != GAMEOBJECT_TYPE_TRAP || !obj->isSpawned())
+    if (!obj || obj->GetGoType() != GAMEOBJECT_TYPE_TRAP || !obj->IsSpawned())
         return;
 
     obj->SetLootState(GO_JUST_DEACTIVATED);             // can be despawned or destroyed
@@ -1743,7 +1761,7 @@ uint32 BattleGround::GetAlivePlayersCountByTeam(Team team) const
         if (itr->second.PlayerTeam == team)
         {
             Player* pl = sObjectMgr.GetPlayer(itr->first);
-            if (pl && pl->isAlive())
+            if (pl && pl->IsAlive())
                 ++count;
         }
     }

@@ -156,7 +156,7 @@ struct boss_anzuAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Banish at 66% and 33%; Boss can still use spells while banished
@@ -172,7 +172,7 @@ struct boss_anzuAI : public ScriptedAI
 
         if (m_uiFleshRipTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_FLESH_RIP) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_FLESH_RIP) == CAST_OK)
                 m_uiFleshRipTimer = urand(10000, 20000);
         }
         else

@@ -24,6 +24,9 @@
 #include "Spells/SpellMgr.h"
 #include "AI/BaseAI/CreatureAI.h"
 #include "Maps/InstanceData.h"
+#ifdef BUILD_ELUNA
+#include "LuaEngine/LuaEngine.h"
+#endif
 
 Totem::Totem() : Creature(CREATURE_SUBTYPE_TOTEM)
 {
@@ -75,7 +78,7 @@ bool Totem::Create(uint32 guidlow, CreatureCreatePos& cPos, CreatureInfo const* 
 void Totem::Update(uint32 update_diff, uint32 time)
 {
     Unit* owner = GetOwner();
-    if (!owner || !owner->isAlive() || !isAlive())
+    if (!owner || !owner->IsAlive() || !IsAlive())
     {
         UnSummon();                                         // remove self
         return;
@@ -99,6 +102,11 @@ void Totem::Summon(Unit* owner)
 
     if (owner->AI())
         owner->AI()->JustSummoned((Creature*)this);
+
+#ifdef BUILD_ELUNA
+    if (Eluna* e = GetEluna())
+        e->OnSummoned(this, owner);
+#endif
 
     // there are some totems, which exist just for their visual appeareance
     if (!GetSpell())
@@ -148,7 +156,7 @@ void Totem::UnSummon()
     }
 
     // any totem unsummon look like as totem kill, req. for proper animation
-    if (isAlive())
+    if (IsAlive())
         SetDeathState(DEAD);
 
     AddObjectToRemoveList();

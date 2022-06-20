@@ -178,8 +178,8 @@ void PathFinder::BuildPolyPath(const Vector3& startPos, const Vector3& endPos)
         if (m_sourceUnit->GetTypeId() == TYPEID_UNIT)
         {
             // Check for swimming or flying shortcut
-            if ((startPoly == INVALID_POLYREF && m_sourceUnit->GetTerrain()->IsUnderWater(startPos.x, startPos.y, startPos.z)) ||
-                (endPoly == INVALID_POLYREF && m_sourceUnit->GetTerrain()->IsUnderWater(endPos.x, endPos.y, endPos.z)))
+            if ((startPoly == INVALID_POLYREF && m_sourceUnit->GetTerrain()->IsUnderwater(startPos.x, startPos.y, startPos.z)) ||
+                (endPoly == INVALID_POLYREF && m_sourceUnit->GetTerrain()->IsUnderwater(endPos.x, endPos.y, endPos.z)))
                 m_type = ((Creature*)m_sourceUnit)->CanSwim() ? PathType(PATHFIND_NORMAL | PATHFIND_NOT_USING_PATH) : PATHFIND_NOPATH;
             else
                 m_type = ((Creature*)m_sourceUnit)->CanFly() ? PathType(PATHFIND_NORMAL | PATHFIND_NOT_USING_PATH) : PATHFIND_NOPATH;
@@ -202,7 +202,7 @@ void PathFinder::BuildPolyPath(const Vector3& startPos, const Vector3& endPos)
             Creature* owner = (Creature*)m_sourceUnit;
 
             Vector3 p = (distToStartPoly > 7.0f) ? startPos : endPos;
-            if (m_sourceUnit->GetTerrain()->IsUnderWater(p.x, p.y, p.z))
+            if (m_sourceUnit->GetTerrain()->IsUnderwater(p.x, p.y, p.z))
             {
                 DEBUG_FILTER_LOG(LOG_FILTER_PATHFINDING, "++ BuildPolyPath :: underWater case\n");
                 if (owner->CanSwim())
@@ -615,7 +615,7 @@ void PathFinder::updateFilter()
 {
     // allow creatures to cheat and use different movement types if they are moved
     // forcefully into terrain they can't normally move in
-    if (m_sourceUnit->IsInWater() || m_sourceUnit->IsUnderWater())
+    if (m_sourceUnit->IsInWater() || m_sourceUnit->IsUnderwater())
     {
         uint16 includedFlags = m_filter.getIncludeFlags();
         includedFlags |= getNavTerrain(m_sourceUnit->GetPositionX(),

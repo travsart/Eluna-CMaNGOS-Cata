@@ -44,6 +44,7 @@ endif()
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/dep/lualib
 )
 
 add_executable(${EXECUTABLE_NAME}
@@ -54,6 +55,7 @@ target_link_libraries(${EXECUTABLE_NAME}
   shared
   game
   gsoap
+  lualib
 )
 
 if(WIN32)
@@ -119,6 +121,16 @@ endif()
 install(TARGETS ${EXECUTABLE_NAME} DESTINATION ${BIN_DIR})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/mangosd.conf.dist.in ${CMAKE_CURRENT_BINARY_DIR}/mangosd.conf.dist)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mangosd.conf.dist DESTINATION ${CONF_DIR})
+  
+# Define BUILD_ELUNA if needed
+if (BUILD_ELUNA)
+  include_directories(
+  ${CMAKE_SOURCE_DIR}/src/game/LuaEngine/hooks
+  )
+  add_definitions(-DBUILD_ELUNA -DCATA -DCMANGOS)
+  install(FILES ${CMAKE_SOURCE_DIR}/contrib/lua_scripts/masterscript.lua DESTINATION ${BIN_DIR}/lua_scripts)
+  install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/game/LuaEngine/extensions DESTINATION ${BIN_DIR}/lua_scripts)
+endif()
 
 if(MSVC)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/\${BUILD_TYPE}/${EXECUTABLE_NAME}.pdb DESTINATION ${BIN_DIR} CONFIGURATIONS Debug)

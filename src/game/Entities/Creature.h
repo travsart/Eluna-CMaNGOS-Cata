@@ -467,6 +467,8 @@ struct TrainerSpellData
     void Clear() { spellList.clear(); }
 };
 
+typedef std::map<uint32, time_t> CreatureSpellCooldowns;
+
 // max different by z coordinate for creature aggro reaction
 #define CREATURE_Z_ATTACK_RANGE 3
 
@@ -585,6 +587,7 @@ class Creature : public Unit
         bool IsCorpse() const { return getDeathState() ==  CORPSE; }
         bool IsDespawned() const { return getDeathState() ==  DEAD; }
         void SetCorpseDelay(uint32 delay) { m_corpseDelay = delay; }
+        uint32 GetCorpseDelay() const { return m_corpseDelay; }
         void ReduceCorpseDecayTimer();
         uint32 GetCorpseDecayTimer() const { return m_corpseDecayTimer; }
         bool IsRacialLeader() const { return GetCreatureInfo()->RacialLeader; }
@@ -647,10 +650,14 @@ class Creature : public Unit
         bool CanCrit(const SpellEntry* entry, SpellSchoolMask schoolMask, WeaponAttackType attType) const override;
 
         // TODO: Research mob shield block values
-        uint32 GetShieldBlockDamageValue() const override { return (getLevel() / 2 + uint32(GetStat(STAT_STRENGTH) / 20)); }
+        uint32 GetShieldBlockDamageValue() const override { return (GetLevel() / 2 + uint32(GetStat(STAT_STRENGTH) / 20)); }
 
         SpellSchoolMask GetMeleeDamageSchoolMask() const override { return m_meleeDamageSchoolMask; }
         void SetMeleeDamageSchool(SpellSchools school) { m_meleeDamageSchoolMask = SpellSchoolMask(1 << school); }
+
+        bool HasSpellCooldown(uint32 spell_id) const;
+        bool HasCategoryCooldown(uint32 spell_id) const;
+        uint32 GetCreatureSpellCooldownDelay(uint32 spellId) const;
 
         bool HasSpell(uint32 spellID) const override;
 
@@ -718,6 +725,8 @@ class Creature : public Unit
         SpellEntry const* ReachWithSpellCure(Unit* pVictim);
 
         uint32 m_spells[CREATURE_MAX_SPELLS];
+        CreatureSpellCooldowns m_CreatureSpellCooldowns;
+        CreatureSpellCooldowns m_CreatureCategoryCooldowns;
 
         void SendAIReaction(AiReaction reactionType);
 

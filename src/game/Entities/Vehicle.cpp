@@ -542,7 +542,7 @@ void VehicleInfo::ApplySeatMods(Unit* passenger, uint32 seatFlags)
                 }
 
                 // set vehicle faction as per the controller faction
-                ((Creature*)pVehicle)->SetFactionTemporary(pPlayer->getFaction(), TEMPFACTION_NONE);
+                ((Creature*)pVehicle)->SetFactionTemporary(pPlayer->GetFaction(), TEMPFACTION_NONE);
             }
         }
 
@@ -619,7 +619,7 @@ void VehicleInfo::RemoveSeatMods(Unit* passenger, uint32 seatFlags)
         // Reinitialize movement
         if (((Creature*)passenger)->AI())
             ((Creature*)passenger)->AI()->SetCombatMovement(true, true);
-        if (!passenger->getVictim())
+        if (!passenger->GetVictim())
             passenger->GetMotionMaster()->Initialize();
     }
 }

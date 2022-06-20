@@ -69,7 +69,7 @@ void guardAI::UpdateAI(const uint32 uiDiff)
         m_uiGlobalCooldown = 0;
 
     // Buff timer (only buff when we are alive and not in combat
-    if (m_creature->isAlive() && !m_creature->isInCombat())
+    if (m_creature->IsAlive() && !m_creature->IsInCombat())
     {
         if (m_uiBuffTimer < uiDiff)
         {
@@ -95,14 +95,14 @@ void guardAI::UpdateAI(const uint32 uiDiff)
     }
 
     // Return since we have no target
-    if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+    if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
         return;
 
     // Make sure our attack is ready and we arn't currently casting
     if (m_creature->isAttackReady() && !m_creature->IsNonMeleeSpellCasted(false))
     {
         // If we are within range melee the target
-        if (m_creature->CanReachWithMeleeAttack(m_creature->getVictim()))
+        if (m_creature->CanReachWithMeleeAttack(m_creature->GetVictim()))
         {
             bool bHealing = false;
             const SpellEntry* pSpellInfo = NULL;
@@ -115,7 +115,7 @@ void guardAI::UpdateAI(const uint32 uiDiff)
             if (pSpellInfo)
                 bHealing = true;
             else
-                pSpellInfo = SelectSpell(m_creature->getVictim(), -1, -1, SELECT_TARGET_ANY_ENEMY, 0, 0, 0, 0, SELECT_EFFECT_DONTCARE);
+                pSpellInfo = SelectSpell(m_creature->GetVictim(), -1, -1, SELECT_TARGET_ANY_ENEMY, 0, 0, 0, 0, SELECT_EFFECT_DONTCARE);
 
             // 20% chance to replace our white hit with a spell
             if (pSpellInfo && !urand(0, 4) && !m_uiGlobalCooldown)
@@ -124,13 +124,13 @@ void guardAI::UpdateAI(const uint32 uiDiff)
                 if (bHealing)
                     DoCastSpell(m_creature, pSpellInfo);
                 else
-                    DoCastSpell(m_creature->getVictim(), pSpellInfo);
+                    DoCastSpell(m_creature->GetVictim(), pSpellInfo);
 
                 // Set our global cooldown
                 m_uiGlobalCooldown = GENERIC_CREATURE_COOLDOWN;
             }
             else
-                m_creature->AttackerStateUpdate(m_creature->getVictim());
+                m_creature->AttackerStateUpdate(m_creature->GetVictim());
 
             m_creature->resetAttackTimer();
         }
@@ -151,7 +151,7 @@ void guardAI::UpdateAI(const uint32 uiDiff)
             if (pSpellInfo)
                 bHealing = true;
             else
-                pSpellInfo = SelectSpell(m_creature->getVictim(), -1, -1, SELECT_TARGET_ANY_ENEMY, 0, 0, ATTACK_DISTANCE, 0, SELECT_EFFECT_DONTCARE);
+                pSpellInfo = SelectSpell(m_creature->GetVictim(), -1, -1, SELECT_TARGET_ANY_ENEMY, 0, 0, ATTACK_DISTANCE, 0, SELECT_EFFECT_DONTCARE);
 
             // Found a spell, check if we arn't on cooldown
             if (pSpellInfo && !m_uiGlobalCooldown)
@@ -167,7 +167,7 @@ void guardAI::UpdateAI(const uint32 uiDiff)
                 if (bHealing)
                     DoCastSpell(m_creature, pSpellInfo);
                 else
-                    DoCastSpell(m_creature->getVictim(), pSpellInfo);
+                    DoCastSpell(m_creature->GetVictim(), pSpellInfo);
 
                 // Set our global cooldown
                 m_uiGlobalCooldown = GENERIC_CREATURE_COOLDOWN;
@@ -177,7 +177,7 @@ void guardAI::UpdateAI(const uint32 uiDiff)
                 // Cancel our current spell and then mutate new movement generator
                 m_creature->InterruptNonMeleeSpells(false);
                 m_creature->GetMotionMaster()->Clear(false);
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                m_creature->GetMotionMaster()->MoveChase(m_creature->GetVictim());
             }
         }
     }

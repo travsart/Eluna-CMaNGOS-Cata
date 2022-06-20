@@ -95,7 +95,7 @@ bool TargetedMovementGeneratorMedium<T, D>::Update(T& owner, const uint32& time_
     if (!i_target.isValid() || !i_target->IsInWorld())
         return false;
 
-    if (!owner.isAlive())
+    if (!owner.IsAlive())
         return true;
 
     if (owner.hasUnitState(UNIT_STAT_NOT_MOVE))
@@ -176,7 +176,7 @@ void ChaseMovementGenerator<T>::_addUnitStateMove(T& u) { u.addUnitState(UNIT_ST
 template<class T>
 bool ChaseMovementGenerator<T>::_lostTarget(T& u) const
 {
-    return u.getVictim() != this->GetTarget();
+    return u.GetVictim() != this->GetTarget();
 }
 
 template<class T>

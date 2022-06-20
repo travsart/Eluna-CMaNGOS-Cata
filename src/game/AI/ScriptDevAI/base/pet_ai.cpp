@@ -23,7 +23,7 @@ bool ScriptedPetAI::IsVisible(Unit* pWho) const
 
 void ScriptedPetAI::MoveInLineOfSight(Unit* pWho)
 {
-    if (m_creature->getVictim())
+    if (m_creature->GetVictim())
         return;
 
     if (!m_creature->GetCharmInfo() || !m_creature->GetCharmInfo()->HasReactState(REACT_AGGRESSIVE))
@@ -51,7 +51,7 @@ void ScriptedPetAI::AttackStart(Unit* pWho)
 
 void ScriptedPetAI::AttackedBy(Unit* pAttacker)
 {
-    if (m_creature->getVictim())
+    if (m_creature->GetVictim())
         return;
 
     if (m_creature->GetCharmInfo() && !m_creature->GetCharmInfo()->HasReactState(REACT_PASSIVE) &&
@@ -86,15 +86,15 @@ void ScriptedPetAI::UpdatePetAI(const uint32 /*uiDiff*/)
 
 void ScriptedPetAI::UpdateAI(const uint32 uiDiff)
 {
-    if (!m_creature->isAlive())                             // should not be needed, isAlive is checked in mangos before calling UpdateAI
+    if (!m_creature->IsAlive())                             // should not be needed, IsAlive is checked in mangos before calling UpdateAI
         return;
 
     // UpdateAllies() is done in the generic PetAI in Mangos, but we can't do this from script side.
     // Unclear what side effects this has, but is something to be resolved from Mangos.
 
-    if (m_creature->getVictim())                            // in combat
+    if (m_creature->GetVictim())                            // in combat
     {
-        if (!m_creature->getVictim()->isTargetableForAttack())
+        if (!m_creature->GetVictim()->isTargetableForAttack())
         {
             // target no longer valid for pet, so either attack stops or new target are selected
             // doesn't normally reach this, because of how petAi is designed in Mangos. CombatStop
@@ -113,7 +113,7 @@ void ScriptedPetAI::UpdateAI(const uint32 uiDiff)
         if (!pOwner)
             return;
 
-        if (pOwner->isInCombat() && !m_creature->GetCharmInfo()->HasReactState(REACT_PASSIVE))
+        if (pOwner->IsInCombat() && !m_creature->GetCharmInfo()->HasReactState(REACT_PASSIVE))
         {
             // Not correct in all cases.
             // When mob initiate attack by spell, pet should not start attack before spell landed.

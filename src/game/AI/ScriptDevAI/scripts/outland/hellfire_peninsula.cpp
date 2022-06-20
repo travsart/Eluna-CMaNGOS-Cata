@@ -69,7 +69,7 @@ struct npc_aeranasAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff) override
     {
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_creature->GetHealthPercent() < 30.0f)
@@ -84,7 +84,7 @@ struct npc_aeranasAI : public ScriptedAI
 
         if (m_uiShockTimer < uiDiff)
         {
-            DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHOCK);
+            DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SHOCK);
             m_uiShockTimer = 10000;
         }
         else
@@ -92,7 +92,7 @@ struct npc_aeranasAI : public ScriptedAI
 
         if (m_uiEnvelopingWindsTimer < uiDiff)
         {
-            DoCastSpellIfCan(m_creature->getVictim(), SPELL_ENVELOPING_WINDS);
+            DoCastSpellIfCan(m_creature->GetVictim(), SPELL_ENVELOPING_WINDS);
             m_uiEnvelopingWindsTimer = 25000;
         }
         else
@@ -154,7 +154,7 @@ struct npc_ancestral_wolfAI : public npc_escortAI
                 break;
             case 50:
                 Creature* pRyga = GetClosestCreatureWithEntry(m_creature, NPC_RYGA, 30.0f);
-                if (pRyga && pRyga->isAlive() && !pRyga->isInCombat())
+                if (pRyga && pRyga->IsAlive() && !pRyga->IsInCombat())
                     DoScriptText(SAY_WOLF_WELCOME, pRyga);
                 break;
         }
@@ -271,7 +271,7 @@ struct npc_demoniac_scryerAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (m_bIsComplete || !m_creature->isAlive())
+        if (m_bIsComplete || !m_creature->IsAlive())
             return;
 
         if (m_uiSpawnButtressTimer <= uiDiff)
@@ -280,7 +280,7 @@ struct npc_demoniac_scryerAI : public ScriptedAI
             {
                 m_creature->CastSpell(m_creature, SPELL_SUCKER_DESPAWN_MOB, TRIGGERED_NONE);
 
-                if (m_creature->isInCombat())
+                if (m_creature->IsInCombat())
                 {
                     m_creature->DeleteThreatList();
                     m_creature->CombatStop();
@@ -763,7 +763,7 @@ struct npc_anchorite_baradaAI : public ScriptedAI, private DialogueHelper
     {
         DialogueUpdate(uiDiff);
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         DoMeleeAttackIfReady();
@@ -918,7 +918,7 @@ struct npc_magister_aledisAI : public ScriptedAI
         if (!m_bIsDefeated)
             m_creature->LoadCreatureAddon(true);
 
-        if (m_creature->isAlive())
+        if (m_creature->IsAlive())
         {
             if (!m_bIsDefeated)
             {
@@ -936,7 +936,7 @@ struct npc_magister_aledisAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (!m_bIsDefeated && m_creature->GetHealthPercent() < 25.0f)
@@ -953,7 +953,7 @@ struct npc_magister_aledisAI : public ScriptedAI
 
         if (m_uiPyroblastTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_PYROBLAST) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_PYROBLAST) == CAST_OK)
                 m_uiPyroblastTimer = urand(18000, 21000);
         }
         else
@@ -961,7 +961,7 @@ struct npc_magister_aledisAI : public ScriptedAI
 
         if (m_uiFireballTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_FIREBALL) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_FIREBALL) == CAST_OK)
                 m_uiFireballTimer = urand(3000, 4000);
         }
         else

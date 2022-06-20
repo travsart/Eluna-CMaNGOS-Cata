@@ -143,7 +143,7 @@ struct boss_nefarianAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // ShadowFlame_Timer
@@ -167,7 +167,7 @@ struct boss_nefarianAI : public ScriptedAI
         // VeilOfShadow_Timer
         if (m_uiVeilOfShadowTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_VEIL_OF_SHADOW) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_VEIL_OF_SHADOW) == CAST_OK)
                 m_uiVeilOfShadowTimer = 15000;
         }
         else
@@ -176,7 +176,7 @@ struct boss_nefarianAI : public ScriptedAI
         // Cleave_Timer
         if (m_uiCleaveTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CLEAVE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CLEAVE) == CAST_OK)
                 m_uiCleaveTimer = 7000;
         }
         else

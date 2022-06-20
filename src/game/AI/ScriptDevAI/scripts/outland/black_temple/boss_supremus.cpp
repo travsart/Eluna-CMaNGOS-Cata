@@ -144,7 +144,7 @@ struct boss_supremusAI : public ScriptedAI
         {
             Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1);
             if (!pTarget)
-                pTarget = m_creature->getVictim();
+                pTarget = m_creature->GetVictim();
 
             if (pTarget)
             {
@@ -184,13 +184,13 @@ struct boss_supremusAI : public ScriptedAI
     void KilledUnit(Unit* pKilled) override
     {
         // The current target is the fixated target - repick a new one
-        if (!m_bTankPhase && pKilled == m_creature->getVictim())
+        if (!m_bTankPhase && pKilled == m_creature->GetVictim())
             m_uiSwitchTargetTimer = 0;
     }
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiBerserkTimer)
@@ -266,7 +266,7 @@ struct boss_supremusAI : public ScriptedAI
             {
                 Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1);
 
-                if (DoCastSpellIfCan(pTarget ? pTarget : m_creature->getVictim(), SPELL_VOLCANIC_ERUPTION_BOSS) == CAST_OK)
+                if (DoCastSpellIfCan(pTarget ? pTarget : m_creature->GetVictim(), SPELL_VOLCANIC_ERUPTION_BOSS) == CAST_OK)
                 {
                     DoScriptText(EMOTE_GROUND_CRACK, m_creature);
                     m_uiSummonVolcanoTimer = 10000;
@@ -277,9 +277,9 @@ struct boss_supremusAI : public ScriptedAI
 
             if (m_uiMoltenPunchTimer < uiDiff)
             {
-                if (m_creature->GetCombatDistance(m_creature->getVictim(), false) < RANGE_MOLTEN_PUNCH)
+                if (m_creature->GetCombatDistance(m_creature->GetVictim(), false) < RANGE_MOLTEN_PUNCH)
                 {
-                    DoCastSpellIfCan(m_creature->getVictim(), SPELL_CHARGE);
+                    DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CHARGE);
                     DoScriptText(EMOTE_PUNCH_GROUND, m_creature);
                 }
                 m_uiMoltenPunchTimer = 8000;                // might be better with small timer and some sort of cast-chance
@@ -288,9 +288,9 @@ struct boss_supremusAI : public ScriptedAI
                 m_uiMoltenPunchTimer -= uiDiff;
 
             /* Not understood how this really must work
-             * if (m_creature->GetSpeedRate(MOVE_RUN) > SPEED_CHASE && m_creature->GetCombatDistance(m_creature->getVictim()) < RANGE_MIN_DASHING)
+             * if (m_creature->GetSpeedRate(MOVE_RUN) > SPEED_CHASE && m_creature->GetCombatDistance(m_creature->GetVictim()) < RANGE_MIN_DASHING)
              *     m_creature->SetSpeedRate(MOVE_RUN, SPEED_CHASE);
-             * else if (m_creature->GetCombatDistance(m_creature->getVictim()) > RANGE_MOLTEN_PUNCH)
+             * else if (m_creature->GetCombatDistance(m_creature->GetVictim()) > RANGE_MOLTEN_PUNCH)
              *     m_creature->SetSpeedRate(MOVE_RUN, SPEED_DASHING);
              */
         }

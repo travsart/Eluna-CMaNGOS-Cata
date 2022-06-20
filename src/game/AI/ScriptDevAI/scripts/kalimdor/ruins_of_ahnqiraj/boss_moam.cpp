@@ -71,7 +71,7 @@ struct boss_moamAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         switch (m_uiPhase)
@@ -93,9 +93,9 @@ struct boss_moamAI : public ScriptedAI
 
                 if (m_uiSummonManaFiendsTimer <= uiDiff)
                 {
-                    DoCastSpellIfCan(m_creature->getVictim(), SPELL_SUMMON_MANAFIEND_1, CAST_TRIGGERED);
-                    DoCastSpellIfCan(m_creature->getVictim(), SPELL_SUMMON_MANAFIEND_2, CAST_TRIGGERED);
-                    DoCastSpellIfCan(m_creature->getVictim(), SPELL_SUMMON_MANAFIEND_3, CAST_TRIGGERED);
+                    DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SUMMON_MANAFIEND_1, CAST_TRIGGERED);
+                    DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SUMMON_MANAFIEND_2, CAST_TRIGGERED);
+                    DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SUMMON_MANAFIEND_3, CAST_TRIGGERED);
                     m_uiSummonManaFiendsTimer = 90000;
                 }
                 else
@@ -114,7 +114,7 @@ struct boss_moamAI : public ScriptedAI
 
                 if (m_uiTrampleTimer <= uiDiff)
                 {
-                    DoCastSpellIfCan(m_creature->getVictim(), SPELL_TRAMPLE);
+                    DoCastSpellIfCan(m_creature->GetVictim(), SPELL_TRAMPLE);
                     m_uiTrampleTimer = 15000;
                 }
                 else

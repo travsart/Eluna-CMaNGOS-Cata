@@ -145,7 +145,7 @@ struct boss_rotfaceAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Slime Spray
@@ -228,12 +228,12 @@ struct mob_little_oozeAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiStickyOozeTimer <= uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_STICKY_OOZE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_STICKY_OOZE) == CAST_OK)
                 m_uiStickyOozeTimer = urand(10000, 15000);
         }
         else
@@ -281,7 +281,7 @@ struct mob_big_oozeAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Unstable Ooze
@@ -311,7 +311,7 @@ struct mob_big_oozeAI : public ScriptedAI
         // Sticky Ooze
         if (m_uiStickyOozeTimer <= uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_STICKY_OOZE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_STICKY_OOZE) == CAST_OK)
                 m_uiStickyOozeTimer = urand(10000, 15000);
         }
         else

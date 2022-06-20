@@ -29,6 +29,8 @@
 
 class Item;
 
+#define GUILD_RANK_NONE         0xFF
+
 enum GuildDefaultRanks
 {
     // these ranks can be modified, but they cannot be deleted
@@ -356,6 +358,7 @@ class Guild
         void SetLeader(ObjectGuid guid);
         bool AddMember(ObjectGuid plGuid, uint32 plRank);
         bool DelMember(ObjectGuid guid, bool isDisbanding = false);
+        bool ChangeMemberRank(ObjectGuid guid, uint8 newRank);
         // lowest rank is the count of ranks - 1 (the highest rank_id in table)
         uint32 GetLowestRank() const { return m_Ranks.size() - 1; }
 
@@ -470,7 +473,7 @@ class Guild
         void   LoadGuildBankFromDB();
         // Money deposit/withdraw
         void   SendMoneyInfo(WorldSession* session, uint32 LowGuid);
-        bool   MemberMoneyWithdraw(uint64 amount, uint32 LowGuid);
+        bool   MemberMoneyWithdraw(uint32 amount, uint32 LowGuid);
         uint64 GetGuildBankMoney() { return m_GuildBankMoney; }
         void   SetBankMoney(int64 money);
         // per days

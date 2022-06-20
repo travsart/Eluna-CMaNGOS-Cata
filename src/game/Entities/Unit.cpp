@@ -50,6 +50,10 @@
 #include "movement/MovementStructures.h"
 #include "Tools/Formulas.h"
 
+#ifdef BUILD_ELUNA
+#include "LuaEngine/LuaEngine.h"
+#endif
+
 #include <math.h>
 #include <array>
 
@@ -672,7 +676,7 @@ void Unit::Update(uint32 update_diff, uint32 p_time)
 
     if (CanHaveThreatList())
         getThreatManager().UpdateForClient(update_diff);
-    else if (isInCombat())
+    else if (IsInCombat())
     {
         // update combat timer only for players and pets (they have no threat list)
         // Check UNIT_STAT_MELEE_ATTACKING or UNIT_STAT_CHASE (without UNIT_STAT_FOLLOW in this case) so pets can reach far away
@@ -701,7 +705,7 @@ void Unit::Update(uint32 update_diff, uint32 p_time)
     if (IsVehicle())
     {
         // Initialize vehicle if not done
-        if (isAlive() && !m_vehicleInfo->IsInitialized())
+        if (IsAlive() && !m_vehicleInfo->IsInitialized())
             m_vehicleInfo->Initialize();
 
         // Update passenger positions if we are the first vehicle
@@ -715,10 +719,10 @@ void Unit::Update(uint32 update_diff, uint32 p_time)
     UpdateSplineMovement(p_time);
     i_motionMaster.UpdateMotion(p_time);
 
-    if (AI() && isAlive())
+    if (AI() && IsAlive())
         AI()->UpdateAI(p_time);   // AI not react good at real update delays (while freeze in non-active part of map)
 
-    if (isAlive())
+    if (IsAlive())
     {
         ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, GetHealth() < GetMaxHealth() * 0.20f);
         ModifyAuraState(AURA_STATE_HEALTHLESS_35_PERCENT, GetHealth() < GetMaxHealth() * 0.35f);
@@ -728,7 +732,7 @@ void Unit::Update(uint32 update_diff, uint32 p_time)
 
 bool Unit::UpdateMeleeAttackingState()
 {
-    Unit* victim = getVictim();
+    Unit* victim = GetVictim();
     if (!victim || IsNonMeleeSpellCasted(false))
         return false;
 
@@ -899,7 +903,7 @@ void Unit::RemoveSpellsCausingAura(AuraType auraType, ObjectGuid casterGuid)
 
 void Unit::DealDamageMods(Unit* pVictim, uint32& damage, uint32* absorb, DamageEffectType damagetype, SpellEntry const* spellProto)
 {
-    if (!pVictim->isAlive() || pVictim->IsTaxiFlying() || (pVictim->GetTypeId() == TYPEID_UNIT && ((Creature*)pVictim)->IsInEvadeMode()))
+    if (!pVictim->IsAlive() || pVictim->IsTaxiFlying() || (pVictim->GetTypeId() == TYPEID_UNIT && ((Creature*)pVictim)->IsInEvadeMode()))
     {
         if (absorb)
             *absorb += damage;
@@ -1165,6 +1169,15 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
         else
             pVictim->SetHealth(0);
 
+#ifdef BUILD_ELUNA
+        // used by eluna
+        Creature* killer = ((Creature*)this);
+        if (Creature* killerCre = killer->ToCreature())
+            if (Player* killed = pVictim->ToPlayer())
+                if(Eluna* e = killed->GetEluna())
+                    e->OnPlayerKilledByCreature(killerCre, killed);
+#endif
+
         // Call KilledUnit for creatures
         if (AI())
             AI()->KilledUnit(pVictim);
@@ -1232,6 +1245,11 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
                     if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript(playerVictim->GetCachedZoneId()))
                         outdoorPvP->HandlePlayerKill(player_tap, playerVictim);
                 }
+#ifdef BUILD_ELUNA
+                // used by eluna
+            if (Eluna* e = player_tap->GetEluna())
+                e->OnPVPKill(player_tap, playerVictim);
+#endif
             }
         }
         else                                                // Killed creature
@@ -1253,7 +1271,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
 
         if (damagetype != DOT)
         {
-            if (!getVictim())
+            if (!GetVictim())
             {
                 // if not have main target then attack state with target (including AI call)
                 // start melee attacks only after melee hit
@@ -1375,7 +1393,7 @@ struct PetOwnerKilledUnitHelper
 
 void Unit::JustKilledCreature(Creature* victim, Player* responsiblePlayer)
 {
-    victim->m_deathState = DEAD;                            // so that isAlive, isDead return expected results in the called hooks of JustKilledCreature
+    victim->m_deathState = DEAD;                            // so that IsAlive, IsDead return expected results in the called hooks of JustKilledCreature
     // must be used only shortly before SetDeathState(JUST_DIED) and only for Creatures or Pets
 
     // some critters required for quests (need normal entry instead possible heroic in any cases)
@@ -1420,8 +1438,16 @@ void Unit::JustKilledCreature(Creature* victim, Player* responsiblePlayer)
         mapInstance->OnCreatureDeath(victim);
 
     if (responsiblePlayer)                                  // killedby Player, inform BG
+    {
+#ifdef BUILD_ELUNA
+        // used by eluna
+        if (Eluna* e = responsiblePlayer->GetEluna())
+            e->OnCreatureKill(responsiblePlayer, victim);
+#endif
         if (BattleGround* bg = responsiblePlayer->GetBattleGround())
             bg->HandleKillUnit(victim, responsiblePlayer);
+    }
+
     // Notify the outdoor pvp script
     if (OutdoorPvP* outdoorPvP = sOutdoorPvPMgr.GetScript(responsiblePlayer ? responsiblePlayer->GetCachedZoneId() : GetZoneId()))
         outdoorPvP->HandleCreatureDeath(victim);
@@ -1751,7 +1777,7 @@ void Unit::DealSpellDamage(SpellNonMeleeDamage* damageInfo, bool durabilityLoss)
     if (!pVictim)
         return;
 
-    if (!pVictim->isAlive() || pVictim->IsTaxiFlying() || (pVictim->GetTypeId() == TYPEID_UNIT && ((Creature*)pVictim)->IsInEvadeMode()))
+    if (!pVictim->IsAlive() || pVictim->IsTaxiFlying() || (pVictim->GetTypeId() == TYPEID_UNIT && ((Creature*)pVictim)->IsInEvadeMode()))
         return;
 
     SpellEntry const* spellProto = sSpellStore.LookupEntry(damageInfo->SpellID);
@@ -1794,7 +1820,7 @@ void Unit::CalculateMeleeDamage(Unit* pVictim, CalcDamageInfo* damageInfo, Weapo
     if (!pVictim)
         return;
 
-    if (!this->isAlive() || !pVictim->isAlive())
+    if (!this->IsAlive() || !pVictim->IsAlive())
         return;
 
     // Select HitInfo/procAttacker/procVictim flag based on attack type
@@ -1981,7 +2007,7 @@ void Unit::DealMeleeDamage(CalcDamageInfo* damageInfo, bool durabilityLoss)
     if (!pVictim)
         return;
 
-    if (!pVictim->isAlive() || pVictim->IsTaxiFlying() || (pVictim->GetTypeId() == TYPEID_UNIT && ((Creature*)pVictim)->IsInEvadeMode()))
+    if (!pVictim->IsAlive() || pVictim->IsTaxiFlying() || (pVictim->GetTypeId() == TYPEID_UNIT && ((Creature*)pVictim)->IsInEvadeMode()))
         return;
 
     // You don't lose health from damage taken from another player while in a sanctuary
@@ -2047,7 +2073,7 @@ void Unit::DealMeleeDamage(CalcDamageInfo* damageInfo, bool durabilityLoss)
     if (!(damageInfo->HitInfo & HITINFO_MISS))
     {
         // on weapon hit casts
-        if (GetTypeId() == TYPEID_PLAYER && pVictim->isAlive())
+        if (GetTypeId() == TYPEID_PLAYER && pVictim->IsAlive())
             ((Player*)this)->CastItemCombatSpell(pVictim, damageInfo->attackType);
 
         SetInCombatWithVictim(pVictim);
@@ -2166,9 +2192,9 @@ uint32 Unit::CalcArmorReducedDamage(Unit* pVictim, const uint32 damage)
     // Apply Player CR_ARMOR_PENETRATION rating and percent talents
     if (GetTypeId() == TYPEID_PLAYER)
     {
-        float maxArmorPen = 400 + 85 * pVictim->getLevel();
-        if (getLevel() > 59)
-            maxArmorPen += 4.5f * 85 * (pVictim->getLevel() - 59);
+        float maxArmorPen = 400 + 85 * pVictim->GetLevel();
+        if (GetLevel() > 59)
+            maxArmorPen += 4.5f * 85 * (pVictim->GetLevel() - 59);
         // Cap ignored armor to this value
         maxArmorPen = std::min(((armor + maxArmorPen) / 3), armor);
         // Also, armor penetration is limited to 100% since 3.1.2, before greater values did
@@ -2180,7 +2206,7 @@ uint32 Unit::CalcArmorReducedDamage(Unit* pVictim, const uint32 damage)
     if (armor < 0.0f)
         armor = 0.0f;
 
-    float levelModifier = (float)getLevel();
+    float levelModifier = (float)GetLevel();
     if (levelModifier > 59)
         levelModifier = levelModifier + (4.5f * (levelModifier - 59));
 
@@ -2199,7 +2225,7 @@ uint32 Unit::CalcArmorReducedDamage(Unit* pVictim, const uint32 damage)
 
 void Unit::CalculateDamageAbsorbAndResist(Unit* pCaster, SpellSchoolMask schoolMask, DamageEffectType damagetype, const uint32 damage, uint32* absorb, uint32* resist, bool canReflect, bool ignoreResists, bool binary)
 {
-    if (!pCaster || !isAlive() || !damage)
+    if (!pCaster || !IsAlive() || !damage)
         return;
 
     // Magic damage, check for resists
@@ -2622,7 +2648,7 @@ void Unit::CalculateDamageAbsorbAndResist(Unit* pCaster, SpellSchoolMask schoolM
 
             // Damage can be splitted only if aura has an alive caster
             Unit* caster = (*i)->GetCaster();
-            if (!caster || caster == this || !caster->IsInWorld() || !caster->isAlive())
+            if (!caster || caster == this || !caster->IsInWorld() || !caster->IsAlive())
                 continue;
 
             int32 currentAbsorb;
@@ -2659,7 +2685,7 @@ void Unit::CalculateDamageAbsorbAndResist(Unit* pCaster, SpellSchoolMask schoolM
 
             // Damage can be splitted only if aura has an alive caster
             Unit* caster = (*i)->GetCaster();
-            if (!caster || caster == this || !caster->IsInWorld() || !caster->isAlive())
+            if (!caster || caster == this || !caster->IsInWorld() || !caster->IsAlive())
                 continue;
 
             uint32 splitted = uint32(RemainingDamage * (*i)->GetModifier()->m_amount / 100.0f);
@@ -2736,7 +2762,7 @@ void Unit::CalculateAbsorbResistBlock(Unit* pCaster, SpellNonMeleeDamage* damage
 
 void Unit::CalculateHealAbsorb(const uint32 heal, uint32* absorb)
 {
-    if (!isAlive() || !heal)
+    if (!IsAlive() || !heal)
         return;
 
     int32 RemainingHeal = heal;
@@ -2799,7 +2825,7 @@ void Unit::AttackerStateUpdate(Unit* pVictim, WeaponAttackType attType, bool ext
     if (hasUnitState(UNIT_STAT_CAN_NOT_REACT) || HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PACIFIED))
         return;
 
-    if (!pVictim->isAlive())
+    if (!pVictim->IsAlive())
         return;
 
     if (IsNonMeleeSpellCasted(false))
@@ -2970,7 +2996,7 @@ float Unit::CalculateLevelPenalty(SpellEntry const* spellProto) const
 
     if (spellLevel < 20)
         LvlPenalty = (20.0f - spellLevel) * 3.75f;
-    float LvlFactor = (float(spellLevel) + 6.0f) / float(getLevel());
+    float LvlFactor = (float(spellLevel) + 6.0f) / float(GetLevel());
     if (LvlFactor > 1.0f)
         LvlFactor = 1.0f;
 
@@ -3066,7 +3092,7 @@ SpellMissInfo Unit::MagicSpellHitResult(Unit* pVictim, SpellEntry const* spell, 
 SpellMissInfo Unit::SpellHitResult(Unit* pVictim, SpellEntry const* spell, bool reflectable)
 {
     // Dead units can't be missed, can't resist, reflect, etc
-    if (!pVictim->isAlive())
+    if (!pVictim->IsAlive())
         return SPELL_MISS_NONE;
     // Return evade for units in evade mode
     if (pVictim->GetTypeId() == TYPEID_UNIT && ((Creature*)pVictim)->IsInEvadeMode())
@@ -4527,7 +4553,7 @@ void Unit::_UpdateSpells(uint32 time)
         {
             dnext1 = ite1;
             //(*i)->Update( difftime );
-            if (!(*ite1)->isSpawned())
+            if (!(*ite1)->IsSpawned())
             {
                 (*ite1)->SetOwnerGuid(ObjectGuid());
                 (*ite1)->SetRespawnTime(0);
@@ -4801,9 +4827,9 @@ bool Unit::IsInWater() const
     return GetTerrain()->IsInWater(GetPositionX(), GetPositionY(), GetPositionZ());
 }
 
-bool Unit::IsUnderWater() const
+bool Unit::IsUnderwater() const
 {
-    return GetTerrain()->IsUnderWater(GetPositionX(), GetPositionY(), GetPositionZ());
+    return GetTerrain()->IsUnderwater(GetPositionX(), GetPositionY(), GetPositionZ());
 }
 
 void Unit::DeMorph()
@@ -5007,7 +5033,7 @@ bool Unit::AddSpellAuraHolder(SpellAuraHolder* holder)
     SpellEntry const* aurSpellInfo = holder->GetSpellProto();
 
     // ghost spell check, allow apply any auras at player loading in ghost mode (will be cleanup after load)
-    if (!isAlive() && !IsDeathPersistentSpell(aurSpellInfo) &&
+    if (!IsAlive() && !IsDeathPersistentSpell(aurSpellInfo) &&
         !IsDeathOnlySpell(aurSpellInfo) && !aurSpellInfo->HasAttribute(SPELL_ATTR_EX2_CAN_TARGET_DEAD) &&
         (GetTypeId() != TYPEID_PLAYER || !((Player*)this)->GetSession()->PlayerLoading()))
     {
@@ -5492,7 +5518,7 @@ void Unit::RemoveAuraHolderDueToSpellByDispel(uint32 spellId, uint32 stackAmount
         if (Aura* dotAura = GetAura(SPELL_AURA_PERIODIC_DAMAGE, SPELLFAMILY_SHAMAN, uint64(0x10000000), 0x00000000, casterGuid))
             caster = dotAura->GetCaster();
 
-        if (caster && !caster->isDead())
+        if (caster && !caster->IsDead())
         {
             Unit::AuraList const& auras = caster->GetAurasByType(SPELL_AURA_DUMMY);
             for (Unit::AuraList::const_iterator i = auras.begin(); i != auras.end(); ++i)
@@ -6412,7 +6438,7 @@ void Unit::ProcDamageAndSpell(Unit* pVictim, uint32 procAttacker, uint32 procVic
         ProcDamageAndSpellFor(false, pVictim, procAttacker, procExtra, attType, procSpell, amount, dontTriggerSpecial);
     // Now go on with a victim's events'n'auras
     // Not much to do if no flags are set or there is no victim
-    if (pVictim && pVictim->isAlive() && procVictim)
+    if (pVictim && pVictim->IsAlive() && procVictim)
         pVictim->ProcDamageAndSpellFor(true, this, procVictim, procExtra, attType, procSpell, amount, dontTriggerSpecial);
 }
 
@@ -6575,9 +6601,9 @@ void Unit::SetPowerType(Powers new_powertype)
     }
 }
 
-FactionTemplateEntry const* Unit::getFactionTemplateEntry() const
+FactionTemplateEntry const* Unit::GetFactionTemplateEntry() const
 {
-    FactionTemplateEntry const* entry = sFactionTemplateStore.LookupEntry(getFaction());
+    FactionTemplateEntry const* entry = sFactionTemplateStore.LookupEntry(GetFaction());
     if (!entry)
     {
         static ObjectGuid guid;                             // prevent repeating spam same faction problem
@@ -6587,9 +6613,9 @@ FactionTemplateEntry const* Unit::getFactionTemplateEntry() const
             guid = GetObjectGuid();
 
             if (guid.GetHigh() == HIGHGUID_PET)
-                sLog.outError("%s (base creature entry %u) have invalid faction template id %u, owner %s", GetGuidStr().c_str(), GetEntry(), getFaction(), ((Pet*)this)->GetOwnerGuid().GetString().c_str());
+                sLog.outError("%s (base creature entry %u) have invalid faction template id %u, owner %s", GetGuidStr().c_str(), GetEntry(), GetFaction(), ((Pet*)this)->GetOwnerGuid().GetString().c_str());
             else
-                sLog.outError("%s have invalid faction template id %u", GetGuidStr().c_str(), getFaction());
+                sLog.outError("%s have invalid faction template id %u", GetGuidStr().c_str(), GetFaction());
         }
     }
     return entry;
@@ -6602,11 +6628,11 @@ bool Unit::IsHostileTo(Unit const* unit) const
         return false;
 
     // always non-hostile to GM in GM mode
-    if (unit->GetTypeId() == TYPEID_PLAYER && ((Player const*)unit)->isGameMaster())
+    if (unit->GetTypeId() == TYPEID_PLAYER && ((Player const*)unit)->IsGameMaster())
         return false;
 
     // always hostile to enemy
-    if (getVictim() == unit || unit->getVictim() == this)
+    if (GetVictim() == unit || unit->GetVictim() == this)
         return true;
 
     // test pet/charm masters instead pers/charmeds
@@ -6616,15 +6642,15 @@ bool Unit::IsHostileTo(Unit const* unit) const
     const Unit* targetOwner = targetCharmer ? targetCharmer : unit->GetOwner(true);
 
     // always hostile to owner's enemy
-    if (testerOwner && (testerOwner->getVictim() == unit || unit->getVictim() == testerOwner))
+    if (testerOwner && (testerOwner->GetVictim() == unit || unit->GetVictim() == testerOwner))
         return true;
 
     // always hostile to enemy owner
-    if (targetOwner && (getVictim() == targetOwner || targetOwner->getVictim() == this))
+    if (targetOwner && (GetVictim() == targetOwner || targetOwner->GetVictim() == this))
         return true;
 
     // always hostile to owner of owner's enemy
-    if (testerOwner && targetOwner && (testerOwner->getVictim() == targetOwner || targetOwner->getVictim() == testerOwner))
+    if (testerOwner && targetOwner && (testerOwner->GetVictim() == targetOwner || targetOwner->GetVictim() == testerOwner))
         return true;
 
     Unit const* tester = testerOwner ? testerOwner : this;
@@ -6666,8 +6692,8 @@ bool Unit::IsHostileTo(Unit const* unit) const
     }
 
     // faction base cases
-    FactionTemplateEntry const* tester_faction = tester->getFactionTemplateEntry();
-    FactionTemplateEntry const* target_faction = target->getFactionTemplateEntry();
+    FactionTemplateEntry const* tester_faction = tester->GetFactionTemplateEntry();
+    FactionTemplateEntry const* target_faction = target->GetFactionTemplateEntry();
     if (!tester_faction || !target_faction)
         return false;
 
@@ -6716,11 +6742,11 @@ bool Unit::IsFriendlyTo(Unit const* unit) const
         return true;
 
     // always friendly to GM in GM mode
-    if (unit->GetTypeId() == TYPEID_PLAYER && ((Player const*)unit)->isGameMaster())
+    if (unit->GetTypeId() == TYPEID_PLAYER && ((Player const*)unit)->IsGameMaster())
         return true;
 
     // always non-friendly to enemy
-    if (getVictim() == unit || unit->getVictim() == this)
+    if (GetVictim() == unit || unit->GetVictim() == this)
         return false;
 
     // test pet/charm masters instead pers/charmeds
@@ -6730,15 +6756,15 @@ bool Unit::IsFriendlyTo(Unit const* unit) const
     const Unit* targetOwner = targetCharmer ? targetCharmer : unit->GetOwner(true);
 
     // always non-friendly to owner's enemy
-    if (testerOwner && (testerOwner->getVictim() == unit || unit->getVictim() == testerOwner))
+    if (testerOwner && (testerOwner->GetVictim() == unit || unit->GetVictim() == testerOwner))
         return false;
 
     // always non-friendly to enemy owner
-    if (targetOwner && (getVictim() == targetOwner || targetOwner->getVictim() == this))
+    if (targetOwner && (GetVictim() == targetOwner || targetOwner->GetVictim() == this))
         return false;
 
     // always non-friendly to owner of owner's enemy
-    if (testerOwner && targetOwner && (testerOwner->getVictim() == targetOwner || targetOwner->getVictim() == testerOwner))
+    if (testerOwner && targetOwner && (testerOwner->GetVictim() == targetOwner || targetOwner->GetVictim() == testerOwner))
         return false;
 
     Unit const* tester = testerOwner ? testerOwner : this;
@@ -6780,8 +6806,8 @@ bool Unit::IsFriendlyTo(Unit const* unit) const
     }
 
     // faction base cases
-    FactionTemplateEntry const* tester_faction = tester->getFactionTemplateEntry();
-    FactionTemplateEntry const* target_faction = target->getFactionTemplateEntry();
+    FactionTemplateEntry const* tester_faction = tester->GetFactionTemplateEntry();
+    FactionTemplateEntry const* target_faction = target->GetFactionTemplateEntry();
     if (!tester_faction || !target_faction)
         return false;
 
@@ -6825,7 +6851,7 @@ bool Unit::IsFriendlyTo(Unit const* unit) const
 
 bool Unit::IsHostileToPlayers() const
 {
-    FactionTemplateEntry const* my_faction = getFactionTemplateEntry();
+    FactionTemplateEntry const* my_faction = GetFactionTemplateEntry();
     if (!my_faction || !my_faction->faction)
         return false;
 
@@ -6838,7 +6864,7 @@ bool Unit::IsHostileToPlayers() const
 
 bool Unit::IsNeutralToAll() const
 {
-    FactionTemplateEntry const* my_faction = getFactionTemplateEntry();
+    FactionTemplateEntry const* my_faction = GetFactionTemplateEntry();
     if (!my_faction || !my_faction->faction)
         return true;
 
@@ -6855,7 +6881,7 @@ bool Unit::Attack(Unit* victim, bool meleeAttack)
         return false;
 
     // dead units can neither attack nor be attacked
-    if (!isAlive() || !victim->IsInWorld() || !victim->isAlive())
+    if (!IsAlive() || !victim->IsInWorld() || !victim->IsAlive())
         return false;
 
     // player cannot attack in mount state
@@ -6865,7 +6891,7 @@ bool Unit::Attack(Unit* victim, bool meleeAttack)
     // nobody can attack GM in GM-mode
     if (victim->GetTypeId() == TYPEID_PLAYER)
     {
-        if (((Player*)victim)->isGameMaster())
+        if (((Player*)victim)->IsGameMaster())
             return false;
     }
     else
@@ -7032,6 +7058,19 @@ bool Unit::CanAttackByItself() const
     }
 
     return true;
+}
+
+struct IsAttackingPlayerHelper
+{
+    explicit IsAttackingPlayerHelper() {}
+    bool operator()(Unit const* unit) const { return unit->isAttackingPlayer(); }
+};
+
+bool Unit::isAttackingPlayer() const
+{
+    if (hasUnitState(UNIT_STAT_MELEE_ATTACKING || UNIT_STAT_CHANNELING))
+        return true;
+    return CheckAllControlledUnits(IsAttackingPlayerHelper(), CONTROLLED_PET | CONTROLLED_TOTEMS | CONTROLLED_GUARDIANS | CONTROLLED_CHARM);
 }
 
 void Unit::RemoveAllAttackers()
@@ -7447,7 +7486,7 @@ Unit* Unit::SelectMagnetTarget(Unit* victim, Spell* spell, SpellEffectIndex eff)
         {
             if (Unit* magnet = (*itr)->GetCaster())
             {
-                if (magnet->isAlive() && magnet->IsWithinLOSInMap(this) && spell->CheckTarget(magnet, eff))
+                if (magnet->IsAlive() && magnet->IsWithinLOSInMap(this) && spell->CheckTarget(magnet, eff))
                     return magnet;
             }
         }
@@ -7460,7 +7499,7 @@ Unit* Unit::SelectMagnetTarget(Unit* victim, Spell* spell, SpellEffectIndex eff)
         {
             if (Unit* magnet = (*i)->GetCaster())
             {
-                if (magnet->isAlive() && magnet->IsWithinLOSInMap(this) && (!spell || spell->CheckTarget(magnet, eff)))
+                if (magnet->IsAlive() && magnet->IsWithinLOSInMap(this) && (!spell || spell->CheckTarget(magnet, eff)))
                 {
                     if (roll_chance_i((*i)->GetModifier()->m_amount))
                         return magnet;
@@ -7768,7 +7807,7 @@ uint32 Unit::SpellDamageBonusDone(Unit* pVictim, SpellEntry const* spellProto, u
                     float multiplier = 3.0f;
 
                     // if target have higher level
-                    if (pVictim->getLevel() > getLevel())
+                    if (pVictim->GetLevel() > GetLevel())
                         // Glyph of Ice Lance
                         if (Aura* glyph = GetDummyAura(56377))
                             multiplier = glyph->GetModifier()->m_amount;
@@ -9119,7 +9158,7 @@ void Unit::SetInCombatWithVictim(Unit* victim)
 void Unit::SetInCombatState(bool PvP, Unit* enemy)
 {
     // only alive units can be in combat
-    if (!isAlive())
+    if (!IsAlive())
         return;
 
     if (PvP)
@@ -9129,7 +9168,7 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
 
     SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
-    if (isCharmed() || (GetTypeId() != TYPEID_PLAYER && ((Creature*)this)->IsPet()))
+    if (IsCharmed() || (GetTypeId() != TYPEID_PLAYER && ((Creature*)this)->IsPet()))
         SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT);
 
     // interrupt all delayed non-combat casts
@@ -9162,6 +9201,12 @@ void Unit::SetInCombatState(bool PvP, Unit* enemy)
         if (m_isCreatureLinkingTrigger)
             GetMap()->GetCreatureLinkingHolder()->DoCreatureLinkingEvent(LINKING_EVENT_AGGRO, pCreature, enemy);
     }
+#ifdef BUILD_ELUNA
+    // used by eluna
+    if (GetTypeId() == TYPEID_PLAYER)
+        if (Eluna* e = ToPlayer()->GetEluna())
+            e->OnPlayerEnterCombat(ToPlayer(), enemy);
+#endif
 }
 
 void Unit::ClearInCombat()
@@ -9169,8 +9214,14 @@ void Unit::ClearInCombat()
     m_CombatTimer = 0;
     RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
 
-    if (isCharmed() || (GetTypeId() != TYPEID_PLAYER && ((Creature*)this)->IsPet()))
+    if (IsCharmed() || (GetTypeId() != TYPEID_PLAYER && ((Creature*)this)->IsPet()))
         RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT);
+
+#ifdef BUILD_ELUNA
+    if (GetTypeId() == TYPEID_PLAYER)
+        if (Eluna* e = ToPlayer()->GetEluna())
+            e->OnPlayerLeaveCombat(ToPlayer());
+#endif
 
     if (GetTypeId() == TYPEID_PLAYER)
     {
@@ -9183,7 +9234,7 @@ void Unit::ClearInCombat()
 
 bool Unit::isTargetableForAttack(bool inverseAlive /*=false*/) const
 {
-    if (GetTypeId() == TYPEID_PLAYER && ((Player*)this)->isGameMaster())
+    if (GetTypeId() == TYPEID_PLAYER && ((Player*)this)->IsGameMaster())
         return false;
 
     if (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE))
@@ -9194,7 +9245,7 @@ bool Unit::isTargetableForAttack(bool inverseAlive /*=false*/) const
         return false;
 
     // inversealive is needed for some spells which need to be casted at dead targets (aoe)
-    if (isAlive() == inverseAlive)
+    if (IsAlive() == inverseAlive)
         return false;
 
     return IsInWorld() && !hasUnitState(UNIT_STAT_FEIGN_DEATH) && !IsTaxiFlying();
@@ -9296,13 +9347,13 @@ bool Unit::isVisibleForOrDetect(Unit const* u, WorldObject const* viewPoint, boo
             return false;
 
         // if player is dead then he can't detect anyone in any cases
-        if (!u->isAlive())
+        if (!u->IsAlive())
             detect = false;
     }
     else
     {
         // all dead creatures/players not visible for any creatures
-        if (!u->isAlive() || !isAlive())
+        if (!u->IsAlive() || !IsAlive())
             return false;
     }
 
@@ -9327,8 +9378,8 @@ bool Unit::isVisibleForOrDetect(Unit const* u, WorldObject const* viewPoint, boo
     // isInvisibleForAlive() those units can only be seen by dead or if other
     // unit is also invisible for alive.. if an isinvisibleforalive unit dies we
     // should be able to see it too
-    if (u->isAlive() && isAlive() && isInvisibleForAlive() != u->isInvisibleForAlive())
-        if (u->GetTypeId() != TYPEID_PLAYER || !((Player*)u)->isGameMaster())
+    if (u->IsAlive() && IsAlive() && isInvisibleForAlive() != u->isInvisibleForAlive())
+        if (u->GetTypeId() != TYPEID_PLAYER || !((Player*)u)->IsGameMaster())
             return false;
 
     // Visible units, always are visible for all units, except for units under invisibility and phases
@@ -9336,7 +9387,7 @@ bool Unit::isVisibleForOrDetect(Unit const* u, WorldObject const* viewPoint, boo
         return true;
 
     // GMs see any players, not higher GMs and all units in any phase
-    if (u->GetTypeId() == TYPEID_PLAYER && ((Player*)u)->isGameMaster())
+    if (u->GetTypeId() == TYPEID_PLAYER && ((Player*)u)->IsGameMaster())
     {
         if (GetTypeId() == TYPEID_PLAYER)
             return ((Player*)this)->GetSession()->GetSecurity() <= ((Player*)u)->GetSession()->GetSecurity();
@@ -9993,8 +10044,8 @@ bool Unit::IsTargetUnderControl(Unit const& target) const
     // also check if this unit is controlled by another creature from friendly faction
     if (Unit const* charmer = GetMap()->GetUnit(charmerGuid))
     {
-        FactionTemplateEntry const* charmerFactionEntry = charmer->getFactionTemplateEntry();
-        FactionTemplateEntry const* controllerFactionEntry = target.getFactionTemplateEntry();
+        FactionTemplateEntry const* charmerFactionEntry = charmer->GetFactionTemplateEntry();
+        FactionTemplateEntry const* controllerFactionEntry = target.GetFactionTemplateEntry();
         if (controllerFactionEntry && charmerFactionEntry && !controllerFactionEntry->IsHostileTo(*controllerFactionEntry))
             return true;
     }
@@ -10009,7 +10060,7 @@ bool Unit::CanHaveThreatList(bool ignoreAliveState/*=false*/) const
         return false;
 
     // only alive units can have threat list
-    if (!isAlive() && !ignoreAliveState)
+    if (!IsAlive() && !ignoreAliveState)
         return false;
 
     Creature const* creature = ((Creature const*)this);
@@ -10074,13 +10125,13 @@ void Unit::TauntApply(Unit* taunter)
 {
     MANGOS_ASSERT(GetTypeId() == TYPEID_UNIT);
 
-    if (!taunter || (taunter->GetTypeId() == TYPEID_PLAYER && ((Player*)taunter)->isGameMaster()))
+    if (!taunter || (taunter->GetTypeId() == TYPEID_PLAYER && ((Player*)taunter)->IsGameMaster()))
         return;
 
     if (!CanHaveThreatList())
         return;
 
-    Unit* target = getVictim();
+    Unit* target = GetVictim();
 
     if (target && target == taunter)
         return;
@@ -10104,13 +10155,13 @@ void Unit::TauntFadeOut(Unit* taunter)
 {
     MANGOS_ASSERT(GetTypeId() == TYPEID_UNIT);
 
-    if (!taunter || (taunter->GetTypeId() == TYPEID_PLAYER && ((Player*)taunter)->isGameMaster()))
+    if (!taunter || (taunter->GetTypeId() == TYPEID_PLAYER && ((Player*)taunter)->IsGameMaster()))
         return;
 
     if (!CanHaveThreatList())
         return;
 
-    Unit* target = getVictim();
+    Unit* target = GetVictim();
 
     if (!target || target != taunter)
         return;
@@ -10183,7 +10234,7 @@ bool Unit::SelectHostileTarget()
 
     MANGOS_ASSERT(GetTypeId() == TYPEID_UNIT);
 
-    if (!this->isAlive())
+    if (!this->IsAlive())
         return false;
 
     // This function only useful once AI has been initialized
@@ -10191,7 +10242,7 @@ bool Unit::SelectHostileTarget()
         return false;
 
     Unit* target = nullptr;
-    Unit* oldTarget = getVictim();
+    Unit* oldTarget = GetVictim();
 
     // first check if we should fixate a target
     if (m_fixateTargetGuid)
@@ -10201,7 +10252,7 @@ bool Unit::SelectHostileTarget()
         else
         {
             Unit* pFixateTarget = GetMap()->GetUnit(m_fixateTargetGuid);
-            if (pFixateTarget && pFixateTarget->isAlive() && !IsSecondChoiceTarget(pFixateTarget, false, true))
+            if (pFixateTarget && pFixateTarget->IsAlive() && !IsSecondChoiceTarget(pFixateTarget, false, true))
                 target = pFixateTarget;
         }
     }
@@ -10267,7 +10318,7 @@ bool Unit::SelectHostileTarget()
     }
 
     // no target but something prevent go to evade mode
-    if (!isInCombat() || HasAuraType(SPELL_AURA_MOD_TAUNT))
+    if (!IsInCombat() || HasAuraType(SPELL_AURA_MOD_TAUNT))
         return false;
 
     // last case when creature don't must go to evade mode:
@@ -10336,14 +10387,14 @@ int32 Unit::CalculateSpellDamage(Unit const* target, SpellEntry const* spellProt
     int32 basePoints = 0;
     uint32 spellLevel = 0;
     float comboDamage = 0.0f;
-    uint32 level = getLevel();
+    uint32 level = GetLevel();
 
     SpellScalingEntry const* scalingEntry = spellProto->GetSpellScaling();
     GtSpellScalingEntry const* gtScalingEntry = NULL;
     if (scalingEntry && scalingEntry->IsScalableEffect(effect_index))
     {
         if (target && IsAuraApplyEffect(spellProto, effect_index) && IsPositiveEffect(spellProto, effect_index))
-            level = target->getLevel();
+            level = target->GetLevel();
 
         uint32 gtSpellScalingId = level - 1;
         if (scalingEntry->playerClass == -1)
@@ -10437,13 +10488,13 @@ int32 Unit::CalculateSpellDamage(Unit const* target, SpellEntry const* spellProt
         if (spellProto->HasAttribute(SPELL_ATTR_LEVEL_DAMAGE_CALCULATION) && spellLevel)
         {
             if (spellEffect->EffectApplyAuraName)
-                value += (std::max<float>(0.0f, float(getLevel() - spellProto->GetMaxLevel())) * basePointsPerLevel);
+                value += (std::max<float>(0.0f, float(GetLevel() - spellProto->GetMaxLevel())) * basePointsPerLevel);
             else if (spellEffect->Effect != SPELL_EFFECT_WEAPON_PERCENT_DAMAGE &&
                 spellEffect->Effect != SPELL_EFFECT_KNOCK_BACK &&
                 !IsControlledByPlayer())
             {
                 GtNPCManaCostScalerEntry const* spellScaler = sGtNPCManaCostScalerStore.LookupEntry(spellLevel - 1);
-                GtNPCManaCostScalerEntry const* casterScaler = sGtNPCManaCostScalerStore.LookupEntry(this->getLevel() - 1);
+                GtNPCManaCostScalerEntry const* casterScaler = sGtNPCManaCostScalerStore.LookupEntry(this->GetLevel() - 1);
                 if (spellScaler && casterScaler)
                     value *= casterScaler->ratio / spellScaler->ratio;
             }
@@ -11884,7 +11935,7 @@ void Unit::SetImmobilizedState(bool apply, bool stun)
     }
 }
 
-void Unit::SetFeared(bool apply, ObjectGuid casterGuid, uint32 spellID, uint32 time)
+void Unit::SetFleeing(bool apply, ObjectGuid casterGuid, uint32 spellID, uint32 time)
 {
     SetIncapacitatedState(apply, UNIT_FLAG_FLEEING, casterGuid, spellID, time);
 }
@@ -11938,9 +11989,9 @@ void Unit::SetIncapacitatedState(bool apply, uint32 state, ObjectGuid casterGuid
             if (!GetTargetGuid().IsEmpty()) // Incapacitated creature loses its target
                 SetTargetGuid(ObjectGuid());
         }
-        else if (isAlive())
+        else if (IsAlive())
         {
-            if (Unit* victim = getVictim())
+            if (Unit* victim = GetVictim())
             {
                 SetTargetGuid(victim->GetObjectGuid());  // Restore target
                 if (movement)
@@ -12038,11 +12089,11 @@ void Unit::SetFeignDeath(bool apply, ObjectGuid casterGuid /*= ObjectGuid()*/)
 
         clearUnitState(UNIT_STAT_FEIGN_DEATH);
 
-        if (GetTypeId() != TYPEID_PLAYER && isAlive())
+        if (GetTypeId() != TYPEID_PLAYER && IsAlive())
         {
             // restore appropriate movement generator
-            if (getVictim())
-                GetMotionMaster()->MoveChase(getVictim());
+            if (GetVictim())
+                GetMotionMaster()->MoveChase(GetVictim());
             else
                 GetMotionMaster()->Initialize();
         }
@@ -12582,7 +12633,7 @@ void Unit::RestoreOriginalFaction()
         if (creature->IsPet() || creature->IsTotem())
         {
             if (Unit* owner = GetOwner())
-                setFaction(owner->getFaction());
+                setFaction(owner->GetFaction());
         }
         else
             setFaction(creature->GetCreatureInfo()->FactionAlliance);
@@ -12706,9 +12757,9 @@ struct StopAttackFactionHelper
 
 void Unit::StopAttackFaction(uint32 faction_id)
 {
-    if (Unit* victim = getVictim())
+    if (Unit* victim = GetVictim())
     {
-        if (victim->getFactionTemplateEntry()->faction == faction_id)
+        if (victim->GetFactionTemplateEntry()->faction == faction_id)
         {
             AttackStop();
             if (IsNonMeleeSpellCasted(false))
@@ -12723,7 +12774,7 @@ void Unit::StopAttackFaction(uint32 faction_id)
     AttackerSet const& attackers = getAttackers();
     for (AttackerSet::const_iterator itr = attackers.begin(); itr != attackers.end();)
     {
-        if ((*itr)->getFactionTemplateEntry()->faction == faction_id)
+        if ((*itr)->GetFactionTemplateEntry()->faction == faction_id)
         {
             (*itr)->AttackStop();
             itr = attackers.begin();
@@ -13196,13 +13247,13 @@ Unit* Unit::TakePossessOf(SpellEntry const* spellEntry, SummonPropertiesEntry co
 
     Player* player = GetTypeId() == TYPEID_PLAYER ? static_cast<Player*>(this): nullptr;
 
-    pCreature->SetFactionTemporary(getFaction(), TEMPFACTION_NONE);     // set same faction than player
+    pCreature->SetFactionTemporary(GetFaction(), TEMPFACTION_NONE);     // set same faction than player
     pCreature->SetRespawnCoord(pos);                                    // set spawn coord
     pCreature->SetCharmerGuid(GetObjectGuid());                         // save guid of the charmer
     pCreature->SetUInt32Value(UNIT_CREATED_BY_SPELL, spellEntry->Id);   // set the spell id used to create this (may be used for removing corresponding aura
     pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_POSSESSED);          // set flag for client that mean this unit is controlled by a player
     pCreature->addUnitState(UNIT_STAT_POSSESSED);                       // also set internal unit state flag
-    pCreature->SelectLevel(getLevel());                                 // set level to same level than summoner TODO:: not sure its always the case...
+    pCreature->SelectLevel(GetLevel());                                 // set level to same level than summoner TODO:: not sure its always the case...
     pCreature->SetLinkedToOwnerAura(TEMPSPAWN_LINKED_AURA_OWNER_CHECK | TEMPSPAWN_LINKED_AURA_REMOVE_OWNER); // set what to do if linked aura is removed or the creature is dead.
     pCreature->SetWalk(IsWalking(), true);                              // sync the walking state with the summoner
 
@@ -13279,7 +13330,7 @@ bool Unit::TakePossessOf(Unit* possessed)
     if (possessed->GetTypeId() == TYPEID_UNIT)
     {
         possessedCreature = static_cast<Creature *>(possessed);
-        possessedCreature->SetFactionTemporary(getFaction(), TEMPFACTION_NONE);
+        possessedCreature->SetFactionTemporary(GetFaction(), TEMPFACTION_NONE);
         possessedCreature->SetWalk(IsWalking(), true);
         charmInfo->SetCharmState("PossessedAI");
         getHostileRefManager().deleteReference(possessedCreature);
@@ -13294,7 +13345,7 @@ bool Unit::TakePossessOf(Unit* possessed)
         if (player && player->IsInDuelWith(possessedPlayer))
             possessedPlayer->SetUInt32Value(PLAYER_DUEL_TEAM, player->GetUInt32Value(PLAYER_DUEL_TEAM));
         else
-            possessedPlayer->setFaction(getFaction());
+            possessedPlayer->setFaction(GetFaction());
     }
 
     if (player)
@@ -13355,7 +13406,7 @@ bool Unit::TakeCharmOf(Unit* charmed)
         if (charmerPlayer && charmerPlayer->IsInDuelWith(charmedPlayer))
             charmedPlayer->SetUInt32Value(PLAYER_DUEL_TEAM, charmerPlayer->GetUInt32Value(PLAYER_DUEL_TEAM));
         else
-            charmedPlayer->setFaction(getFaction());
+            charmedPlayer->setFaction(GetFaction());
 
         charmInfo->SetCharmState("PetAI");
         charmed->SetByteValue(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_AURAS); // important have to be after charminfo initialization
@@ -13374,7 +13425,7 @@ bool Unit::TakeCharmOf(Unit* charmed)
         Creature* charmedCreature = static_cast<Creature *>(charmed);
         charmInfo->SetCharmState("PetAI");
         getHostileRefManager().deleteReference(charmedCreature);
-        charmedCreature->SetFactionTemporary(getFaction(), TEMPFACTION_NONE);
+        charmedCreature->SetFactionTemporary(GetFaction(), TEMPFACTION_NONE);
         charmedCreature->SetWalk(IsWalking(), true);
 
         charmInfo->InitCharmCreateSpells();
@@ -13452,7 +13503,7 @@ void Unit::ResetControlState(bool attackCharmer /*= true*/)
     if (possessed->GetTypeId() == TYPEID_UNIT)
     {
         // now we have to clean threat list to be able to restore normal creature behavior
-        FactionTemplateEntry const* factionEntry = possessed->getFactionTemplateEntry();
+        FactionTemplateEntry const* factionEntry = possessed->GetFactionTemplateEntry();
 
         possessedCreature = static_cast<Creature *>(possessed);
         if (!possessedCreature->IsPet())
@@ -13467,7 +13518,7 @@ void Unit::ResetControlState(bool attackCharmer /*= true*/)
                 if (attacker->GetTypeId() != TYPEID_UNIT)
                     continue;
 
-                if (!factionEntry->IsHostileTo(*attacker->getFactionTemplateEntry()))
+                if (!factionEntry->IsHostileTo(*attacker->GetFactionTemplateEntry()))
                     friendlyTargets.insert(attacker);
             }
 
@@ -13491,12 +13542,12 @@ void Unit::ResetControlState(bool attackCharmer /*= true*/)
             while (possessed->GetMotionMaster()->GetCurrentMovementGeneratorType() == FOLLOW_MOTION_TYPE)
                 possessed->GetMotionMaster()->MovementExpired(true);
 
-            if (possessed->isAlive())
+            if (possessed->IsAlive())
             {
                 possessedCreature->SetCombatStartPosition(GetPositionX(), GetPositionY(), GetPositionZ()); // needed for creature not yet entered in combat or SelectHostileTarget() will fail
 
                                                                                                            // TODO:: iam not sure we need that faction check
-                if (!factionEntry->IsFriendlyTo(*getFactionTemplateEntry()))
+                if (!factionEntry->IsFriendlyTo(*GetFactionTemplateEntry()))
                     possessed->getThreatManager().addThreat(this, GetMaxHealth());     // generating threat by max life amount best way i found to make it realistic
             }
             else
@@ -13508,7 +13559,7 @@ void Unit::ResetControlState(bool attackCharmer /*= true*/)
         }
         else
         {
-            possessed->setFaction(possessedCreature->GetOwner()->getFaction());
+            possessed->setFaction(possessedCreature->GetOwner()->GetFaction());
 
             charmInfo->ResetCharmState();
 

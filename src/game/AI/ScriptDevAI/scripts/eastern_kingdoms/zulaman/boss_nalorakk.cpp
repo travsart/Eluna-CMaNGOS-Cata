@@ -94,7 +94,7 @@ struct boss_nalorakkAI : public ScriptedAI
         if (m_pInstance && m_pInstance->IsBearPhaseInProgress())
             return;
 
-        if (pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->isGameMaster() && m_creature->IsWithinDistInMap(pWho, aBearEventInfo[m_uiCurrentWave].fAggroDist))
+        if (pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->IsGameMaster() && m_creature->IsWithinDistInMap(pWho, aBearEventInfo[m_uiCurrentWave].fAggroDist))
         {
             DoScriptText(aBearEventInfo[m_uiCurrentWave].iYellId, m_creature);
             if (m_pInstance)
@@ -135,7 +135,7 @@ struct boss_nalorakkAI : public ScriptedAI
         m_creature->LoadCreatureAddon(true);
 
         // Boss should evade on the top of the platform
-        if (m_creature->isAlive())
+        if (m_creature->IsAlive())
             m_creature->GetMotionMaster()->MovePoint(1, aBearEventInfo[m_uiCurrentWave].fX, aBearEventInfo[m_uiCurrentWave].fY, aBearEventInfo[m_uiCurrentWave].fZ);
 
         m_creature->SetLootRecipient(NULL);
@@ -169,7 +169,7 @@ struct boss_nalorakkAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff) override
     {
         // Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Berserking
@@ -193,7 +193,7 @@ struct boss_nalorakkAI : public ScriptedAI
             // Brutal Swipe (some sources may say otherwise, but I've never seen this in Bear form)
             if (m_uiBrutalSwipeTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_BRUTAL_SWIPE) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_BRUTAL_SWIPE) == CAST_OK)
                     m_uiBrutalSwipeTimer = urand(7000, 15000);
             }
             else
@@ -202,7 +202,7 @@ struct boss_nalorakkAI : public ScriptedAI
             // Mangle
             if (m_uiMangleTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_MANGLE) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_MANGLE) == CAST_OK)
                     m_uiMangleTimer = urand(3000, 15000);
             }
             else
@@ -216,7 +216,7 @@ struct boss_nalorakkAI : public ScriptedAI
 
                 // if there aren't other units, cast on the tank
                 if (!pTtarget)
-                    pTtarget = m_creature->getVictim();
+                    pTtarget = m_creature->GetVictim();
 
                 if (DoCastSpellIfCan(pTtarget, SPELL_SURGE) == CAST_OK)
                 {
@@ -264,7 +264,7 @@ struct boss_nalorakkAI : public ScriptedAI
             // Lacerating Slash
             if (m_uiLaceratingSlashTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_LACERATING_SLASH) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_LACERATING_SLASH) == CAST_OK)
                     m_uiLaceratingSlashTimer = urand(6000, 20000);
             }
             else
@@ -273,7 +273,7 @@ struct boss_nalorakkAI : public ScriptedAI
             // Rend Flesh
             if (m_uiRendFleshTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_REND_FLESH) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_REND_FLESH) == CAST_OK)
                     m_uiRendFleshTimer = urand(6000, 20000);
             }
             else

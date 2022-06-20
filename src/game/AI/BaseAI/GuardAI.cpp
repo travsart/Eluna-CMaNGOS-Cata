@@ -39,8 +39,8 @@ void GuardAI::MoveInLineOfSight(Unit* u)
     if (!m_creature->CanFly() && m_creature->GetDistanceZ(u) > CREATURE_Z_ATTACK_RANGE)
         return;
 
-    if (!m_creature->getVictim() && u->isTargetableForAttack() &&
-            (u->IsHostileToPlayers() || m_creature->IsHostileTo(u) /*|| u->getVictim() && m_creature->IsFriendlyTo(u->getVictim())*/) &&
+    if (!m_creature->GetVictim() && u->isTargetableForAttack() &&
+            (u->IsHostileToPlayers() || m_creature->IsHostileTo(u) /*|| u->GetVictim() && m_creature->IsFriendlyTo(u->GetVictim())*/) &&
             u->isInAccessablePlaceFor(m_creature))
     {
         float attackRadius = m_creature->GetAttackDistance(u);
@@ -55,7 +55,7 @@ void GuardAI::MoveInLineOfSight(Unit* u)
 
 void GuardAI::EnterEvadeMode()
 {
-    if (!m_creature->isAlive())
+    if (!m_creature->IsAlive())
     {
         DEBUG_FILTER_LOG(LOG_FILTER_AI_AND_MOVEGENSS, "Creature stopped attacking because he's dead [guid=%u]", m_creature->GetGUIDLow());
         m_creature->StopMoving();
@@ -75,7 +75,7 @@ void GuardAI::EnterEvadeMode()
     {
         DEBUG_FILTER_LOG(LOG_FILTER_AI_AND_MOVEGENSS, "Creature stopped attacking, no victim [guid=%u]", m_creature->GetGUIDLow());
     }
-    else if (!victim->isAlive())
+    else if (!victim->IsAlive())
     {
         DEBUG_FILTER_LOG(LOG_FILTER_AI_AND_MOVEGENSS, "Creature stopped attacking, victim is dead [guid=%u]", m_creature->GetGUIDLow());
     }
@@ -105,11 +105,11 @@ void GuardAI::EnterEvadeMode()
 
 void GuardAI::UpdateAI(const uint32 /*diff*/)
 {
-    // update i_victimGuid if i_creature.getVictim() !=0 and changed
-    if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+    // update i_victimGuid if i_creature.GetVictim() !=0 and changed
+    if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
         return;
 
-    i_victimGuid = m_creature->getVictim()->GetObjectGuid();
+    i_victimGuid = m_creature->GetVictim()->GetObjectGuid();
 
     DoMeleeAttackIfReady();
 }

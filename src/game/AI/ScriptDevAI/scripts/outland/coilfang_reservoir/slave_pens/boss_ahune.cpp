@@ -33,7 +33,7 @@ enum
     SPELL_SUICIDE               = 45254,
     SPELL_AHUNE_LOOT            = 45941,
     SPELL_AHUNE_LOOT_H          = 46623,
-    SPELL_ISDEAD_CHECK          = 61976,            // purpose unk
+    SPELL_IsDead_CHECK          = 61976,            // purpose unk
     SPELL_AHUNE_DIES_ACHIEV     = 62043,
 
     // ground phase spells
@@ -186,7 +186,7 @@ struct boss_ahuneAI : public Scripted_NoMovementAI
             m_bHasCombatStarted = true;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiPhase == PHASE_GROUND)

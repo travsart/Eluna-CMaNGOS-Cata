@@ -149,7 +149,7 @@ struct npc_millhouse_manastormAI : public ScriptedAI, private DialogueHelper
         m_creature->LoadCreatureAddon(true);
 
         // Boss should evade in the center of the room
-        if (m_creature->isAlive())
+        if (m_creature->IsAlive())
             m_creature->GetMotionMaster()->MovePoint(1, fRoomCenterCoords[0], fRoomCenterCoords[1], fRoomCenterCoords[2]);
 
         m_creature->SetLootRecipient(NULL);
@@ -188,7 +188,7 @@ struct npc_millhouse_manastormAI : public ScriptedAI, private DialogueHelper
     {
         DialogueUpdate(uiDiff);
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (!m_bHasLowHp && m_creature->GetHealthPercent() < 20.0f)
@@ -199,7 +199,7 @@ struct npc_millhouse_manastormAI : public ScriptedAI, private DialogueHelper
 
         if (m_uiPyroblastTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_PYROBLAST) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_PYROBLAST) == CAST_OK)
             {
                 m_uiPyroblastTimer = 40000;
                 DoScriptText(SAY_PYRO, m_creature);
@@ -210,7 +210,7 @@ struct npc_millhouse_manastormAI : public ScriptedAI, private DialogueHelper
 
         if (m_uiFireballTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_FIREBALL) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_FIREBALL) == CAST_OK)
                 m_uiFireballTimer = 4000;
         }
         else
@@ -218,7 +218,7 @@ struct npc_millhouse_manastormAI : public ScriptedAI, private DialogueHelper
 
         if (m_uiFrostBoltTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_FROSTBOLT) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_FROSTBOLT) == CAST_OK)
                 m_uiFrostBoltTimer = urand(4000, 6000);
         }
         else
@@ -234,7 +234,7 @@ struct npc_millhouse_manastormAI : public ScriptedAI, private DialogueHelper
 
         if (m_uiFireBlastTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_FIRE_BLAST) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_FIRE_BLAST) == CAST_OK)
                 m_uiFireBlastTimer = urand(5000, 16000);
         }
         else
@@ -242,7 +242,7 @@ struct npc_millhouse_manastormAI : public ScriptedAI, private DialogueHelper
 
         if (m_uiArcaneMissileTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_ARCANE_MISSILES) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_ARCANE_MISSILES) == CAST_OK)
                 m_uiArcaneMissileTimer = urand(5000, 8000);
         }
         else

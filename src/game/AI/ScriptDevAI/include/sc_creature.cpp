@@ -57,7 +57,7 @@ void ScriptedAI::MoveInLineOfSight(Unit* pWho)
 
         if (m_creature->IsWithinDistInMap(pWho, m_creature->GetAttackDistance(pWho)) && m_creature->IsWithinLOSInMap(pWho))
         {
-            if (!m_creature->getVictim())
+            if (!m_creature->GetVictim())
             {
                 pWho->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
                 AttackStart(pWho);
@@ -108,7 +108,7 @@ void ScriptedAI::EnterCombat(Unit* pEnemy)
 void ScriptedAI::UpdateAI(const uint32 /*uiDiff*/)
 {
     // Check if we have a current target
-    if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+    if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
         return;
 
     DoMeleeAttackIfReady();
@@ -131,7 +131,7 @@ void ScriptedAI::EnterEvadeMode()
     m_creature->CombatStop(true);
 
     // only alive creatures that are not on transport can return to home position
-    if (m_creature->isAlive() && !m_creature->IsBoarded())
+    if (m_creature->IsAlive() && !m_creature->IsBoarded())
         m_creature->GetMotionMaster()->MoveTargetedHome();
 
     m_creature->SetLootRecipient(NULL);
@@ -162,7 +162,7 @@ void ScriptedAI::DoStartNoMovement(Unit* pVictim)
 
 void ScriptedAI::DoStopAttack()
 {
-    if (m_creature->getVictim())
+    if (m_creature->GetVictim())
         m_creature->AttackStop();
 }
 
@@ -526,7 +526,7 @@ bool ScriptedAI::EnterEvadeIfOutOfCombatArea(const uint32 uiDiff)
         return false;
     }
 
-    if (m_creature->IsInEvadeMode() || !m_creature->getVictim())
+    if (m_creature->IsInEvadeMode() || !m_creature->GetVictim())
         return false;
 
     float fX = m_creature->GetPositionX();

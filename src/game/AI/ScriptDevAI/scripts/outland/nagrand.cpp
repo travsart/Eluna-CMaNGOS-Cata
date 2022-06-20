@@ -67,7 +67,7 @@ struct mob_lumpAI : public ScriptedAI
 
     void AttackedBy(Unit* pAttacker) override
     {
-        if (m_creature->getVictim())
+        if (m_creature->GetVictim())
             return;
 
         if (m_creature->IsFriendlyTo(pAttacker))
@@ -122,13 +122,13 @@ struct mob_lumpAI : public ScriptedAI
         }
 
         // Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // SpearThrow Timer
         if (m_uiSpearThrowTimer < uiDiff)
         {
-            DoCastSpellIfCan(m_creature->getVictim(), SPELL_SPEAR_THROW);
+            DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SPEAR_THROW);
             m_uiSpearThrowTimer = 20000;
         }
         else
@@ -290,12 +290,12 @@ struct npc_nagrand_captiveAI : public npc_escortAI
 
     void UpdateEscortAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiChainLightningTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CHAIN_LIGHTNING) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CHAIN_LIGHTNING) == CAST_OK)
                 m_uiChainLightningTimer = urand(7000, 14000);
         }
         else
@@ -314,7 +314,7 @@ struct npc_nagrand_captiveAI : public npc_escortAI
 
         if (m_uiFrostShockTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_FROST_SHOCK) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_FROST_SHOCK) == CAST_OK)
                 m_uiFrostShockTimer = urand(7500, 15000);
         }
         else
@@ -501,7 +501,7 @@ struct npc_rethhedronAI : public ScriptedAI
                 m_uiDelayTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_bEventFinished)
@@ -509,7 +509,7 @@ struct npc_rethhedronAI : public ScriptedAI
 
         if (m_uiCrippleTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CRIPPLE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CRIPPLE) == CAST_OK)
                 m_uiCrippleTimer = urand(20000, 30000);
         }
         else
@@ -517,7 +517,7 @@ struct npc_rethhedronAI : public ScriptedAI
 
         if (m_uiShadowBoltTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHADOW_BOLT) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SHADOW_BOLT) == CAST_OK)
                 m_uiShadowBoltTimer = urand(3000, 5000);
         }
         else
@@ -525,7 +525,7 @@ struct npc_rethhedronAI : public ScriptedAI
 
         if (m_uiAbyssalTossTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_ABYSSAL_TOSS) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_ABYSSAL_TOSS) == CAST_OK)
                 m_uiAbyssalTossTimer = urand(500, 2000);
         }
         else

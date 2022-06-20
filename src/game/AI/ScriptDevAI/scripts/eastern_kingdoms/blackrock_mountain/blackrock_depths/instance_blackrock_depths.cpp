@@ -262,7 +262,7 @@ void instance_blackrock_depths::SetData(uint32 uiType, uint32 uiData)
                 {
                     if (Creature* pDwarf = GetSingleCreatureFromStorage(aTombDwarfes[i]))
                     {
-                        if (!pDwarf->isAlive())
+                        if (!pDwarf->IsAlive())
                             pDwarf->Respawn();
                     }
                 }
@@ -551,7 +551,7 @@ void instance_blackrock_depths::OnCreatureDeath(Creature* pCreature)
             {
                 uint32 uiTextId;
 
-                if (!pDagran->isAlive())
+                if (!pDagran->IsAlive())
                     return;
 
                 if (m_uiDagranTimer > 0)

@@ -37,6 +37,9 @@
 #include "Server/WorldSession.h"
 #include "Server/Opcodes.h"
 #include "Chat/Chat.h"
+#ifdef BUILD_ELUNA
+#include "LuaEngine/LuaEngine.h"
+#endif
 
 bool WorldSession::CheckMailBox(ObjectGuid guid)
 {
@@ -288,6 +291,17 @@ void WorldSession::HandleSendMail(WorldPacket& recv_data)
 
         items[i] = item;
     }
+
+#ifdef BUILD_ELUNA
+    if (Eluna* e = pl->GetEluna())
+    {
+        if (!e->OnSendMail(pl, rc))
+        {
+            pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_EQUIP_ERROR, EQUIP_ERR_CANT_DO_RIGHT_NOW);
+            return;
+        }
+    }
+#endif
 
     pl->SendMailResult(0, MAIL_SEND, MAIL_OK);
 

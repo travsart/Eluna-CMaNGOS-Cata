@@ -253,7 +253,7 @@ struct boss_victor_nefariusAI : public ScriptedAI, private DialogueHelper
 
         DialogueUpdate(uiDiff);
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Only do this if we haven't spawned nef yet

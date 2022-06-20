@@ -132,7 +132,7 @@ static ReputationRank GetFactionReaction(FactionTemplateEntry const* thisTemplat
 
     if (thisTemplate)
     {
-        if (const FactionTemplateEntry* unitFactionTemplate = unit->getFactionTemplateEntry())
+        if (const FactionTemplateEntry* unitFactionTemplate = unit->GetFactionTemplateEntry())
         {
             if (unit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED))
             {
@@ -204,7 +204,7 @@ ReputationRank Unit::GetReactionTo(Unit const* unit) const
 
                 // WotLK+ group check: faction to unit
                 if (thisPlayer->IsInSameRaidWith(unitPlayer))
-                    return GetFactionReaction(getFactionTemplateEntry(), unit);
+                    return GetFactionReaction(GetFactionTemplateEntry(), unit);
             }
 
             // WotLK+ FFA check
@@ -214,7 +214,7 @@ ReputationRank Unit::GetReactionTo(Unit const* unit) const
 
         if (thisPlayer)
         {
-            if (const FactionTemplateEntry* unitFactionTemplate = unit->getFactionTemplateEntry())
+            if (const FactionTemplateEntry* unitFactionTemplate = unit->GetFactionTemplateEntry())
             {
                 if (const ReputationRank* rank = thisPlayer->GetReputationMgr().GetForcedRankIfAny(unitFactionTemplate))
                     return (*rank);
@@ -233,7 +233,7 @@ ReputationRank Unit::GetReactionTo(Unit const* unit) const
         }
     }
     // Default fallback if player-specific checks didn't catch anything: facton to unit
-    return GetFactionReaction(getFactionTemplateEntry(), unit);
+    return GetFactionReaction(GetFactionTemplateEntry(), unit);
 }
 
 /////////////////////////////////////////////////
@@ -251,9 +251,9 @@ ReputationRank Unit::GetReactionTo(const Corpse *corpse) const
 
     // Original logic begins
 
-    if (const FactionTemplateEntry* thisTemplate = getFactionTemplateEntry())
+    if (const FactionTemplateEntry* thisTemplate = GetFactionTemplateEntry())
     {
-        if (const uint32 corpseTemplateId = corpse->getFaction())
+        if (const uint32 corpseTemplateId = corpse->GetFaction())
         {
             if (const FactionTemplateEntry* corpseTemplate = sFactionTemplateStore.LookupEntry(corpseTemplateId))
                 return GetFactionReaction(thisTemplate, corpseTemplate);
@@ -451,7 +451,7 @@ bool Unit::CanAttackNow(const Unit *unit) const
 
     // We can't initiate attack while dead or ghost
     // NOTE: WotLK: client additionally contains an attack display hackfix for raised ally situation here (if player is dead and posesses a unit), we should handle it diffrerently serverside
-    if (!isAlive())
+    if (!IsAlive())
         return false;
 
     // We can't initiate attack while mounted ...
@@ -463,7 +463,7 @@ bool Unit::CanAttackNow(const Unit *unit) const
     }
 
     // We can't initiate attack on dead units
-    if (!unit->isAlive())
+    if (!unit->IsAlive())
         return false;
 
     return CanAttack(unit);
@@ -596,9 +596,9 @@ bool Unit::CanCooperate(const Unit *unit) const
     if (GetCharmerGuid() || unit->GetCharmerGuid())
         return false;
 
-    if (const FactionTemplateEntry* thisFactionTemplate = getFactionTemplateEntry())
+    if (const FactionTemplateEntry* thisFactionTemplate = GetFactionTemplateEntry())
     {
-        if (const FactionTemplateEntry* unitFactionTemplate = unit->getFactionTemplateEntry())
+        if (const FactionTemplateEntry* unitFactionTemplate = unit->GetFactionTemplateEntry())
         {
             if (thisFactionTemplate->factionGroupMask == unitFactionTemplate->factionGroupMask)
                 return (!CanAttack(unit));
@@ -697,7 +697,7 @@ bool Unit::CanInteractNow(const Unit *unit) const
         return false;
 
     // We can't interact with anyone while being dead (this does not apply to player ghosts, which allow very limited interactions)
-    if (!isAlive() && (GetTypeId() == TYPEID_UNIT || !(static_cast<const Player*>(this)->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_GHOST))))
+    if (!IsAlive() && (GetTypeId() == TYPEID_UNIT || !(static_cast<const Player*>(this)->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_GHOST))))
         return false;
 
     // We can't interact with anyone while being shapeshifted, unless form flags allow us to do so
@@ -711,7 +711,7 @@ bool Unit::CanInteractNow(const Unit *unit) const
     }
 
     // We can't interact with dead units, unless it's a creature with special flag
-    if (!unit->isAlive())
+    if (!unit->IsAlive())
     {
         if (GetTypeId() != TYPEID_UNIT || !(static_cast<const Creature*>(unit)->GetCreatureInfo()->CreatureTypeFlags & CREATURE_TYPEFLAGS_INTERACT_DEAD))
             return false;
@@ -722,7 +722,7 @@ bool Unit::CanInteractNow(const Unit *unit) const
         return false;
 
     // WotLK+: We can't interact with units who are currently fighting, unless specific conditions are met
-    if (unit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT) ||  unit->getVictim())
+    if (unit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PET_IN_COMBAT) ||  unit->GetVictim())
     {
         // We can't interact with units in fight by default
         bool interactable = false;

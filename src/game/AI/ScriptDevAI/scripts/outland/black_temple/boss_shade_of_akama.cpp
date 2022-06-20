@@ -451,7 +451,7 @@ struct npc_akamaAI : public ScriptedAI, private DialogueHelper
                 break;
             case PHASE_COMBAT:
 
-                if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+                if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
                     return;
 
                 if (!m_bHasYelledOnce && m_creature->GetHealthPercent() < 15.0f)
@@ -462,7 +462,7 @@ struct npc_akamaAI : public ScriptedAI, private DialogueHelper
 
                 if (m_uiDestructivePoisonTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_DESTRUCTIVE_POISON) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_DESTRUCTIVE_POISON) == CAST_OK)
                         m_uiDestructivePoisonTimer = 15000;
                 }
                 else
@@ -470,7 +470,7 @@ struct npc_akamaAI : public ScriptedAI, private DialogueHelper
 
                 if (m_uiLightningBoltTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CHAIN_LIGHTNING) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CHAIN_LIGHTNING) == CAST_OK)
                         m_uiLightningBoltTimer = 10000;
                 }
                 else
@@ -578,7 +578,7 @@ struct boss_shade_of_akamaAI : public ScriptedAI
 
     void UpdateAI(const uint32 /*uiDiff*/) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         DoMeleeAttackIfReady();

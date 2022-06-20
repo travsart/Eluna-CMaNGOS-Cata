@@ -20,9 +20,9 @@ void ScriptedInstance::DoUseDoorOrButton(ObjectGuid guid, uint32 uiWithRestoreTi
     {
         if (pGo->GetGoType() == GAMEOBJECT_TYPE_DOOR || pGo->GetGoType() == GAMEOBJECT_TYPE_BUTTON || pGo->GetGoType() == GAMEOBJECT_TYPE_TRAPDOOR)
         {
-            if (pGo->getLootState() == GO_READY)
+            if (pGo->GetLootState() == GO_READY)
                 pGo->UseDoorOrButton(uiWithRestoreTime, bUseAlternativeState);
-            else if (pGo->getLootState() == GO_ACTIVATED)
+            else if (pGo->GetLootState() == GO_ACTIVATED)
                 pGo->ResetDoorOrButton();
         }
         else
@@ -59,7 +59,7 @@ void ScriptedInstance::DoRespawnGameObject(ObjectGuid guid, uint32 uiTimeToDespa
                 pGo->GetGoType() == GAMEOBJECT_TYPE_BUTTON)
             return;
 
-        if (pGo->isSpawned())
+        if (pGo->IsSpawned())
             return;
 
         pGo->SetRespawnTime(uiTimeToDespawn);
@@ -140,7 +140,7 @@ Player* ScriptedInstance::GetPlayerInMap(bool bOnlyAlive /*=false*/, bool bCanBe
     for (Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
     {
         Player* pPlayer = itr->getSource();
-        if (pPlayer && (!bOnlyAlive || pPlayer->isAlive()) && (bCanBeGamemaster || !pPlayer->isGameMaster()))
+        if (pPlayer && (!bOnlyAlive || pPlayer->IsAlive()) && (bCanBeGamemaster || !pPlayer->IsGameMaster()))
             return pPlayer;
     }
 

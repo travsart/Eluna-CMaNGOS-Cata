@@ -166,10 +166,10 @@ struct npc_kelerun_bloodmournAI : public ScriptedAI
             if (m_uiCheckAliveStateTimer < uiDiff)
             {
                 Creature* pChallenger = m_creature->GetMap()->GetCreature(m_aChallengerGuids[m_uiChallengerCount]);
-                if (pChallenger && !pChallenger->isAlive())
+                if (pChallenger && !pChallenger->IsAlive())
                 {
                     Player* pPlayer = m_creature->GetMap()->GetPlayer(m_playerGuid);
-                    if (!pPlayer || !pPlayer->isAlive())
+                    if (!pPlayer || !pPlayer->IsAlive())
                     {
                         Reset();
                         return;
@@ -197,7 +197,7 @@ struct npc_kelerun_bloodmournAI : public ScriptedAI
                 if (m_uiEngageTimer <= uiDiff)
                 {
                     Player* pPlayer = m_creature->GetMap()->GetPlayer(m_playerGuid);
-                    if (!pPlayer || !pPlayer->isAlive())
+                    if (!pPlayer || !pPlayer->IsAlive())
                     {
                         Reset();
                         return;
@@ -424,12 +424,12 @@ struct npc_apprentice_mirvedaAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff) override
     {
         // Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiFireballTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_FIREBALL) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_FIREBALL) == CAST_OK)
                 m_uiFireballTimer = urand(4000, 6000);
         }
         else

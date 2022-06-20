@@ -286,7 +286,7 @@ struct boss_freyaAI : public ScriptedAI
             // reset elders
             if (Creature* pElder = m_pInstance->GetSingleCreatureFromStorage(NPC_ELDER_BRIGHTLEAF))
             {
-                if (pElder->isAlive())
+                if (pElder->IsAlive())
                 {
                     pElder->AI()->EnterEvadeMode();
                     pElder->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -294,7 +294,7 @@ struct boss_freyaAI : public ScriptedAI
             }
             if (Creature* pElder = m_pInstance->GetSingleCreatureFromStorage(NPC_ELDER_IRONBRACH))
             {
-                if (pElder->isAlive())
+                if (pElder->IsAlive())
                 {
                     pElder->AI()->EnterEvadeMode();
                     pElder->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -302,7 +302,7 @@ struct boss_freyaAI : public ScriptedAI
             }
             if (Creature* pElder = m_pInstance->GetSingleCreatureFromStorage(NPC_ELDER_STONEBARK))
             {
-                if (pElder->isAlive())
+                if (pElder->IsAlive())
                 {
                     pElder->AI()->EnterEvadeMode();
                     pElder->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -317,7 +317,7 @@ struct boss_freyaAI : public ScriptedAI
         m_creature->DeleteThreatList();
         m_creature->CombatStop(true);
 
-        if (m_creature->isAlive() && !m_bEventFinished)
+        if (m_creature->IsAlive() && !m_bEventFinished)
             m_creature->GetMotionMaster()->MoveTargetedHome();
 
         m_creature->SetLootRecipient(NULL);
@@ -383,19 +383,19 @@ struct boss_freyaAI : public ScriptedAI
                 break;
             case NPC_DETONATING_LASHER:
             case NPC_ANCIENT_CONSERVATOR:
-                pSummoned->AI()->AttackStart(m_creature->getVictim());
+                pSummoned->AI()->AttackStart(m_creature->GetVictim());
                 break;
             case NPC_WATER_SPIRIT:
                 m_waterSpiritGuid = pSummoned->GetObjectGuid();
-                pSummoned->AI()->AttackStart(m_creature->getVictim());
+                pSummoned->AI()->AttackStart(m_creature->GetVictim());
                 break;
             case NPC_STORM_LASHER:
                 m_stormLasherGuid = pSummoned->GetObjectGuid();
-                pSummoned->AI()->AttackStart(m_creature->getVictim());
+                pSummoned->AI()->AttackStart(m_creature->GetVictim());
                 break;
             case NPC_SNAPLASHER:
                 m_snaplasherGuid = pSummoned->GetObjectGuid();
-                pSummoned->AI()->AttackStart(m_creature->getVictim());
+                pSummoned->AI()->AttackStart(m_creature->GetVictim());
                 break;
             case NPC_NATURE_BOMB:
                 pSummoned->CastSpell(pSummoned, SPELL_NATURE_BOMB_GO, TRIGGERED_OLD_TRIGGERED);
@@ -470,7 +470,7 @@ struct boss_freyaAI : public ScriptedAI
 
         if (Creature* pElder = m_pInstance->GetSingleCreatureFromStorage(NPC_ELDER_BRIGHTLEAF))
         {
-            if (pElder->isAlive())
+            if (pElder->IsAlive())
             {
                 pElder->CastSpell(pElder, m_bIsRegularMode ? SPELL_BRIGHTLEAF_ESSENCE_CHANNEL : SPELL_BRIGHTLEAF_ESSENCE_CHANNEL_H, TRIGGERED_NONE, NULL, NULL, m_creature->GetObjectGuid());
                 pElder->CastSpell(pElder, SPELL_FULL_HEAL, TRIGGERED_OLD_TRIGGERED);
@@ -481,7 +481,7 @@ struct boss_freyaAI : public ScriptedAI
         }
         if (Creature* pElder = m_pInstance->GetSingleCreatureFromStorage(NPC_ELDER_IRONBRACH))
         {
-            if (pElder->isAlive())
+            if (pElder->IsAlive())
             {
                 pElder->CastSpell(pElder, m_bIsRegularMode ? SPELL_IRONBRANCH_ESSENCE_CHANNEL : SPELL_IRONBRANCH_ESSENCE_CHANNEL_H, TRIGGERED_NONE, NULL, NULL, m_creature->GetObjectGuid());
                 pElder->CastSpell(pElder, SPELL_FULL_HEAL, TRIGGERED_OLD_TRIGGERED);
@@ -492,7 +492,7 @@ struct boss_freyaAI : public ScriptedAI
         }
         if (Creature* pElder = m_pInstance->GetSingleCreatureFromStorage(NPC_ELDER_STONEBARK))
         {
-            if (pElder->isAlive())
+            if (pElder->IsAlive())
             {
                 pElder->CastSpell(pElder, m_bIsRegularMode ? SPELL_STONEBARK_ESSEMCE_CHANNEL : SPELL_STONEBARK_ESSEMCE_CHANNEL_H, TRIGGERED_NONE, NULL, NULL, m_creature->GetObjectGuid());
                 pElder->CastSpell(pElder, SPELL_FULL_HEAL, TRIGGERED_OLD_TRIGGERED);
@@ -522,7 +522,7 @@ struct boss_freyaAI : public ScriptedAI
 
         if (Creature* pElder = m_pInstance->GetSingleCreatureFromStorage(NPC_ELDER_BRIGHTLEAF))
         {
-            if (pElder->isAlive())
+            if (pElder->IsAlive())
             {
                 pElder->CastSpell(pElder, SPELL_DRAINED_OF_POWER, TRIGGERED_OLD_TRIGGERED);
                 pElder->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -530,7 +530,7 @@ struct boss_freyaAI : public ScriptedAI
         }
         if (Creature* pElder = m_pInstance->GetSingleCreatureFromStorage(NPC_ELDER_IRONBRACH))
         {
-            if (pElder->isAlive())
+            if (pElder->IsAlive())
             {
                 pElder->CastSpell(pElder, SPELL_DRAINED_OF_POWER, TRIGGERED_OLD_TRIGGERED);
                 pElder->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -538,7 +538,7 @@ struct boss_freyaAI : public ScriptedAI
         }
         if (Creature* pElder = m_pInstance->GetSingleCreatureFromStorage(NPC_ELDER_STONEBARK))
         {
-            if (pElder->isAlive())
+            if (pElder->IsAlive())
             {
                 pElder->CastSpell(pElder, SPELL_DRAINED_OF_POWER, TRIGGERED_OLD_TRIGGERED);
                 pElder->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -562,7 +562,7 @@ struct boss_freyaAI : public ScriptedAI
                 m_uiEpilogueTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiBerserkTimer)
@@ -811,7 +811,7 @@ struct npc_water_spiritAI : public three_nature_alliesAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiTidalWaveTimer < uiDiff)
@@ -878,7 +878,7 @@ struct npc_storm_lasherAI : public three_nature_alliesAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiLightningLashTimer < uiDiff)

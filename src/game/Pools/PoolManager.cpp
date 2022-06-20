@@ -440,7 +440,7 @@ void PoolGroup<GameObject>::Spawn1Object(MapPersistentState& mapState, PoolObjec
                 }
                 else
                 {
-                    if (pGameobject->isSpawnedByDefault())
+                    if (pGameobject->IsSpawnedByDefault())
                     {
                         // if new spawn replaces a just despawned object, not instantly spawn but set respawn timer
                         if (!instantly)

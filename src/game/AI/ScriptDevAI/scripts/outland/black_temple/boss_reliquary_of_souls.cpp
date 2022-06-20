@@ -155,7 +155,7 @@ struct boss_reliquary_of_soulsAI : public Scripted_NoMovementAI
 
     void MoveInLineOfSight(Unit* pWho) override
     {
-        if (m_uiPhase == PHASE_0_NOT_BEGUN && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->isGameMaster() &&
+        if (m_uiPhase == PHASE_0_NOT_BEGUN && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->IsGameMaster() &&
                 m_creature->IsWithinDistInMap(pWho, m_creature->GetAttackDistance(pWho)) && m_creature->IsWithinLOSInMap(pWho))
         {
             // Start phase 1
@@ -417,7 +417,7 @@ struct boss_essence_of_sufferingAI : public essence_base_AI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiEnrageTimer < uiDiff)
@@ -482,7 +482,7 @@ struct boss_essence_of_desireAI : public essence_base_AI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiRuneShieldTimer < uiDiff)
@@ -495,7 +495,7 @@ struct boss_essence_of_desireAI : public essence_base_AI
 
         if (m_uiDeadenTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_DEADEN) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_DEADEN) == CAST_OK)
             {
                 DoScriptText(DESI_SAY_SPEC, m_creature);
                 m_uiDeadenTimer = 30000;
@@ -506,7 +506,7 @@ struct boss_essence_of_desireAI : public essence_base_AI
 
         if (m_uiSoulShockTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SPIRIT_SHOCK) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SPIRIT_SHOCK) == CAST_OK)
                 m_uiSoulShockTimer = urand(5000, 10000);
         }
         else
@@ -567,7 +567,7 @@ struct boss_essence_of_angerAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiSeetheTimer < uiDiff)
@@ -649,7 +649,7 @@ struct npc_enslaved_soulAI : public ScriptedAI
 
     void UpdateAI(const uint32 /*uiDiff*/) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         DoMeleeAttackIfReady();

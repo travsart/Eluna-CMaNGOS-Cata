@@ -91,7 +91,7 @@ struct mob_unkor_the_ruthlessAI : public ScriptedAI
                 m_uiUnfriendlyTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Do quest kill credit at 30%
@@ -249,12 +249,12 @@ struct npc_akunoAI : public npc_escortAI
 
     void UpdateEscortAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiChainLightningTimer < uiDiff)
         {
-            DoCastSpellIfCan(m_creature->getVictim(), SPELL_CHAIN_LIGHTNING);
+            DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CHAIN_LIGHTNING);
             m_uiChainLightningTimer = urand(7000, 14000);
         }
         else
@@ -383,7 +383,7 @@ struct npc_letollAI : public npc_escortAI
         {
             float fAngle = uiCount < MAX_RESEARCHER ? M_PI / MAX_RESEARCHER - (uiCount * 2 * M_PI / MAX_RESEARCHER) : 0.0f;
 
-            if ((*itr)->isAlive() && !(*itr)->isInCombat())
+            if ((*itr)->IsAlive() && !(*itr)->IsInCombat())
                 (*itr)->GetMotionMaster()->MoveFollow(m_creature, 2.5f, fAngle);
 
             ++uiCount;
@@ -404,7 +404,7 @@ struct npc_letollAI : public npc_escortAI
                     continue;
                 }
 
-                if ((*itr)->isAlive() && (*itr)->IsWithinDistInMap(m_creature, 20.0f))
+                if ((*itr)->IsAlive() && (*itr)->IsWithinDistInMap(m_creature, 20.0f))
                     return (*itr);
             }
         }
@@ -451,7 +451,7 @@ struct npc_letollAI : public npc_escortAI
 
     void Aggro(Unit* pWho) override
     {
-        if (pWho->isInCombat() && pWho->GetTypeId() == TYPEID_UNIT && pWho->GetEntry() == NPC_BONE_SIFTER)
+        if (pWho->IsInCombat() && pWho->GetTypeId() == TYPEID_UNIT && pWho->GetEntry() == NPC_BONE_SIFTER)
             DoScriptText(SAY_LE_HELP_HIM, m_creature);
     }
 
@@ -459,7 +459,7 @@ struct npc_letollAI : public npc_escortAI
     {
         Player* pPlayer = GetPlayerForEscort();
 
-        if (pPlayer && pPlayer->isAlive())
+        if (pPlayer && pPlayer->IsAlive())
             pSummoned->AI()->AttackStart(pPlayer);
         else
             pSummoned->AI()->AttackStart(m_creature);
@@ -467,7 +467,7 @@ struct npc_letollAI : public npc_escortAI
 
     void UpdateEscortAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
         {
             if (HasEscortState(STATE_ESCORT_PAUSED))
             {
@@ -674,12 +674,12 @@ struct npc_isla_starmaneAI : public npc_escortAI
                 m_uiPeriodicTalkTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiEntanglingRootsTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_ENTANGLING_ROOTS) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_ENTANGLING_ROOTS) == CAST_OK)
                 m_uiEntanglingRootsTimer = urand(8000, 16000);
         }
         else
@@ -687,7 +687,7 @@ struct npc_isla_starmaneAI : public npc_escortAI
 
         if (m_uiMoonfireTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_MOONFIRE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_MOONFIRE) == CAST_OK)
                 m_uiMoonfireTimer = urand(6000, 12000);
         }
         else
@@ -695,7 +695,7 @@ struct npc_isla_starmaneAI : public npc_escortAI
 
         if (m_uiWrathTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_WRATH) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_WRATH) == CAST_OK)
                 m_uiWrathTimer = 2000;
         }
         else
@@ -824,7 +824,7 @@ struct npc_skywingAI : public npc_escortAI
                 m_uiCycloneTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
     }
 };
@@ -1107,13 +1107,13 @@ struct npc_avatar_of_terokkAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || !AttackPlayerWithQuest(m_creature))
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim() || !AttackPlayerWithQuest(m_creature))
             return;
 
         if (m_uiAbilityTimer <= uiDiff)
         {
             m_uiAbilityTimer = 12000;
-            DoCast(m_creature->getVictim(), SPELL_FEATHER_BURST);
+            DoCast(m_creature->GetVictim(), SPELL_FEATHER_BURST);
             return;
         }
         else
@@ -1140,13 +1140,13 @@ struct npc_minion_of_terokkAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || !AttackPlayerWithQuest(m_creature))
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim() || !AttackPlayerWithQuest(m_creature))
             return;
 
         if (m_uiAbilityTimer <= uiDiff)
         {
             m_uiAbilityTimer = 15000;
-            DoCast(m_creature->getVictim(), SPELL_TERRIFYING_SCREECH);
+            DoCast(m_creature->GetVictim(), SPELL_TERRIFYING_SCREECH);
             return;
         }
         else

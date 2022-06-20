@@ -35,10 +35,17 @@
 #include "Entities/CreatureLinkingMgr.h"
 #include "Vmap/DynamicTree.h"
 
+#ifdef BUILD_ELUNA
+#include "LuaEngine/LuaValue.h"
+#endif
+
 #include <bitset>
 
 struct CreatureInfo;
 class Creature;
+#ifdef BUILD_ELUNA
+class Eluna;
+#endif
 class Unit;
 class WorldPacket;
 class InstanceData;
@@ -185,6 +192,7 @@ class Map : public GridRefManager<NGridType>
         bool Instanceable() const { return i_mapEntry && i_mapEntry->Instanceable(); }
         bool IsDungeon() const { return i_mapEntry && i_mapEntry->IsDungeon(); }
         bool IsRaid() const { return i_mapEntry && i_mapEntry->IsRaid(); }
+        bool IsHeroic() const { return IsRaid() ? i_spawnMode >= RAID_DIFFICULTY_10MAN_HEROIC : i_spawnMode >= DUNGEON_DIFFICULTY_HEROIC; }
         bool IsNonRaidDungeon() const { return i_mapEntry && i_mapEntry->IsNonRaidDungeon(); }
         bool IsRaidOrHeroicDungeon() const { return IsRaid() || GetDifficulty() > DUNGEON_DIFFICULTY_NORMAL; }
         bool IsBattleGround() const { return i_mapEntry && i_mapEntry->IsBattleGround(); }
@@ -311,6 +319,12 @@ class Map : public GridRefManager<NGridType>
         void AddToSpawnCount(const ObjectGuid & guid);
         void RemoveFromSpawnCount(const ObjectGuid & guid);
 
+#ifdef BUILD_ELUNA
+        Eluna* GetEluna() const;
+
+        LuaVal lua_data = LuaVal({});
+#endif
+
         TimePoint GetCurrentClockTime();
     private:
         void LoadMapAndVMap(int gx, int gy);
@@ -409,6 +423,10 @@ class Map : public GridRefManager<NGridType>
         WeatherSystem* m_weatherSystem;
 
         std::unordered_map<uint32, std::set<ObjectGuid>> m_spawnedCount;
+
+#ifdef BUILD_ELUNA
+        Eluna* eluna;
+#endif
 };
 
 class WorldMap : public Map

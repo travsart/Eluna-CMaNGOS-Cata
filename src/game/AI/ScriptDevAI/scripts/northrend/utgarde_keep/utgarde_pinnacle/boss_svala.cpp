@@ -112,7 +112,7 @@ struct boss_svalaAI : public ScriptedAI
         m_uiRitualStrikeTimer   = 0;
         m_bHasDoneRitual        = false;
 
-        if (m_creature->isAlive() && m_pInstance && m_pInstance->GetData(TYPE_SVALA) > IN_PROGRESS)
+        if (m_creature->IsAlive() && m_pInstance && m_pInstance->GetData(TYPE_SVALA) > IN_PROGRESS)
         {
             if (m_creature->GetEntry() != NPC_SVALA_SORROW)
                 m_creature->UpdateEntry(NPC_SVALA_SORROW);
@@ -227,12 +227,12 @@ struct boss_svalaAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
         {
             if (m_bIsIntroDone)
                 return;
 
-            if (pArthas && pArthas->isAlive())
+            if (pArthas && pArthas->IsAlive())
             {
                 if (m_uiIntroTimer < uiDiff)
                 {
@@ -278,7 +278,7 @@ struct boss_svalaAI : public ScriptedAI
 
         if (m_uiSinisterStrikeTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), m_bIsRegularMode ? SPELL_SINISTER_STRIKE : SPELL_SINISTER_STRIKE_H) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), m_bIsRegularMode ? SPELL_SINISTER_STRIKE : SPELL_SINISTER_STRIKE_H) == CAST_OK)
                 m_uiSinisterStrikeTimer = 10000;
         }
         else
@@ -343,7 +343,7 @@ CreatureAI* GetAI_boss_svala(Creature* pCreature)
 
 bool AreaTrigger_at_svala_intro(Player* pPlayer, AreaTriggerEntry const* /*pAt*/)
 {
-    if (pPlayer->isGameMaster())
+    if (pPlayer->IsGameMaster())
         return false;
 
     if (ScriptedInstance* pInstance = (ScriptedInstance*)pPlayer->GetInstanceData())

@@ -70,7 +70,7 @@ struct boss_mr_smiteAI : public ScriptedAI
 
     void AttackedBy(Unit* pAttacker) override
     {
-        if (m_creature->getVictim())
+        if (m_creature->GetVictim())
             return;
 
         if (m_uiPhase > PHASE_3)
@@ -151,7 +151,7 @@ struct boss_mr_smiteAI : public ScriptedAI
 
     void PhaseEquipEnd()
     {
-        // We don't have getVictim, so select from threat list
+        // We don't have GetVictim, so select from threat list
         Unit* pVictim = m_creature->SelectAttackingTarget(ATTACKING_TARGET_TOPAGGRO, 0);
 
         if (!pVictim)
@@ -172,7 +172,7 @@ struct boss_mr_smiteAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
         {
             if (m_uiEquipTimer)
             {
@@ -215,7 +215,7 @@ struct boss_mr_smiteAI : public ScriptedAI
                         m_uiPhase = PHASE_EQUIP_START;
                         m_uiEquipTimer = 2500;
 
-                        // will clear getVictim (m_attacking)
+                        // will clear GetVictim (m_attacking)
                         m_creature->AttackStop(true);
                         m_creature->RemoveAurasDueToSpell(SPELL_NIBLE_REFLEXES);
                     }
@@ -233,7 +233,7 @@ struct boss_mr_smiteAI : public ScriptedAI
                         m_uiPhase = PHASE_EQUIP_START;
                         m_uiEquipTimer = 2500;
 
-                        // will clear getVictim (m_attacking)
+                        // will clear GetVictim (m_attacking)
                         m_creature->AttackStop(true);
                         m_creature->RemoveAurasDueToSpell(SPELL_THRASH);
                     }
@@ -245,7 +245,7 @@ struct boss_mr_smiteAI : public ScriptedAI
             {
                 if (m_uiSlamTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SMITE_SLAM) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SMITE_SLAM) == CAST_OK)
                         m_uiSlamTimer = 11000;
                 }
                 else

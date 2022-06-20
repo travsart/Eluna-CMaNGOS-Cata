@@ -356,7 +356,7 @@ struct boss_majordomoAI : public ScriptedAI
         if (m_bHasEncounterFinished)
             return;
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Cast Ageis to heal self
@@ -383,7 +383,7 @@ struct boss_majordomoAI : public ScriptedAI
         // Teleports the main target to the heated rock in the center of the area
         if (m_uiTeleportTargetTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_TELEPORT_TARGET) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_TELEPORT_TARGET) == CAST_OK)
                 m_uiTeleportTargetTimer = urand (25000, 30000);
         }
         else

@@ -35,6 +35,9 @@
 #include <functional>
 #include <vector>
 
+#ifdef BUILD_ELUNA
+class Eluna;
+#endif
 class Object;
 class ObjectGuid;
 class WorldPacket;
@@ -612,6 +615,10 @@ class World
 
         static TimePoint GetCurrentClockTime() { return m_currentTime; }
 
+#ifdef BUILD_ELUNA
+        Eluna* GetEluna() const { return eluna; }
+        Eluna* eluna;
+#endif
     protected:
         void _UpdateGameTime();
         // callback for UpdateRealmCharacters

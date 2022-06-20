@@ -140,7 +140,7 @@ struct boss_moroesAI : public ScriptedAI
     void DoSpawnGuests()
     {
         // not if m_creature are dead, so avoid
-        if (!m_creature->isAlive())
+        if (!m_creature->IsAlive())
             return;
 
         // it's empty, so first time
@@ -190,7 +190,7 @@ struct boss_moroesAI : public ScriptedAI
 
             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
             {
-                if (i->getSource()->isAlive() && i->getSource()->HasAura(SPELL_GARROTE))
+                if (i->getSource()->IsAlive() && i->getSource()->HasAura(SPELL_GARROTE))
                     i->getSource()->RemoveAurasDueToSpell(SPELL_GARROTE);
             }
         }
@@ -198,7 +198,7 @@ struct boss_moroesAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Note: because the Vanish spell adds invisibility effect on the target, the timers won't be decreased during the vanish phase
@@ -246,7 +246,7 @@ struct boss_moroesAI : public ScriptedAI
             // Gouge highest aggro, and attack second highest
             if (m_uiGougeTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_GOUGE) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_GOUGE) == CAST_OK)
                     m_uiGougeTimer = 40000;
             }
             else

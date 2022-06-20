@@ -73,7 +73,7 @@ struct boss_ebonrocAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Shadow Flame Timer
@@ -97,7 +97,7 @@ struct boss_ebonrocAI : public ScriptedAI
         // Shadow of Ebonroc Timer
         if (m_uiShadowOfEbonrocTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHADOW_OF_EBONROC) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SHADOW_OF_EBONROC) == CAST_OK)
                 m_uiShadowOfEbonrocTimer = urand(25000, 35000);
         }
         else

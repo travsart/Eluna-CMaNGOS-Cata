@@ -1155,7 +1155,7 @@ bool TerrainInfo::IsAboveWater(float x, float y, float z, float* pWaterZ/*= null
     return false;
 }
 
-bool TerrainInfo::IsUnderWater(float x, float y, float z, float* pWaterZ/*= nullptr*/) const
+bool TerrainInfo::IsUnderwater(float x, float y, float z, float* pWaterZ/*= nullptr*/) const
 {
     if (const_cast<TerrainInfo*>(this)->GetGrid(x, y))
     {

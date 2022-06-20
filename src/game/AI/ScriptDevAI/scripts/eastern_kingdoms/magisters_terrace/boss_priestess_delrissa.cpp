@@ -117,7 +117,7 @@ struct boss_priestess_delrissaAI : public ScriptedAI
     void DoInitializeCompanions()
     {
         // can be called if creature are dead, so avoid
-        if (!m_creature->isAlive())
+        if (!m_creature->IsAlive())
             return;
 
         // it's empty, so first time
@@ -182,7 +182,7 @@ struct boss_priestess_delrissaAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiHealTimer < uiDiff)
@@ -324,7 +324,7 @@ struct priestess_companion_commonAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff) override
     {
         // Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Call specific virtual function
@@ -420,8 +420,8 @@ struct npc_kagani_nightstrikeAI : public priestess_companion_commonAI
         {
             if (m_uiVanishEndTimer <= uiDiff)
             {
-                DoCastSpellIfCan(m_creature->getVictim(), SPELL_BACKSTAB, CAST_TRIGGERED);
-                DoCastSpellIfCan(m_creature->getVictim(), SPELL_KIDNEY_SHOT, CAST_TRIGGERED);
+                DoCastSpellIfCan(m_creature->GetVictim(), SPELL_BACKSTAB, CAST_TRIGGERED);
+                DoCastSpellIfCan(m_creature->GetVictim(), SPELL_KIDNEY_SHOT, CAST_TRIGGERED);
                 m_uiVanishEndTimer = 0;
             }
             else
@@ -450,7 +450,7 @@ struct npc_kagani_nightstrikeAI : public priestess_companion_commonAI
 
         if (m_uiGougeTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_GOUGE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_GOUGE) == CAST_OK)
                 m_uiGougeTimer = 5500;
         }
         else
@@ -458,7 +458,7 @@ struct npc_kagani_nightstrikeAI : public priestess_companion_commonAI
 
         if (m_uiKickTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_KICK) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_KICK) == CAST_OK)
                 m_uiKickTimer = 7000;
         }
         else
@@ -466,7 +466,7 @@ struct npc_kagani_nightstrikeAI : public priestess_companion_commonAI
 
         if (m_uiEviscerateTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), m_bIsRegularMode ? SPELL_EVISCERATE : SPELL_EVISCERATE_H) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), m_bIsRegularMode ? SPELL_EVISCERATE : SPELL_EVISCERATE_H) == CAST_OK)
                 m_uiEviscerateTimer = 4000;
         }
         else
@@ -646,7 +646,7 @@ struct npc_eramas_brightblazeAI : public priestess_companion_commonAI
     {
         if (m_uiKnockdownTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), m_bIsRegularMode ? SPELL_KNOCKDOWN : SPELL_KNOCKDOWN_H) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), m_bIsRegularMode ? SPELL_KNOCKDOWN : SPELL_KNOCKDOWN_H) == CAST_OK)
                 m_uiKnockdownTimer = 6000;
         }
         else
@@ -654,7 +654,7 @@ struct npc_eramas_brightblazeAI : public priestess_companion_commonAI
 
         if (m_uiSnapKickTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SNAP_KICK) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SNAP_KICK) == CAST_OK)
                 m_uiSnapKickTimer  = 4500;
         }
         else
@@ -877,7 +877,7 @@ struct npc_warlord_salarisAI : public priestess_companion_commonAI
 
         if (m_uiDisarmTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_DISARM) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_DISARM) == CAST_OK)
                 m_uiDisarmTimer = 6000;
         }
         else
@@ -885,7 +885,7 @@ struct npc_warlord_salarisAI : public priestess_companion_commonAI
 
         if (m_uiHamstringTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_HAMSTRING) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_HAMSTRING) == CAST_OK)
                 m_uiHamstringTimer = 4500;
         }
         else
@@ -893,7 +893,7 @@ struct npc_warlord_salarisAI : public priestess_companion_commonAI
 
         if (m_uiMortalStrikeTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_MORTAL_STRIKE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_MORTAL_STRIKE) == CAST_OK)
                 m_uiMortalStrikeTimer = 4500;
         }
         else
@@ -901,7 +901,7 @@ struct npc_warlord_salarisAI : public priestess_companion_commonAI
 
         if (m_uiPiercingHowlTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_PIERCING_HOWL) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_PIERCING_HOWL) == CAST_OK)
                 m_uiPiercingHowlTimer = 10000;
         }
         else
@@ -909,7 +909,7 @@ struct npc_warlord_salarisAI : public priestess_companion_commonAI
 
         if (m_uiFrighteningShoutTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_FRIGHTENING_SHOUT) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_FRIGHTENING_SHOUT) == CAST_OK)
                 m_uiFrighteningShoutTimer = 18000;
         }
         else
@@ -982,11 +982,11 @@ struct npc_garaxxasAI : public priestess_companion_commonAI
 
     bool UpdateCompanionAI(const uint32 uiDiff)
     {
-        if (m_creature->CanReachWithMeleeAttack(m_creature->getVictim()))
+        if (m_creature->CanReachWithMeleeAttack(m_creature->GetVictim()))
         {
             if (m_uiWingClipTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_WING_CLIP) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_WING_CLIP) == CAST_OK)
                     m_uiWingClipTimer = 4000;
             }
             else
@@ -1131,7 +1131,7 @@ struct npc_apokoAI : public priestess_companion_commonAI
 
         if (m_uiFrostShockTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), m_bIsRegularMode ? SPELL_FROST_SHOCK : SPELL_FROST_SHOCK_H) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), m_bIsRegularMode ? SPELL_FROST_SHOCK : SPELL_FROST_SHOCK_H) == CAST_OK)
                 m_uiFrostShockTimer = 7000;
         }
         else
@@ -1196,8 +1196,8 @@ struct npc_zelfanAI : public priestess_companion_commonAI
 
     void JustSummoned(Creature* pSummoned) override
     {
-        if (m_creature->getVictim())
-            pSummoned->AI()->AttackStart(m_creature->getVictim());
+        if (m_creature->GetVictim())
+            pSummoned->AI()->AttackStart(m_creature->GetVictim());
     }
 
     bool UpdateCompanionAI(const uint32 uiDiff)

@@ -97,7 +97,7 @@ struct boss_temporusAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff) override
     {
         // Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Attack Haste
@@ -112,7 +112,7 @@ struct boss_temporusAI : public ScriptedAI
         // MortalWound_Timer
         if (m_uiMortalWoundTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_MORTAL_WOUND) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_MORTAL_WOUND) == CAST_OK)
                 m_uiMortalWoundTimer = urand(10000, 20000);
         }
         else

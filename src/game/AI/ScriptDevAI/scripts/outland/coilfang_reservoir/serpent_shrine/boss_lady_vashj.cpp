@@ -253,7 +253,7 @@ struct boss_lady_vashjAI : public ScriptedAI
     bool CanCastShootOrMultishot()
     {
         // It's not very clear how this should work - requires additional research!
-        if (DoCastSpellIfCan(m_creature->getVictim(), urand(0, 1) ? SPELL_SHOOT : SPELL_MULTI_SHOT) == CAST_OK)
+        if (DoCastSpellIfCan(m_creature->GetVictim(), urand(0, 1) ? SPELL_SHOOT : SPELL_MULTI_SHOT) == CAST_OK)
         {
             if (urand(0, 2))
                 DoScriptText(urand(0, 1) ? SAY_BOWSHOT1 : SAY_BOWSHOT2, m_creature);
@@ -279,8 +279,8 @@ struct boss_lady_vashjAI : public ScriptedAI
             DoScriptText(SAY_PHASE3, m_creature);
             SetCombatMovement(true);
 
-            if (m_creature->getVictim())
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+            if (m_creature->GetVictim())
+                m_creature->GetMotionMaster()->MoveChase(m_creature->GetVictim());
 
             m_uiPhase = PHASE_3;
             m_uiRangedCheckTimer = 3000;
@@ -289,14 +289,14 @@ struct boss_lady_vashjAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiPhase == PHASE_1 || m_uiPhase == PHASE_3)
         {
             if (m_uiShockBlastTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHOCK_BLAST) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SHOCK_BLAST) == CAST_OK)
                     m_uiShockBlastTimer = urand(1000, 15000);
             }
             else
@@ -372,7 +372,7 @@ struct boss_lady_vashjAI : public ScriptedAI
             }
 
             // If we are within range melee the target
-            if (m_creature->CanReachWithMeleeAttack(m_creature->getVictim()))
+            if (m_creature->CanReachWithMeleeAttack(m_creature->GetVictim()))
                 DoMeleeAttackIfReady();
             else
             {

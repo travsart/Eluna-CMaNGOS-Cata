@@ -190,7 +190,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // When Solarian reaches 20% she will transform into a huge void walker.
@@ -241,7 +241,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
 
                     SetCombatMovement(true);
                     m_creature->GetMotionMaster()->Clear();
-                    m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                    m_creature->GetMotionMaster()->MoveChase(m_creature->GetVictim());
                 }
 
                 m_uiDelayTimer = 0;
@@ -288,7 +288,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
                     if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                     {
                         if (!m_creature->HasInArc(pTarget, 2.5f))
-                            pTarget = m_creature->getVictim();
+                            pTarget = m_creature->GetVictim();
 
                         if (pTarget)
                             DoCastSpellIfCan(pTarget, SPELL_ARCANE_MISSILES);
@@ -364,7 +364,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
 
                         SetCombatMovement(true);
                         m_creature->GetMotionMaster()->Clear();
-                        m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                        m_creature->GetMotionMaster()->MoveChase(m_creature->GetVictim());
 
                         // Set as visible and reset spells timers
                         m_creature->SetVisibility(VISIBILITY_ON);
@@ -392,7 +392,7 @@ struct boss_high_astromancer_solarianAI : public ScriptedAI
                 // Void Bolt Timer
                 if (m_uiVoidBoltTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_VOID_BOLT) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_VOID_BOLT) == CAST_OK)
                         m_uiVoidBoltTimer = 10000;
                 }
                 else
@@ -432,7 +432,7 @@ struct mob_solarium_priestAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiHealTimer < uiDiff)

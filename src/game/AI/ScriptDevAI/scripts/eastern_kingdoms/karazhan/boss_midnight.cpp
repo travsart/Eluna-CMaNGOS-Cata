@@ -97,8 +97,8 @@ struct boss_midnightAI : public ScriptedAI
 
     void JustSummoned(Creature* pSummoned) override
     {
-        if (m_creature->getVictim())
-            pSummoned->AI()->AttackStart(m_creature->getVictim());
+        if (m_creature->GetVictim())
+            pSummoned->AI()->AttackStart(m_creature->GetVictim());
 
         if (pSummoned->GetEntry() == NPC_ATTUMEN)
         {
@@ -152,7 +152,7 @@ struct boss_midnightAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Stop attacking during the mount phase
@@ -175,7 +175,7 @@ struct boss_midnightAI : public ScriptedAI
 
         if (m_uiKnockDown < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_KNOCKDOWN) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_KNOCKDOWN) == CAST_OK)
                 m_uiKnockDown = urand(6000, 9000);
         }
         else
@@ -249,12 +249,12 @@ struct boss_attumenAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiCleaveTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHADOWCLEAVE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SHADOWCLEAVE) == CAST_OK)
                 m_uiCleaveTimer = urand(10000, 16000);
         }
         else
@@ -279,7 +279,7 @@ struct boss_attumenAI : public ScriptedAI
         if (m_uiKnockDown < uiDiff)
         {
             // Cast knockdown when mounted, otherwise uppercut
-            if (DoCastSpellIfCan(m_creature->getVictim(), m_creature->GetEntry() == NPC_ATTUMEN_MOUNTED ? SPELL_KNOCKDOWN : SPELL_UPPERCUT) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), m_creature->GetEntry() == NPC_ATTUMEN_MOUNTED ? SPELL_KNOCKDOWN : SPELL_UPPERCUT) == CAST_OK)
                 m_uiKnockDown = urand(6000, 9000);
         }
         else

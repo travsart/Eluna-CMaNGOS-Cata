@@ -392,6 +392,7 @@ class WorldSession
         void SendNotInArenaTeamPacket(uint8 type);
         void SendPetitionShowList(ObjectGuid guid);
         void SendSaveGuildEmblem(uint32 msg);
+        void SendGuildInvite(Player* player);
 
         void BuildPartyMemberStatsChangedPacket(Player* player, WorldPacket* data);
 

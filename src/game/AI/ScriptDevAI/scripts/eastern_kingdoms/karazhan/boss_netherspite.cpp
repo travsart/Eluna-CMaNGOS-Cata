@@ -202,7 +202,7 @@ struct boss_netherspiteAI : public ScriptedAI
         {
             m_creature->RemoveAurasDueToSpell(SPELL_SHADOWFORM);
             SetCombatMovement(true);
-            DoStartMovement(m_creature->getVictim());
+            DoStartMovement(m_creature->GetVictim());
 
             m_uiActivePhase = BEAM_PHASE;
             DoScriptText(EMOTE_PHASE_BEAM, m_creature);
@@ -246,7 +246,7 @@ struct boss_netherspiteAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiPhaseSwitchTimer <= uiDiff)

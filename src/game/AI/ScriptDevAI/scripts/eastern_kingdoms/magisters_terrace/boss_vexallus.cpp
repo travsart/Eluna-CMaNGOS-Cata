@@ -119,7 +119,7 @@ struct boss_vexallusAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (!m_bEnraged)
@@ -203,7 +203,7 @@ struct mob_pure_energyAI : public ScriptedAI
             {
                 Creature* pVex = m_creature->GetMap()->GetCreature(m_creature->GetSpawnerGuid());
 
-                if (!pVex || !pVex->isAlive())
+                if (!pVex || !pVex->IsAlive())
                     return;
 
                 if (Player* pPlayer = pKiller->GetBeneficiaryPlayer())

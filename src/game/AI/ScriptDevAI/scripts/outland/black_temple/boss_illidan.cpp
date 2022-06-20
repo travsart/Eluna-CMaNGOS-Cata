@@ -526,10 +526,10 @@ struct boss_illidan_stormrageAI : public ScriptedAI, private DialogueHelper
             case NPC_MAIEV_SHADOWSONG:
                 // Resume combat and attack Maiev
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                m_creature->SetTargetGuid(m_creature->getVictim()->GetObjectGuid());
+                m_creature->SetTargetGuid(m_creature->GetVictim()->GetObjectGuid());
                 SetCombatMovement(false);
                 m_creature->GetMotionMaster()->Clear();
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                m_creature->GetMotionMaster()->MoveChase(m_creature->GetVictim());
                 if (m_pInstance)
                 {
                     if (Creature* pMaiev = m_pInstance->GetSingleCreatureFromStorage(NPC_MAIEV_SHADOWSONG))
@@ -628,7 +628,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI, private DialogueHelper
     {
         DialogueUpdate(uiDiff);
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Make Akama evade combat at 85%
@@ -748,7 +748,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI, private DialogueHelper
 
                 if (m_uiShearTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHEAR) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SHEAR) == CAST_OK)
                         m_uiShearTimer = urand(10000, 15000);
                 }
                 else
@@ -876,7 +876,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI, private DialogueHelper
 
                         SetCombatMovement(true);
                         m_creature->GetMotionMaster()->Clear();
-                        m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                        m_creature->GetMotionMaster()->MoveChase(m_creature->GetVictim());
                     }
                 }
 
@@ -889,7 +889,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI, private DialogueHelper
 
                         SetCombatMovement(true);
                         m_creature->GetMotionMaster()->Clear();
-                        m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                        m_creature->GetMotionMaster()->MoveChase(m_creature->GetVictim());
                     }
                 }
                 else
@@ -957,7 +957,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI, private DialogueHelper
                                 m_uiPhase = PHASE_DUAL_NORMAL;
 
                                 SetCombatMovement(true);
-                                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                                m_creature->GetMotionMaster()->MoveChase(m_creature->GetVictim());
                                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                                 m_uiTransformTimer = 64000;
                                 m_uiLandTimer = 0;
@@ -1219,7 +1219,7 @@ struct npc_akama_illidanAI : public npc_escortAI, private DialogueHelper
                 m_uiSummonMinionTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiHealDelayTimer)
@@ -1234,7 +1234,7 @@ struct npc_akama_illidanAI : public npc_escortAI, private DialogueHelper
         {
             if (m_uiChainLightningTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CHAIN_LIGHTNING) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CHAIN_LIGHTNING) == CAST_OK)
                     m_uiChainLightningTimer = urand(4000, 8000);
             }
             else
@@ -1374,7 +1374,7 @@ struct boss_maievAI : public ScriptedAI, private DialogueHelper
     {
         DialogueUpdate(uiDiff);
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiTauntTimer < uiDiff)
@@ -1392,7 +1392,7 @@ struct boss_maievAI : public ScriptedAI, private DialogueHelper
 
         if (m_uiShadowStriketimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHADOW_STRIKE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SHADOW_STRIKE) == CAST_OK)
                 m_uiShadowStriketimer = urand(12000, 16000);
         }
         else
@@ -1400,7 +1400,7 @@ struct boss_maievAI : public ScriptedAI, private DialogueHelper
 
         if (m_uiThrowDaggerTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_THROW_DAGGER) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_THROW_DAGGER) == CAST_OK)
                 m_uiThrowDaggerTimer = urand(6000, 10000);
         }
         else
@@ -1480,12 +1480,12 @@ struct npc_flame_of_azzinothAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiFlameBlastTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_FLAME_BLAST) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_FLAME_BLAST) == CAST_OK)
             {
                 m_uiFlameBlastTimer = 10000;
                 m_uiSummonBlazeTimer = 3000;

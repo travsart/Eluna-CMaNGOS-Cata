@@ -199,7 +199,7 @@ bool hyjalAI::IsEventInProgress() const
     for (uint8 i = 0; i < 2; ++i)
     {
         Creature* pBoss = m_creature->GetMap()->GetCreature(m_aBossGuid[i]);
-        if (pBoss && pBoss->isAlive())
+        if (pBoss && pBoss->IsAlive())
             return true;
     }
 
@@ -212,7 +212,7 @@ void hyjalAI::EnterEvadeMode()
     m_creature->DeleteThreatList();
     m_creature->CombatStop(true);
 
-    if (m_creature->isAlive())
+    if (m_creature->IsAlive())
         m_creature->GetMotionMaster()->MoveTargetedHome();
 
     m_creature->SetLootRecipient(NULL);
@@ -489,7 +489,7 @@ void hyjalAI::UpdateAI(const uint32 uiDiff)
             {
                 if (Creature* pTemp = m_pInstance->instance->GetCreature(*itr))
                 {
-                    if (!pTemp->isAlive() || pTemp->getVictim())
+                    if (!pTemp->IsAlive() || pTemp->GetVictim())
                         continue;
 
                     pTemp->SetWalk(false);
@@ -507,7 +507,7 @@ void hyjalAI::UpdateAI(const uint32 uiDiff)
             m_uiNextWaveTimer -= uiDiff;
     }
 
-    if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+    if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
         return;
 
     for (uint8 i = 0; i < MAX_SPELL; ++i)
@@ -525,7 +525,7 @@ void hyjalAI::UpdateAI(const uint32 uiDiff)
                 {
                     case TARGETTYPE_SELF:   pTarget = m_creature; break;
                     case TARGETTYPE_RANDOM: pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0); break;
-                    case TARGETTYPE_VICTIM: pTarget = m_creature->getVictim(); break;
+                    case TARGETTYPE_VICTIM: pTarget = m_creature->GetVictim(); break;
                 }
 
                 if (pTarget)

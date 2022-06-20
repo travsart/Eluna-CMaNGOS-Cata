@@ -286,10 +286,10 @@ struct boss_zuljinAI : public ScriptedAI
             if (m_uiPhase != PHASE_EAGLE)
             {
                 SetCombatMovement(true);
-                if (m_creature->getVictim())
+                if (m_creature->GetVictim())
                 {
                     m_creature->GetMotionMaster()->Clear();
-                    m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                    m_creature->GetMotionMaster()->MoveChase(m_creature->GetVictim());
                 }
             }
             // In Eagle phase we just cast Energy storm and summon 4 Feather cyclones; Boss doesn't move in this phase
@@ -316,7 +316,7 @@ struct boss_zuljinAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || m_bIsInTransition)
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim() || m_bIsInTransition)
             return;
 
         if (m_creature->GetHealthPercent() < m_uiHealthCheck)
@@ -389,7 +389,7 @@ struct boss_zuljinAI : public ScriptedAI
 
                 if (m_uiOverpowerTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_OVERPOWER) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_OVERPOWER) == CAST_OK)
                         m_uiOverpowerTimer = urand(12000, 16000);
                 }
                 else

@@ -99,7 +99,7 @@ struct boss_the_makerAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiAcidSprayTimer < uiDiff)
@@ -134,7 +134,7 @@ struct boss_the_makerAI : public ScriptedAI
 
         if (m_uiKnockdownTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_KNOCKDOWN) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_KNOCKDOWN) == CAST_OK)
                 m_uiKnockdownTimer = urand(4000, 12000);
         }
         else

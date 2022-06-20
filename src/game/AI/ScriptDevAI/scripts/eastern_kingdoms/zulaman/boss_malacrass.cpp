@@ -256,7 +256,7 @@ struct boss_malacrassAI : public ScriptedAI
     void DoInitializeAdds()
     {
         // not if m_creature are dead, so avoid
-        if (!m_creature->isAlive())
+        if (!m_creature->IsAlive())
             return;
 
         // it's empty, so first time
@@ -354,7 +354,7 @@ struct boss_malacrassAI : public ScriptedAI
                 pTarget = m_creature;
                 break;
             case TARGET_TYPE_VICTIM:
-                pTarget = m_creature->getVictim();
+                pTarget = m_creature->GetVictim();
                 break;
             case TARGET_TYPE_RANDOM:
                 pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
@@ -375,7 +375,7 @@ struct boss_malacrassAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Acts as an enrage timer

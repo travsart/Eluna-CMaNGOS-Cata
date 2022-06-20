@@ -210,7 +210,7 @@ struct boss_halazziAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiBerserkTimer)
@@ -250,7 +250,7 @@ struct boss_halazziAI : public ScriptedAI
 
             if (m_uiSaberLashTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SABER_LASH) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SABER_LASH) == CAST_OK)
                 {
                     DoScriptText(urand(0, 1) ? SAY_SABERLASH1 : SAY_SABERLASH2, m_creature);
                     m_uiSaberLashTimer = 20000;
@@ -334,7 +334,7 @@ struct boss_spirit_lynxAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiFrenzyTimer < uiDiff)
@@ -347,7 +347,7 @@ struct boss_spirit_lynxAI : public ScriptedAI
 
         if (m_uiShredArmorTimer < uiDiff)
         {
-            DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHRED_ARMOR);
+            DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SHRED_ARMOR);
             m_uiShredArmorTimer = 4000;
         }
         else

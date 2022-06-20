@@ -167,7 +167,7 @@ struct boss_skeramAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff) override
     {
         // Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // ArcaneExplosion_Timer
@@ -224,7 +224,7 @@ struct boss_skeramAI : public ScriptedAI
         }
 
         // If we are within range melee the target
-        if (m_creature->CanReachWithMeleeAttack(m_creature->getVictim()))
+        if (m_creature->CanReachWithMeleeAttack(m_creature->GetVictim()))
             DoMeleeAttackIfReady();
         else
         {

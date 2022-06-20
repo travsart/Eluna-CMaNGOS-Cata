@@ -212,7 +212,7 @@ void instance_karazhan::SetData(uint32 uiType, uint32 uiData)
                 // Respawn Midnight on Fail
                 if (Creature* pMidnight = GetSingleCreatureFromStorage(NPC_MIDNIGHT))
                 {
-                    if (!pMidnight->isAlive())
+                    if (!pMidnight->IsAlive())
                         pMidnight->Respawn();
                 }
             }
@@ -409,8 +409,8 @@ void instance_karazhan::OnCreatureDeath(Creature* pCreature)
             {
                 if (Creature* pCrone = pCreature->SummonCreature(NPC_CRONE, afChroneSpawnLoc[0], afChroneSpawnLoc[1], afChroneSpawnLoc[2], afChroneSpawnLoc[3], TEMPSPAWN_DEAD_DESPAWN, 0))
                 {
-                    if (pCreature->getVictim())
-                        pCrone->AI()->AttackStart(pCreature->getVictim());
+                    if (pCreature->GetVictim())
+                        pCrone->AI()->AttackStart(pCreature->GetVictim());
                 }
             }
             break;

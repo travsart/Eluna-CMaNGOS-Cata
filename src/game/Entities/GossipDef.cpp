@@ -512,7 +512,7 @@ void PlayerMenu::SendQuestGiverQuestDetails(Quest const* pQuest, ObjectGuid guid
                 data << uint32(0);
 
         // send rewMoneyMaxLevel explicit for max player level, else send RewOrReqMoney
-        if (GetMenuSession()->GetPlayer()->getLevel() >= sWorld.getConfig(CONFIG_UINT32_MAX_PLAYER_LEVEL))
+        if (GetMenuSession()->GetPlayer()->GetLevel() >= sWorld.getConfig(CONFIG_UINT32_MAX_PLAYER_LEVEL))
             data << uint32(pQuest->GetRewMoneyMaxLevel());
         else
             data << uint32(pQuest->GetRewOrReqMoney());
@@ -845,7 +845,7 @@ void PlayerMenu::SendQuestGiverOfferReward(Quest const* pQuest, ObjectGuid npcGU
             data << uint32(0);
 
     // send rewMoneyMaxLevel explicit for max player level, else send RewOrReqMoney
-    if (GetMenuSession()->GetPlayer()->getLevel() >= sWorld.getConfig(CONFIG_UINT32_MAX_PLAYER_LEVEL))
+    if (GetMenuSession()->GetPlayer()->GetLevel() >= sWorld.getConfig(CONFIG_UINT32_MAX_PLAYER_LEVEL))
         data << uint32(pQuest->GetRewMoneyMaxLevel());
     else
         data << uint32(pQuest->GetRewOrReqMoney());

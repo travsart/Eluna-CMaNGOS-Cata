@@ -195,7 +195,7 @@ void Player::UpdateArmor()
 
 float Player::GetHealthBonusFromStamina()
 {
-    GtOCTHpPerStaminaEntry const* hpBase = sGtOCTHpPerStaminaStore.LookupEntry((getClass() - 1) * GT_MAX_LEVEL + getLevel() - 1);
+    GtOCTHpPerStaminaEntry const* hpBase = sGtOCTHpPerStaminaStore.LookupEntry((getClass() - 1) * GT_MAX_LEVEL + GetLevel() - 1);
 
     float stamina = GetStat(STAT_STAMINA);
 
@@ -254,7 +254,7 @@ void Player::UpdateAttackPowerAndDamage(bool ranged)
     MANGOS_ASSERT(chrEntry);
 
     float val2 = 0.0f;
-    float level = float(getLevel());
+    float level = float(GetLevel());
 
     UnitMods unitMod = ranged ? UNIT_MOD_ATTACK_POWER_RANGED : UNIT_MOD_ATTACK_POWER;
 

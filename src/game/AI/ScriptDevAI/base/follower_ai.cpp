@@ -45,7 +45,7 @@ void FollowerAI::AttackStart(Unit* pWho)
 // It will cause m_creature to attack pWho that are attacking _any_ player (which has been confirmed may happen also on offi)
 bool FollowerAI::AssistPlayerInCombat(Unit* pWho)
 {
-    if (!pWho->getVictim())
+    if (!pWho->GetVictim())
         return false;
 
     // experimental (unknown) flag not present
@@ -57,7 +57,7 @@ bool FollowerAI::AssistPlayerInCombat(Unit* pWho)
         return false;
 
     // victim of pWho is not a player
-    if (!pWho->getVictim()->GetBeneficiaryPlayer())
+    if (!pWho->GetVictim()->GetBeneficiaryPlayer())
         return false;
 
     // never attack friendly
@@ -68,7 +68,7 @@ bool FollowerAI::AssistPlayerInCombat(Unit* pWho)
     if (m_creature->IsWithinDistInMap(pWho, MAX_PLAYER_DISTANCE) && m_creature->IsWithinLOSInMap(pWho))
     {
         // already fighting someone?
-        if (!m_creature->getVictim())
+        if (!m_creature->GetVictim())
         {
             AttackStart(pWho);
             return true;
@@ -103,7 +103,7 @@ void FollowerAI::MoveInLineOfSight(Unit* pWho)
             float fAttackRadius = m_creature->GetAttackDistance(pWho);
             if (m_creature->IsWithinDistInMap(pWho, fAttackRadius) && m_creature->IsWithinLOSInMap(pWho))
             {
-                if (!m_creature->getVictim())
+                if (!m_creature->GetVictim())
                 {
                     pWho->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
                     AttackStart(pWho);
@@ -184,7 +184,7 @@ void FollowerAI::EnterEvadeMode()
 
 void FollowerAI::UpdateAI(const uint32 uiDiff)
 {
-    if (HasFollowState(STATE_FOLLOW_INPROGRESS) && !m_creature->getVictim())
+    if (HasFollowState(STATE_FOLLOW_INPROGRESS) && !m_creature->GetVictim())
     {
         if (m_uiUpdateFollowTimer < uiDiff)
         {
@@ -246,7 +246,7 @@ void FollowerAI::UpdateAI(const uint32 uiDiff)
 
 void FollowerAI::UpdateFollowerAI(const uint32 /*uiDiff*/)
 {
-    if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+    if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
         return;
 
     DoMeleeAttackIfReady();
@@ -271,7 +271,7 @@ void FollowerAI::MovementInform(uint32 uiMotionType, uint32 uiPointId)
 
 void FollowerAI::StartFollow(Player* pLeader, uint32 uiFactionForFollower, const Quest* pQuest)
 {
-    if (m_creature->getVictim())
+    if (m_creature->GetVictim())
     {
         debug_log("SD2: FollowerAI attempt to StartFollow while in combat.");
         return;
@@ -311,7 +311,7 @@ Player* FollowerAI::GetLeaderForFollower()
 {
     if (Player* pLeader = m_creature->GetMap()->GetPlayer(m_leaderGuid))
     {
-        if (pLeader->isAlive())
+        if (pLeader->IsAlive())
             return pLeader;
         else
         {
@@ -321,7 +321,7 @@ Player* FollowerAI::GetLeaderForFollower()
                 {
                     Player* pMember = pRef->getSource();
 
-                    if (pMember && pMember->isAlive() && m_creature->IsWithinDistInMap(pMember, MAX_PLAYER_DISTANCE))
+                    if (pMember && pMember->IsAlive() && m_creature->IsWithinDistInMap(pMember, MAX_PLAYER_DISTANCE))
                     {
                         debug_log("SD2: FollowerAI GetLeader changed and returned new leader.");
                         m_leaderGuid = pMember->GetObjectGuid();

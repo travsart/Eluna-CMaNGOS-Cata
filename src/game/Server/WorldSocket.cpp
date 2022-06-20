@@ -30,6 +30,9 @@
 #include "Server/WorldSession.h"
 #include "Log.h"
 #include "Server/DBCStores.h"
+#ifdef BUILD_ELUNA
+#include "LuaEngine/LuaEngine.h"
+#endif
 
 #include <chrono>
 #include <functional>
@@ -224,6 +227,12 @@ bool WorldSocket::ProcessIncomingData()
                     return false;
                 }
 
+#ifdef BUILD_ELUNA
+                if (!sWorld.GetEluna()->OnPacketReceive(m_session, *pct))
+                {
+                    return 0;
+                }
+#endif
                 return HandleAuthSession(*pct);
 
             case CMSG_PING:
@@ -231,6 +240,10 @@ bool WorldSocket::ProcessIncomingData()
 
             case CMSG_KEEP_ALIVE:
                 DEBUG_LOG("CMSG_KEEP_ALIVE ,size: " SIZEFMTD " ", pct->size());
+
+#ifdef BUILD_ELUNA
+                sWorld.GetEluna()->OnPacketReceive(m_session, *pct);
+#endif
 
                 return true;
 

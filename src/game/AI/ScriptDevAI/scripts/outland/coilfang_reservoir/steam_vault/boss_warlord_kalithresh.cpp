@@ -123,7 +123,7 @@ struct boss_warlord_kalithreshAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiRageCastTimer)
@@ -199,10 +199,10 @@ bool EffectAuraDummy_spell_aura_dummy_warlord_rage(const Aura* pAura, bool bAppl
             // Resume combat when the cast is finished or interrupted
             if (!bApply)
             {
-                if (pTarget->getVictim())
+                if (pTarget->GetVictim())
                 {
                     pTarget->GetMotionMaster()->MovementExpired();
-                    pTarget->GetMotionMaster()->MoveChase(pTarget->getVictim());
+                    pTarget->GetMotionMaster()->MoveChase(pTarget->GetVictim());
                 }
             }
         }

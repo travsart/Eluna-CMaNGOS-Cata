@@ -239,7 +239,7 @@ struct boss_kaelthasAI : public ScriptedAI
     // Custom Move in LoS function
     void MoveInLineOfSight(Unit* pWho) override
     {
-        if (m_uiPhase == PHASE_0_NOT_BEGUN && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->isGameMaster() &&
+        if (m_uiPhase == PHASE_0_NOT_BEGUN && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->IsGameMaster() &&
                 m_creature->IsWithinDistInMap(pWho, m_creature->GetAttackDistance(pWho)) && m_creature->IsWithinLOSInMap(pWho))
         {
             DoScriptText(SAY_INTRO, m_creature);
@@ -346,7 +346,7 @@ struct boss_kaelthasAI : public ScriptedAI
                 m_creature->SetLevitate(false);
                 m_creature->InterruptNonMeleeSpells(false);
                 m_creature->GetMotionMaster()->Clear();
-                DoStartMovement(m_creature->getVictim(), 25.0f);
+                DoStartMovement(m_creature->GetVictim(), 25.0f);
                 m_uiShockBarrierTimer = 10000;
                 m_uiPhase = PHASE_7_GRAVITY;
             }
@@ -501,7 +501,7 @@ struct boss_kaelthasAI : public ScriptedAI
             case PHASE_4_SOLO:
             case PHASE_7_GRAVITY:
             {
-                if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+                if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
                     return;
 
                 if (m_uiGravityExpireTimer)
@@ -799,9 +799,9 @@ struct advisor_base_ai : public ScriptedAI
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
             m_creature->GetMotionMaster()->Clear();
             if (m_creature->GetEntry() == NPC_CAPERNIAN)
-                DoStartMovement(m_creature->getVictim(), 20.0f);
+                DoStartMovement(m_creature->GetVictim(), 20.0f);
             else
-                DoStartMovement(m_creature->getVictim());
+                DoStartMovement(m_creature->GetVictim());
             m_bCanFakeDeath = false;
             m_bFakeDeath = false;
         }
@@ -844,7 +844,7 @@ struct boss_thaladred_the_darkenerAI : public advisor_base_ai
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Don't use abilities during fake death
@@ -866,7 +866,7 @@ struct boss_thaladred_the_darkenerAI : public advisor_base_ai
 
         if (m_uiRendTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_REND) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_REND) == CAST_OK)
                 m_uiRendTimer = urand(7000, 12000);
         }
         else
@@ -882,7 +882,7 @@ struct boss_thaladred_the_darkenerAI : public advisor_base_ai
 
         if (m_uiPsychicBlowTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_PSYCHIC_BLOW) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_PSYCHIC_BLOW) == CAST_OK)
                 m_uiPsychicBlowTimer = urand(20000, 25000);
         }
         else
@@ -921,7 +921,7 @@ struct boss_lord_sanguinarAI : public advisor_base_ai
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Don't use abilities during fake death
@@ -985,7 +985,7 @@ struct boss_grand_astromancer_capernianAI : public advisor_base_ai
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Don't use abilities during fake death
@@ -994,7 +994,7 @@ struct boss_grand_astromancer_capernianAI : public advisor_base_ai
 
         if (m_uiFireballTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CAPERNIAN_FIREBALL) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CAPERNIAN_FIREBALL) == CAST_OK)
                 m_uiFireballTimer = 4000;
         }
         else
@@ -1007,7 +1007,7 @@ struct boss_grand_astromancer_capernianAI : public advisor_base_ai
             if (pTarget && m_creature->IsWithinDistInMap(pTarget, 30.0f))
                 DoCastSpellIfCan(pTarget, SPELL_CONFLAGRATION);
             else
-                DoCastSpellIfCan(m_creature->getVictim(), SPELL_CONFLAGRATION);
+                DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CONFLAGRATION);
 
             m_uiConflagrationTimer = urand(10000, 15000);
         }
@@ -1060,7 +1060,7 @@ struct boss_master_engineer_telonicusAI : public advisor_base_ai
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Don't use abilities during fake death
@@ -1069,7 +1069,7 @@ struct boss_master_engineer_telonicusAI : public advisor_base_ai
 
         if (m_uiBombTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_BOMB) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_BOMB) == CAST_OK)
                 m_uiBombTimer = 25000;
         }
         else
@@ -1173,7 +1173,7 @@ struct mob_phoenix_tkAI : public ScriptedAI
         {
             m_creature->SetHealth(m_creature->GetMaxHealth());
             m_creature->GetMotionMaster()->Clear();
-            DoStartMovement(m_creature->getVictim());
+            DoStartMovement(m_creature->GetVictim());
             m_bFakeDeath = false;
 
             DoCastSpellIfCan(m_creature, SPELL_BURN, CAST_TRIGGERED);
@@ -1189,7 +1189,7 @@ struct mob_phoenix_tkAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_bFakeDeath)

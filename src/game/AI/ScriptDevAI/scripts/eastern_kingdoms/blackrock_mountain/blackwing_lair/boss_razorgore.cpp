@@ -101,13 +101,13 @@ struct boss_razorgoreAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Cleave
         if (m_uiCleaveTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CLEAVE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CLEAVE) == CAST_OK)
                 m_uiCleaveTimer = urand(4000, 8000);
         }
         else
@@ -144,7 +144,7 @@ struct boss_razorgoreAI : public ScriptedAI
         if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_TOPAGGRO, 0, SPELL_CONFLAGRATION, SELECT_FLAG_PLAYER | SELECT_FLAG_NOT_AURA))
         {
             // Target is not current victim, force select and attack it
-            if (pTarget != m_creature->getVictim())
+            if (pTarget != m_creature->GetVictim())
             {
                 AttackStart(pTarget);
                 m_creature->SetInFront(pTarget);
@@ -206,7 +206,7 @@ struct npc_blackwing_orbAI : public ScriptedAI
                 // If Razorgore is not respawned yet: wait
                 if (Creature* pRazorgore = m_pInstance->GetSingleCreatureFromStorage(NPC_RAZORGORE))
                 {
-                    if (!(pRazorgore->isAlive()))
+                    if (!(pRazorgore->IsAlive()))
                     {
                         m_uiIntroVisualTimer = 2000;
                         return;
@@ -216,7 +216,7 @@ struct npc_blackwing_orbAI : public ScriptedAI
                 // If Grethok the Controller is here and spawned, start the visual, else wait for him
                 if (Creature* pGrethok = GetClosestCreatureWithEntry(m_creature, NPC_GRETHOK_CONTROLLER, 2.0f))
                 {
-                    if (pGrethok->isAlive())
+                    if (pGrethok->IsAlive())
                     {
                         m_creature->CastSpell(m_creature, SPELL_POSSESS_VISUAL, TRIGGERED_OLD_TRIGGERED);
                         pGrethok->CastSpell(pGrethok, SPELL_CONTROL_ORB, TRIGGERED_OLD_TRIGGERED);
@@ -241,7 +241,7 @@ bool EffectDummyGameObj_go_black_dragon_egg(Unit* pCaster, uint32 uiSpellId, Spe
 {
     if (uiSpellId == SPELL_DESTROY_EGG && uiEffIndex == EFFECT_INDEX_1)
     {
-        if (!pGOTarget->isSpawned())
+        if (!pGOTarget->IsSpawned())
             return true;
 
         if (ScriptedInstance* pInstance = (ScriptedInstance*)pGOTarget->GetInstanceData())

@@ -70,6 +70,12 @@
 #include "Calendar/Calendar.h"
 #include "Weather/Weather.h"
 
+#ifdef BUILD_ELUNA
+#include "LuaEngine/LuaEngine.h"
+#include "LuaEngine/ElunaConfig.h"
+#include "LuaEngine/ElunaLoader.h"
+#endif
+
 #include <mutex>
 
 INSTANTIATE_SINGLETON_1(World);
@@ -128,6 +134,12 @@ World::World(): mail_timer(0), mail_timer_expires(0), m_NextMonthlyQuestReset(0)
 World::~World()
 {
     // it is assumed that no other thread is accessing this data when the destructor is called.  therefore, no locks are necessary
+
+    #ifdef BUILD_ELUNA
+    // Delete world Eluna state
+        delete eluna;
+        eluna = nullptr;
+    #endif
 
     ///- Empty the kicked session set
     for (auto const session : m_sessions)
@@ -891,6 +903,14 @@ void World::LoadConfigSettings(bool reload)
     setConfig(CONFIG_BOOL_PATH_FIND_OPTIMIZE, "PathFinder.OptimizePath", true);
     setConfig(CONFIG_BOOL_PATH_FIND_NORMALIZE_Z, "PathFinder.NormalizeZ", false);
 
+#ifdef BUILD_ELUNA
+    if (reload)
+    {
+        if (Eluna* e = GetEluna())
+            e->OnConfigLoad(reload);
+    }
+#endif
+
     sLog.outString();
 }
 
@@ -984,6 +1004,18 @@ void World::SetInitialWorldSettings()
     ///- Init highest guids before any guid using table loading to prevent using not initialized guids in some code.
     sObjectMgr.SetHighestGuids();                           // must be after PackInstances() and PackGroupIds()
     sLog.outString();
+
+#ifdef BUILD_ELUNA
+    sLog.outString("Loading Eluna config...");
+    sElunaConfig->Initialize();
+
+    if (sElunaConfig->IsElunaEnabled())
+    {
+        ///- Initialize Lua Engine
+        sLog.outString("Loading Lua scripts...");
+        sElunaLoader->LoadScripts();
+    }
+#endif
 
     sLog.outString("Loading Page Texts...");
     sObjectMgr.LoadPageTexts();
@@ -1220,7 +1252,6 @@ void World::SetInitialWorldSettings()
 
     sLog.outString("Loading Npc Text Id...");
     sObjectMgr.LoadNpcGossips();                            // must be after load Creature and LoadGossipText
-
     sLog.outString("Loading Scripts random templates...");  // must be before String calls
     sScriptMgr.LoadDbScriptRandomTemplates();
                                                             ///- Load and initialize DBScripts Engine
@@ -1315,6 +1346,20 @@ void World::SetInitialWorldSettings()
 
     sLog.outString("Loading hotfix data...");
     sObjectMgr.LoadHotfixData();
+
+#ifdef BUILD_ELUNA
+    // lua state begins uninitialized
+    eluna = nullptr;
+
+    if (sElunaConfig->IsElunaEnabled())
+    {
+        ///- Run eluna scripts.
+        sLog.outString("Starting Eluna world state...");
+        // use map id -1 for the global Eluna state
+        eluna = new Eluna(nullptr, sElunaConfig->IsElunaCompatibilityMode());
+        sLog.outString();
+    }
+#endif
 
     ///- Load and initialize EventAI Scripts
     sLog.outString("Loading CreatureEventAI Texts...");
@@ -1434,6 +1479,11 @@ void World::SetInitialWorldSettings()
 
 #ifdef BUILD_PLAYERBOT
     PlayerbotMgr::SetInitialWorldSettings();
+#endif
+#ifdef BUILD_ELUNA
+    if (GetEluna())
+        GetEluna()->OnConfigLoad(false); // Must be done after Eluna is initialized and scripts have run
+    sLog.outString();
 #endif
     sLog.outString("---------------------------------------");
     sLog.outString("      CMANGOS: World initialized       ");
@@ -1569,6 +1619,15 @@ void World::Update(uint32 diff)
     sMapMgr.Update(diff);
     sBattleGroundMgr.Update(diff);
     sOutdoorPvPMgr.Update(diff);
+
+#ifdef BUILD_ELUNA
+    ///- used by eluna
+    if (Eluna* e = GetEluna())
+    {
+        e->UpdateEluna(diff);
+        e->OnWorldUpdate(diff);
+    }
+#endif
 
     ///- Update groups with offline leaders
     if (m_timers[WUPDATE_GROUPS].Passed())
@@ -1914,6 +1973,11 @@ void World::ShutdownServ(uint32 time, uint32 options, uint8 exitcode)
         m_ShutdownTimer = time;
         ShutdownMsg(true);
     }
+#ifdef BUILD_ELUNA
+    ///- Used by Eluna
+    if (Eluna* e = GetEluna())
+        e->OnShutdownInitiate(ShutdownExitCode(exitcode), ShutdownMask(options));
+#endif
 }
 
 /// Display a shutdown message to the user(s)
@@ -1955,6 +2019,12 @@ void World::ShutdownCancel()
     SendServerMessage(msgid);
 
     DEBUG_LOG("Server %s cancelled.", (m_ShutdownMask & SHUTDOWN_MASK_RESTART ? "restart" : "shutdown"));
+
+#ifdef BUILD_ELUNA
+    ///- Used by Eluna
+    if (Eluna* e = GetEluna())
+        e->OnShutdownCancel();
+#endif
 }
 
 void World::UpdateSessions(uint32 /*diff*/)

@@ -60,7 +60,7 @@ void WorldSession::HandlePetAction(WorldPacket& recv_data)
         return;
     }
 
-    if (!petUnit->isAlive())
+    if (!petUnit->IsAlive())
         return;
 
     CharmInfo* charmInfo = petUnit->GetCharmInfo();
@@ -110,7 +110,7 @@ void WorldSession::HandlePetAction(WorldPacket& recv_data)
                     if (targetUnit && targetUnit != petUnit && targetUnit->isTargetableForAttack())
                     {
                         // This is true if pet has no target or has target but targets differs.
-                        if (petUnit->getVictim() != targetUnit)
+                        if (petUnit->GetVictim() != targetUnit)
                             petUnit->Attack(targetUnit, true);
                     }
                     break;
@@ -166,7 +166,7 @@ void WorldSession::HandlePetAction(WorldPacket& recv_data)
                     if (targetUnit && targetUnit != petUnit && targetUnit->isTargetableForAttack() && targetUnit->isInAccessablePlaceFor((Creature*)petUnit))
                     {
                         // This is true if pet has no target or has target but targets differs.
-                        if (petUnit->getVictim() != targetUnit)
+                        if (petUnit->GetVictim() != targetUnit)
                         {
                             petUnit->AttackStop();
                             if (!petUnit->hasUnitState(UNIT_STAT_POSSESSED))
@@ -373,7 +373,7 @@ void WorldSession::HandlePetStopAttack(WorldPacket& recv_data)
         return;
     }
 
-    if (!pet->isAlive())
+    if (!pet->IsAlive())
         return;
 
     pet->AttackStop();
@@ -529,7 +529,7 @@ void WorldSession::HandlePetSetAction(WorldPacket& recv_data)
             // sign for autocast
             if (act_state == ACT_ENABLED && spell_id)
             {
-                if (petUnit->isCharmed())
+                if (petUnit->IsCharmed())
                     charmInfo->ToggleCreatureAutocast(spell_id, true);
                 else if (pet)
                     pet->ToggleAutocast(spell_id, true);
@@ -537,7 +537,7 @@ void WorldSession::HandlePetSetAction(WorldPacket& recv_data)
             // sign for no/turn off autocast
             else if (act_state == ACT_DISABLED && spell_id)
             {
-                if (petUnit->isCharmed())
+                if (petUnit->IsCharmed())
                     charmInfo->ToggleCreatureAutocast(spell_id, false);
                 else if (pet)
                     pet->ToggleAutocast(spell_id, false);
@@ -715,7 +715,7 @@ void WorldSession::HandlePetSpellAutocastOpcode(WorldPacket& recvPacket)
         return;
     }
 
-    if (petUnit->isCharmed())
+    if (petUnit->IsCharmed())
         // state can be used as boolean
         petUnit->GetCharmInfo()->ToggleCreatureAutocast(spellid, !!state);
     else if (pet)

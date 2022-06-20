@@ -247,7 +247,7 @@ struct npc_squad_leaderAI : public npc_escortAI
                 // for each soldier alive cast the kill credit
                 for (std::list<Creature*>::const_iterator itr = lSoldiersList.begin(); itr != lSoldiersList.end(); ++itr)
                 {
-                    if ((*itr) && (*itr)->isAlive())
+                    if ((*itr) && (*itr)->IsAlive())
                     {
                         (*itr)->CastSpell(*itr, (*itr)->GetEntry() == NPC_SKYBREAKER_INFANTRY ? SPELL_ALLIANCE_TROOP_CREDIT : SPELL_HORDE_TROOP_CREDIT, TRIGGERED_OLD_TRIGGERED);
                         (*itr)->ForcedDespawn(10000);
@@ -264,12 +264,12 @@ struct npc_squad_leaderAI : public npc_escortAI
 
     void UpdateEscortAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiFrostShotTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_FROST_SHOT) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_FROST_SHOT) == CAST_OK)
                 m_uiFrostShotTimer = urand(1000, 3000);
         }
         else
@@ -277,7 +277,7 @@ struct npc_squad_leaderAI : public npc_escortAI
 
         if (m_uiCleaveTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CLEAVE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CLEAVE) == CAST_OK)
                 m_uiCleaveTimer = urand(3000, 5000);
         }
         else
@@ -345,7 +345,7 @@ struct npc_infantryAI : public ScriptedAI
 
         Reset();
 
-        if (!m_creature->isAlive())
+        if (!m_creature->IsAlive())
             return;
 
         if (m_bEscortActive)
@@ -376,12 +376,12 @@ struct npc_infantryAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiShootTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHOOT) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SHOOT) == CAST_OK)
                 m_uiShootTimer = urand(1000, 3000);
         }
         else
@@ -389,7 +389,7 @@ struct npc_infantryAI : public ScriptedAI
 
         if (m_uiHeroicStrikeTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_HEROIC_STRIKE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_HEROIC_STRIKE) == CAST_OK)
                 m_uiHeroicStrikeTimer = urand(3000, 5000);
         }
         else
@@ -518,12 +518,12 @@ struct npc_father_kamarosAI : public npc_escortAI
 
     void UpdateEscortAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiSmiteTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_HOLY_SMITE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_HOLY_SMITE) == CAST_OK)
                 m_uiSmiteTimer = urand(3000, 4000);
         }
         else
@@ -531,7 +531,7 @@ struct npc_father_kamarosAI : public npc_escortAI
 
         if (m_uiShadowWordTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHADOW_WORD_PAIN) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SHADOW_WORD_PAIN) == CAST_OK)
                 m_uiShadowWordTimer = urand(15000, 20000);
         }
         else
@@ -757,7 +757,7 @@ struct npc_grand_admiral_westwindAI : public ScriptedAI
             m_creature->GetMotionMaster()->MoveIdle();
         else
         {
-            if (m_creature->isAlive())
+            if (m_creature->IsAlive())
                 m_creature->GetMotionMaster()->MoveTargetedHome();
 
             m_creature->SetLootRecipient(NULL);
@@ -824,7 +824,7 @@ struct npc_grand_admiral_westwindAI : public ScriptedAI
                 m_uiEscapeTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (!m_bIsTransform)
@@ -839,7 +839,7 @@ struct npc_grand_admiral_westwindAI : public ScriptedAI
 
             if (m_uiHeroicStrikeTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_HEROIC_STRIKE_ADMIRAL) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_HEROIC_STRIKE_ADMIRAL) == CAST_OK)
                     m_uiHeroicStrikeTimer = urand(6000, 7000);
             }
             else
@@ -847,7 +847,7 @@ struct npc_grand_admiral_westwindAI : public ScriptedAI
 
             if (m_uiCleaveTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CLEAVE_ADMIRAL) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CLEAVE_ADMIRAL) == CAST_OK)
                     m_uiCleaveTimer = urand(6000, 7000);
             }
             else
@@ -896,7 +896,7 @@ struct npc_grand_admiral_westwindAI : public ScriptedAI
 
             if (m_uiCarrionTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CARRION_SWARM) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CARRION_SWARM) == CAST_OK)
                     m_uiCarrionTimer = urand(6000, 7000);
             }
             else

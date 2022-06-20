@@ -80,7 +80,7 @@ bool GOUse_go_ethereum_prison(Player* pPlayer, GameObject* pGo)
         {
             uint32 uiSpell = 0;
 
-            if (FactionTemplateEntry const* pFaction = pCreature->getFactionTemplateEntry())
+            if (FactionTemplateEntry const* pFaction = pCreature->GetFactionTemplateEntry())
             {
                 int32 textId = 0;
 
@@ -100,7 +100,7 @@ bool GOUse_go_ethereum_prison(Player* pPlayer, GameObject* pGo)
                 if (uiSpell)
                     pCreature->CastSpell(pPlayer, uiSpell, TRIGGERED_NONE);
                 else
-                    script_error_log("go_ethereum_prison summoned creature (entry %u) but faction (%u) are not expected by script.", pCreature->GetEntry(), pCreature->getFaction());
+                    script_error_log("go_ethereum_prison summoned creature (entry %u) but faction (%u) are not expected by script.", pCreature->GetEntry(), pCreature->GetFaction());
             }
         }
     }

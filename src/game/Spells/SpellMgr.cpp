@@ -119,7 +119,7 @@ uint32 GetSpellCastTime(SpellEntry const* spellInfo, Spell const* spell)
     SpellScalingEntry const* spellScalingEntry = spellInfo->GetSpellScaling();
     if (spell && spellScalingEntry && (spell->GetCaster()->GetTypeId() == TYPEID_PLAYER || spell->GetCaster()->GetObjectGuid().IsPet()))
     {
-        uint32 level = spell->GetCaster()->getLevel();
+        uint32 level = spell->GetCaster()->GetLevel();
         if (level == 1)
             castTime = int32(spellScalingEntry->castTimeMin);
         else if (level < spellScalingEntry->castScalingMaxLevel)
@@ -132,7 +132,7 @@ uint32 GetSpellCastTime(SpellEntry const* spellInfo, Spell const* spell)
     {
         if (spell)
         {
-            uint32 level = spell->GetCaster()->getLevel();
+            uint32 level = spell->GetCaster()->GetLevel();
             if (SpellLevelsEntry const* levelsEntry = spellInfo->GetSpellLevels())
             {
                 if (levelsEntry->maxLevel)
@@ -4114,7 +4114,7 @@ SpellCastResult SpellMgr::GetSpellAllowedInLocationError(SpellEntry const* spell
     }
 
     // continent limitation (virtual continent), ignore for GM
-    if (spellInfo->HasAttribute(SPELL_ATTR_EX4_CAST_ONLY_IN_OUTLAND) && !(player && player->isGameMaster()))
+    if (spellInfo->HasAttribute(SPELL_ATTR_EX4_CAST_ONLY_IN_OUTLAND) && !(player && player->IsGameMaster()))
     {
         uint32 v_map = GetVirtualMapForMapAndZone(map_id, zone_id);
         MapEntry const* mapEntry = sMapStore.LookupEntry(v_map);

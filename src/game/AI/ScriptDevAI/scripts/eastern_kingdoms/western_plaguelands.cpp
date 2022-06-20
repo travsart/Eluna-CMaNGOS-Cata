@@ -683,7 +683,7 @@ struct npc_taelan_fordringAI: public npc_escortAI, private DialogueHelper
     {
         DialogueUpdate(uiDiff);
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_bTaelanDead)
@@ -697,7 +697,7 @@ struct npc_taelan_fordringAI: public npc_escortAI, private DialogueHelper
 
         if (m_uiHolyCleaveTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_HOLY_CLEAVE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_HOLY_CLEAVE) == CAST_OK)
                 m_uiHolyCleaveTimer = urand(11000, 13000);
         }
         else
@@ -705,7 +705,7 @@ struct npc_taelan_fordringAI: public npc_escortAI, private DialogueHelper
 
         if (m_uiHolyStrikeTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_HOLY_STRIKE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_HOLY_STRIKE) == CAST_OK)
                 m_uiHolyStrikeTimer = urand(9000, 14000);
         }
         else
@@ -713,7 +713,7 @@ struct npc_taelan_fordringAI: public npc_escortAI, private DialogueHelper
 
         if (m_uiCrusaderStrike < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CRUSADER_STRIKE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CRUSADER_STRIKE) == CAST_OK)
                 m_uiCrusaderStrike = urand(7000, 12000);
         }
         else
@@ -864,7 +864,7 @@ struct npc_isillienAI: public npc_escortAI
 
     void UpdateEscortAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // start event epilog
@@ -878,7 +878,7 @@ struct npc_isillienAI: public npc_escortAI
         // combat spells
         if (m_uiMindBlastTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_MIND_BLAST) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_MIND_BLAST) == CAST_OK)
                 m_uiMindBlastTimer = urand(3000, 5000);
         }
         else
@@ -886,7 +886,7 @@ struct npc_isillienAI: public npc_escortAI
 
         if (m_uiMindFlayTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_MIND_FLAY) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_MIND_FLAY) == CAST_OK)
                 m_uiMindFlayTimer = urand(9000, 15000);
         }
         else
@@ -894,7 +894,7 @@ struct npc_isillienAI: public npc_escortAI
 
         if (m_uiManaBurnTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_MANA_BURN) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_MANA_BURN) == CAST_OK)
                 m_uiManaBurnTimer = urand(8000, 12000);
         }
         else
@@ -1033,13 +1033,13 @@ struct npc_tirion_fordringAI: public npc_escortAI
 
     void UpdateEscortAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // combat spells
         if (m_uiHolyCleaveTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_HOLY_CLEAVE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_HOLY_CLEAVE) == CAST_OK)
                 m_uiHolyCleaveTimer = urand(12000, 15000);
         }
         else
@@ -1047,7 +1047,7 @@ struct npc_tirion_fordringAI: public npc_escortAI
 
         if (m_uiHolyStrikeTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_HOLY_STRIKE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_HOLY_STRIKE) == CAST_OK)
                 m_uiHolyStrikeTimer = urand(8000, 11000);
         }
         else
@@ -1055,7 +1055,7 @@ struct npc_tirion_fordringAI: public npc_escortAI
 
         if (m_uiCrusaderStrike < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CRUSADER_STRIKE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CRUSADER_STRIKE) == CAST_OK)
                 m_uiCrusaderStrike = urand(7000, 9000);
         }
         else

@@ -148,8 +148,8 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
         }
 
         // Attack only in combat
-        if (m_creature->getVictim())
-            pSummoned->AI()->AttackStart(m_creature->getVictim());
+        if (m_creature->GetVictim())
+            pSummoned->AI()->AttackStart(m_creature->GetVictim());
     }
 
     void SummonedMovementInform(Creature* pSummoned, uint32 uiMotionType, uint32 uiPointId) override
@@ -210,7 +210,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
         {
             // handle elementals on OOC timer
             if (m_uiElementalTimer < uiDiff)

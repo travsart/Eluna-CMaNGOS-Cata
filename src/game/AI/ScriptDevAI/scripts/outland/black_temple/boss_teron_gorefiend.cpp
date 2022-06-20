@@ -140,7 +140,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiSummonDoomBlossomTimer < uiDiff)
@@ -160,7 +160,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
         {
             Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1);
 
-            if (DoCastSpellIfCan(pTarget ? pTarget : m_creature->getVictim(), SPELL_INCINERATE) == CAST_OK)
+            if (DoCastSpellIfCan(pTarget ? pTarget : m_creature->GetVictim(), SPELL_INCINERATE) == CAST_OK)
                 m_uiIncinerateTimer = urand(20000, 50000);
         }
         else

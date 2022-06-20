@@ -176,7 +176,7 @@ struct boss_viscidusAI : public ScriptedAI
                 m_uiPhase = PHASE_NORMAL;
 
                 SetCombatMovement(true);
-                DoStartMovement(m_creature->getVictim());
+                DoStartMovement(m_creature->GetVictim());
             }
         }
     }
@@ -197,7 +197,7 @@ struct boss_viscidusAI : public ScriptedAI
             m_uiPhase = PHASE_NORMAL;
 
             SetCombatMovement(true);
-            DoStartMovement(m_creature->getVictim());
+            DoStartMovement(m_creature->GetVictim());
         }
     }
 
@@ -292,7 +292,7 @@ struct boss_viscidusAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiExplodeDelayTimer)

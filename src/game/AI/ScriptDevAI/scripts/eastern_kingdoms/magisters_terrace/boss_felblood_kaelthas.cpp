@@ -190,7 +190,7 @@ struct boss_felblood_kaelthasAI : public ScriptedAI, private DialogueHelper
 
     void MoveInLineOfSight(Unit* pWho) override
     {
-        if (!m_bHasTaunted && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->isGameMaster() &&
+        if (!m_bHasTaunted && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->IsGameMaster() &&
                 m_creature->IsWithinDistInMap(pWho, 40.0) && m_creature->IsWithinLOSInMap(pWho))
         {
             StartNextDialogueText(SAY_INTRO_1);
@@ -295,7 +295,7 @@ struct boss_felblood_kaelthasAI : public ScriptedAI, private DialogueHelper
     {
         DialogueUpdate(uiDiff);
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Don't use spells during the epilogue
@@ -516,7 +516,7 @@ struct mob_felkael_phoenixAI : public ScriptedAI
         {
             m_creature->SetHealth(m_creature->GetMaxHealth());
             m_creature->GetMotionMaster()->Clear();
-            DoStartMovement(m_creature->getVictim());
+            DoStartMovement(m_creature->GetVictim());
             m_bFakeDeath = false;
 
             DoCastSpellIfCan(m_creature, SPELL_PHOENIX_BURN, CAST_TRIGGERED);
@@ -532,7 +532,7 @@ struct mob_felkael_phoenixAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_bFakeDeath)

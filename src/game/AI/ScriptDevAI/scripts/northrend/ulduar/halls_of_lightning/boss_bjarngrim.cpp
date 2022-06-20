@@ -174,7 +174,7 @@ struct boss_bjarngrimAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff) override
     {
         // Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Change stance
@@ -238,7 +238,7 @@ struct boss_bjarngrimAI : public ScriptedAI
 
                 if (m_uiPummelTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_PUMMEL) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_PUMMEL) == CAST_OK)
                         m_uiPummelTimer = urand(10000, 11000);
                 }
                 else
@@ -259,7 +259,7 @@ struct boss_bjarngrimAI : public ScriptedAI
                 if (m_uiInterceptTimer < uiDiff)
                 {
                     // not much point is this, better random target and more often?
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_INTERCEPT) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_INTERCEPT) == CAST_OK)
                         m_uiInterceptTimer = urand(45000, 46000);
                 }
                 else
@@ -275,7 +275,7 @@ struct boss_bjarngrimAI : public ScriptedAI
 
                 if (m_uiCleaveTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CLEAVE) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CLEAVE) == CAST_OK)
                         m_uiCleaveTimer = urand(8000, 9000);
                 }
                 else
@@ -287,7 +287,7 @@ struct boss_bjarngrimAI : public ScriptedAI
             {
                 if (m_uiMortalStrikeTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_MORTAL_STRIKE) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_MORTAL_STRIKE) == CAST_OK)
                         m_uiMortalStrikeTimer = urand(20000, 21000);
                 }
                 else
@@ -295,7 +295,7 @@ struct boss_bjarngrimAI : public ScriptedAI
 
                 if (m_uiSlamTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SLAM) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SLAM) == CAST_OK)
                         m_uiSlamTimer = urand(15000, 16000);
                 }
                 else
@@ -337,12 +337,12 @@ struct mob_stormforged_lieutenantAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff) override
     {
         // Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiArcWeldTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_ARC_WELD) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_ARC_WELD) == CAST_OK)
                 m_uiArcWeldTimer = urand(20000, 21000);
         }
         else
@@ -354,7 +354,7 @@ struct mob_stormforged_lieutenantAI : public ScriptedAI
             {
                 if (Creature* pBjarngrim = m_pInstance->GetSingleCreatureFromStorage(NPC_BJARNGRIM))
                 {
-                    if (pBjarngrim->isAlive())
+                    if (pBjarngrim->IsAlive())
                         DoCastSpellIfCan(pBjarngrim, m_bIsRegularMode ? SPELL_RENEW_STEEL_N : SPELL_RENEW_STEEL_H);
                 }
             }

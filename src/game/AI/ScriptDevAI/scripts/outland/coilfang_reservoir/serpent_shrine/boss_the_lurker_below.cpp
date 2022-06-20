@@ -137,7 +137,7 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
     bool SelectHostileTarget()
     {
         Unit* pTarget = NULL;
-        Unit* pOldTarget = m_creature->getVictim();
+        Unit* pOldTarget = m_creature->GetVictim();
 
         if (!m_creature->getThreatManager().isThreatListEmpty())
             pTarget = m_creature->getThreatManager().getHostileTarget();
@@ -148,7 +148,7 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
                 AttackStart(pTarget);
 
             // Set victim to old target (if not while Spout)
-            if (pOldTarget && pOldTarget->isAlive() && m_uiPhase != PHASE_SPOUT)
+            if (pOldTarget && pOldTarget->IsAlive() && m_uiPhase != PHASE_SPOUT)
             {
                 m_creature->SetTargetGuid(pOldTarget->GetObjectGuid());
                 m_creature->SetInFront(pOldTarget);
@@ -210,7 +210,7 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
 
                             // Remove the target focus but allow the boss to face the current victim
                             m_creature->SetTargetGuid(ObjectGuid());
-                            m_creature->SetFacingToObject(m_creature->getVictim());
+                            m_creature->SetFacingToObject(m_creature->GetVictim());
 
                             m_uiPhase = PHASE_SPOUT;
                             m_uiSpoutTimer = 30000;
@@ -239,7 +239,7 @@ struct boss_the_lurker_belowAI : public Scripted_NoMovementAI
                         m_uiGeyserTimer -= uiDiff;
 
                     // If we are within range melee the target
-                    if (m_creature->CanReachWithMeleeAttack(m_creature->getVictim()))
+                    if (m_creature->CanReachWithMeleeAttack(m_creature->GetVictim()))
                         DoMeleeAttackIfReady();
                     // Spam Waterbolt spell when not tanked
                     else

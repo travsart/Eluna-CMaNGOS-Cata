@@ -220,8 +220,8 @@ struct boss_alarAI : public ScriptedAI
 
                     // start following target
                     SetCombatMovement(true);
-                    if (m_creature->getVictim())
-                        m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                    if (m_creature->GetVictim())
+                        m_creature->GetMotionMaster()->MoveChase(m_creature->GetVictim());
 
                     m_uiPhase = PHASE_TWO;
                 }
@@ -266,7 +266,7 @@ struct boss_alarAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Platform phase
@@ -331,7 +331,7 @@ struct boss_alarAI : public ScriptedAI
 
             if (m_uiMeltArmorTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_MELT_ARMOR) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_MELT_ARMOR) == CAST_OK)
                     m_uiMeltArmorTimer = 60000;
             }
             else
@@ -416,7 +416,7 @@ struct boss_alarAI : public ScriptedAI
         {
             if (m_uiRangeCheckTimer <= uiDiff)
             {
-                if (!m_creature->IsWithinDistInMap(m_creature->getVictim(), ATTACK_DISTANCE))
+                if (!m_creature->IsWithinDistInMap(m_creature->GetVictim(), ATTACK_DISTANCE))
                     DoCastSpellIfCan(m_creature, SPELL_FLAME_BUFFET);
                 m_uiRangeCheckTimer = 2000;
             }

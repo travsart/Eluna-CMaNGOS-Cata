@@ -88,9 +88,9 @@ struct mob_dragonflayer_forge_masterAI : public ScriptedAI
 
             lGOList.sort(ObjectDistanceOrder(m_creature));
 
-            if (lGOList.front()->getLootState() == GO_READY)
+            if (lGOList.front()->GetLootState() == GO_READY)
                 lGOList.front()->UseDoorOrButton(DAY);
-            else if (lGOList.front()->getLootState() == GO_ACTIVATED)
+            else if (lGOList.front()->GetLootState() == GO_ACTIVATED)
                 lGOList.front()->ResetDoorOrButton();
 
             switch (lGOList.front()->GetEntry())
@@ -102,9 +102,9 @@ struct mob_dragonflayer_forge_masterAI : public ScriptedAI
 
             if (GameObject* pGOTemp = m_pInstance->GetSingleGameObjectFromStorage(uiGOFire))
             {
-                if (pGOTemp->getLootState() == GO_READY)
+                if (pGOTemp->GetLootState() == GO_READY)
                     pGOTemp->UseDoorOrButton(DAY);
-                else if (pGOTemp->getLootState() == GO_ACTIVATED)
+                else if (pGOTemp->GetLootState() == GO_ACTIVATED)
                     pGOTemp->ResetDoorOrButton();
             }
         }
@@ -128,12 +128,12 @@ struct mob_dragonflayer_forge_masterAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiBurningBrandTimer < uiDiff)
         {
-            DoCastSpellIfCan(m_creature->getVictim(), m_bIsRegularMode ? SPELL_BURNING_BRAND : SPELL_BURNING_BRAND_H);
+            DoCastSpellIfCan(m_creature->GetVictim(), m_bIsRegularMode ? SPELL_BURNING_BRAND : SPELL_BURNING_BRAND_H);
             m_uiBurningBrandTimer = 15000;
         }
         else m_uiBurningBrandTimer -= uiDiff;

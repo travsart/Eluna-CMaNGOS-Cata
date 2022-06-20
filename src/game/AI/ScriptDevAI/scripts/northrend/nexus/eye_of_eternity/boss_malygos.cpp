@@ -230,7 +230,7 @@ struct boss_malygosAI : public ScriptedAI, private DialogueHelper
 
     void MoveInLineOfSight(Unit* pWho) override
     {
-        if (!m_bHasDoneIntro && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->isGameMaster() && m_creature->IsWithinDistInMap(pWho, 110.0f))
+        if (!m_bHasDoneIntro && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->IsGameMaster() && m_creature->IsWithinDistInMap(pWho, 110.0f))
         {
             StartNextDialogueText(SAY_INTRO_1);
             m_bHasDoneIntro = true;
@@ -289,7 +289,7 @@ struct boss_malygosAI : public ScriptedAI, private DialogueHelper
         {
             m_creature->SetLevitate(false);
             SetCombatMovement(true);
-            DoStartMovement(m_creature->getVictim());
+            DoStartMovement(m_creature->GetVictim());
             m_creature->RemoveByteFlag(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_FLY_ANIM);
         }
     }
@@ -410,7 +410,7 @@ struct boss_malygosAI : public ScriptedAI, private DialogueHelper
     {
         DialogueUpdate(uiDiff);
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiBerserkTimer)

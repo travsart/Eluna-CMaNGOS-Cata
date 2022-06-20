@@ -3,7 +3,7 @@
 #####################################
 
 [MangosdConf]
-ConfVersion=2016101401
+ConfVersion=2022061901
 
 ###################################################################################################################
 # CONNECTIONS AND DIRECTORIES
@@ -1774,3 +1774,41 @@ Currency.ResetWeekDay = 3
 Currency.ResetHour = 6
 Currency.ConquestPointsDefaultWeekCap = 135000
 Currency.ConquestPointsArenaReward = 12000
+
+###################################################################################################################
+#  ELUNA SETTINGS
+#
+#    Eluna.Enabled
+#        Enable Eluna LuaEngine
+#        Default: 1 (Enabled)
+#                 0 (Disabled)
+#
+#   Eluna.CompatibilityMode
+#       Description: Toggles Eluna between compatibility mode (single-threaded) or multistate mode. 
+#                    Compatibility mode limits the core to a single map update thread.
+#       Default:     true  - (enabled)
+#                    false - (disabled)
+#
+#   Eluna.OnlyOnMaps
+#       Description: When Eluna is enabled, a state will only be created for a list of specified maps
+#                    This only works for multistate mode.
+#       Default:     ""  - (enabled on all maps)
+#                    "0,1,2,..." - (enabled on specific maps only)
+#
+#   Eluna.TraceBack
+#       Description: Sets whether to use debug.traceback function on a lua error or not.
+#                    Notice that you can redefine the function.
+#       Default:    false - (use default error output)
+#                   true  - (use debug.traceback function)
+#
+#   Eluna.ScriptPath
+#       Description: Sets the location of the script folder to load scripts from
+#                    The path can be relative or absolute.
+#       Default:    "lua_scripts"
+#
+###################################################################################################################
+Eluna.Enabled = 1
+Eluna.CompatibilityMode = true
+Eluna.OnlyOnMaps = ""
+Eluna.TraceBack = false
+Eluna.ScriptPath = "lua_scripts"

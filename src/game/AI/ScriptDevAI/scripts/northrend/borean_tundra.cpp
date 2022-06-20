@@ -101,7 +101,7 @@ struct npc_nesingwary_trapperAI : public ScriptedAI
             // respawn the Quality Fur
             if (GameObject* pGoFur = GetClosestGameObjectWithEntry(pTrap, GO_QUALITY_FUR, INTERACTION_DISTANCE))
             {
-                if (!pGoFur->isSpawned())
+                if (!pGoFur->IsSpawned())
                 {
                     pGoFur->SetRespawnTime(10);
                     pGoFur->Refresh();
@@ -114,7 +114,7 @@ struct npc_nesingwary_trapperAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->getVictim() && m_uiPhaseTimer)
+        if (!m_creature->GetVictim() && m_uiPhaseTimer)
         {
             if (m_uiPhaseTimer <= uiDiff)
             {
@@ -149,7 +149,7 @@ struct npc_nesingwary_trapperAI : public ScriptedAI
 
                             if (Player* pPlayer = m_creature->GetMap()->GetPlayer(m_playerGuid))
                             {
-                                if (pPlayer->isAlive())
+                                if (pPlayer->IsAlive())
                                     pPlayer->KilledMonsterCredit(m_creature->GetEntry());
                             }
                         }
@@ -212,7 +212,7 @@ struct npc_oil_stained_wolfAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
         {
             if (m_uiPooTimer)
             {
@@ -251,7 +251,7 @@ bool EffectDummyCreature_npc_oil_stained_wolf(Unit* pCaster, uint32 uiSpellId, S
 {
     if (uiSpellId == SPELL_THROW_WOLF_BAIT)
     {
-        if (uiEffIndex == EFFECT_INDEX_0 && pCreatureTarget->getFaction() != FACTION_MONSTER && !pCreatureTarget->HasAura(SPELL_HAS_EATEN))
+        if (uiEffIndex == EFFECT_INDEX_0 && pCreatureTarget->GetFaction() != FACTION_MONSTER && !pCreatureTarget->HasAura(SPELL_HAS_EATEN))
         {
             pCreatureTarget->SetFactionTemporary(FACTION_MONSTER);
             pCreatureTarget->SetWalk(false);
@@ -468,7 +468,7 @@ struct npc_lurgglbrAI : public npc_escortAI
 
     void UpdateEscortAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
         {
             if (m_uiSayTimer)
             {
@@ -656,7 +656,7 @@ struct npc_nexus_drake_hatchlingAI : public FollowerAI
     {
         FollowerAI::MoveInLineOfSight(pWho);
 
-        if (!m_creature->HasAura(SPELL_SUBDUED) || m_creature->getVictim())
+        if (!m_creature->HasAura(SPELL_SUBDUED) || m_creature->GetVictim())
             return;
 
         if (pWho->GetEntry() == NPC_COLDARRA_DRAKE_HUNT_INVISMAN && m_creature->IsWithinDistInMap(pWho, 20.0f))
@@ -713,7 +713,7 @@ struct npc_nexus_drake_hatchlingAI : public FollowerAI
                 m_uiSubduedTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiNetherbreathTimer < uiDiff)
@@ -901,7 +901,7 @@ struct npc_scourged_flamespitterAI : public ScriptedAI
             if (m_uiNetExpireTimer <= uiDiff)
             {
                 // evade when the net root has expired
-                if (!m_creature->getVictim())
+                if (!m_creature->GetVictim())
                     EnterEvadeMode();
 
                 m_uiNetExpireTimer = 0;
@@ -910,7 +910,7 @@ struct npc_scourged_flamespitterAI : public ScriptedAI
                 m_uiNetExpireTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
         {
             // incinerate visual on OOC timer, unless creature is rooted
             if (!m_uiNetExpireTimer)
@@ -929,7 +929,7 @@ struct npc_scourged_flamespitterAI : public ScriptedAI
 
         if (m_uiIncinerateTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_INCINERATE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_INCINERATE) == CAST_OK)
                 m_uiIncinerateTimer = urand(3000, 5000);
         }
         else
@@ -1128,7 +1128,7 @@ struct npc_jennyAI : public FollowerAI
         {
             if (Player* pSummoner = m_creature->GetBeneficiaryPlayer())
             {
-                StartFollow(pSummoner, pSummoner->getFaction(), GetQuestTemplateStore(QUEST_ID_LOADER_UP));
+                StartFollow(pSummoner, pSummoner->GetFaction(), GetQuestTemplateStore(QUEST_ID_LOADER_UP));
 
                 if (DoCastSpellIfCan(m_creature, SPELL_CREATES_CARRIED) == CAST_OK)
                     m_bFollowStarted = true;
@@ -1143,7 +1143,7 @@ struct npc_jennyAI : public FollowerAI
                 m_uiDropDelayTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
     }
 };
@@ -1333,7 +1333,7 @@ enum
 
 bool NpcSpellClick_npc_storm_totem(Player* pPlayer, Creature* pClickedCreature, uint32 /*uiSpellId*/)
 {
-    if (pPlayer->GetQuestStatus(QUEST_MASTER_THE_STORM) == QUEST_STATUS_INCOMPLETE && !pPlayer->isInCombat() && !GetClosestCreatureWithEntry(pPlayer, NPC_STORM_TEMPEST, 30.0f))
+    if (pPlayer->GetQuestStatus(QUEST_MASTER_THE_STORM) == QUEST_STATUS_INCOMPLETE && !pPlayer->IsInCombat() && !GetClosestCreatureWithEntry(pPlayer, NPC_STORM_TEMPEST, 30.0f))
         pClickedCreature->SummonCreature(NPC_STORM_TEMPEST, 3403.64f, 4133.09f, 18.04f, 5.65f, TEMPSPAWN_TIMED_OOC_OR_DEAD_DESPAWN, 10000);
 
     return true;

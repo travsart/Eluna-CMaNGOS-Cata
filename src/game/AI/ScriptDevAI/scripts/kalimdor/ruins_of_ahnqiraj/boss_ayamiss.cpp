@@ -130,7 +130,7 @@ struct boss_ayamissAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (!m_bHasFrenzy && m_creature->GetHealthPercent() < 20.0f)
@@ -156,7 +156,7 @@ struct boss_ayamissAI : public ScriptedAI
         {
             Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1, SPELL_PARALYZE, SELECT_FLAG_PLAYER);
             if (!pTarget)
-                pTarget = m_creature->getVictim();
+                pTarget = m_creature->GetVictim();
 
             if (DoCastSpellIfCan(pTarget, SPELL_PARALYZE) == CAST_OK)
             {
@@ -215,14 +215,14 @@ struct boss_ayamissAI : public ScriptedAI
                 m_creature->SetLevitate(false);
                 DoResetThreat();
 
-                if (m_creature->getVictim())
-                    m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                if (m_creature->GetVictim())
+                    m_creature->GetMotionMaster()->MoveChase(m_creature->GetVictim());
             }
 
             // Poison Stinger
             if (m_uiPoisonStingerTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_POISON_STINGER) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_POISON_STINGER) == CAST_OK)
                     m_uiPoisonStingerTimer = urand(2000, 3000);
             }
             else
@@ -232,7 +232,7 @@ struct boss_ayamissAI : public ScriptedAI
         {
             if (m_uiLashTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_LASH) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_LASH) == CAST_OK)
                     m_uiLashTimer = urand(8000, 15000);
             }
             else
@@ -240,7 +240,7 @@ struct boss_ayamissAI : public ScriptedAI
 
             if (m_uiTrashTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_TRASH) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_TRASH) == CAST_OK)
                     m_uiTrashTimer = urand(5000, 7000);
             }
             else
@@ -300,7 +300,7 @@ struct npc_hive_zara_larvaAI : public ScriptedAI
                 return;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         DoMeleeAttackIfReady();

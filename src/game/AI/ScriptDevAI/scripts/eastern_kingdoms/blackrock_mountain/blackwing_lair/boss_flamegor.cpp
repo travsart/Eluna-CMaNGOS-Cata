@@ -75,7 +75,7 @@ struct boss_flamegorAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Shadow Flame Timer
@@ -92,7 +92,7 @@ struct boss_flamegorAI : public ScriptedAI
         {
             if (DoCastSpellIfCan(m_creature, SPELL_WING_BUFFET) == CAST_OK)
             {
-                if (Unit* pTarget = m_creature->getVictim())
+                if (Unit* pTarget = m_creature->GetVictim())
                 {
                     if (m_creature->getThreatManager().getThreat(pTarget))
                         m_creature->getThreatManager().modifyThreatPercent(pTarget, -75);

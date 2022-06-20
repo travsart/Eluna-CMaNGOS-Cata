@@ -210,7 +210,7 @@ struct npc_taskmaster_fizzuleAI : public ScriptedAI
         {
             ++m_uiFlareCount;
 
-            if (m_uiFlareCount >= 2 && m_creature->getFaction() != FACTION_FRIENDLY_F)
+            if (m_uiFlareCount >= 2 && m_creature->GetFaction() != FACTION_FRIENDLY_F)
                 m_uiResetTimer = 120000;
         }
     }
@@ -228,7 +228,7 @@ struct npc_taskmaster_fizzuleAI : public ScriptedAI
                 m_uiResetTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         DoMeleeAttackIfReady();
@@ -238,7 +238,7 @@ struct npc_taskmaster_fizzuleAI : public ScriptedAI
     {
         if (uiTextEmote == TEXTEMOTE_SALUTE)
         {
-            if (m_uiFlareCount >= 2 && m_creature->getFaction() != FACTION_FRIENDLY_F)
+            if (m_uiFlareCount >= 2 && m_creature->GetFaction() != FACTION_FRIENDLY_F)
                 EnterEvadeMode();
         }
     }
@@ -400,7 +400,7 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
         {
             Player* pPlayer = m_creature->GetMap()->GetPlayer(m_playerGuid);
 
-            if (!pPlayer || !pPlayer->isAlive())
+            if (!pPlayer || !pPlayer->IsAlive())
                 EnterEvadeMode();
 
             switch (m_uiStep)
@@ -447,7 +447,7 @@ CreatureAI* GetAI_npc_twiggy_flathead(Creature* pCreature)
 
 bool AreaTrigger_at_twiggy_flathead(Player* pPlayer, AreaTriggerEntry const* /*pAt*/)
 {
-    if (pPlayer->isAlive() && !pPlayer->isGameMaster() && pPlayer->GetQuestStatus(QUEST_AFFRAY) == QUEST_STATUS_INCOMPLETE)
+    if (pPlayer->IsAlive() && !pPlayer->IsGameMaster() && pPlayer->GetQuestStatus(QUEST_AFFRAY) == QUEST_STATUS_INCOMPLETE)
     {
         Creature* pCreature = GetClosestCreatureWithEntry(pPlayer, NPC_TWIGGY, 30.0f);
         if (!pCreature)
@@ -563,7 +563,7 @@ struct npc_wizzlecranks_shredderAI : public npc_escortAI
 
     void UpdateEscortAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
         {
             if (m_bIsPostEvent)
             {

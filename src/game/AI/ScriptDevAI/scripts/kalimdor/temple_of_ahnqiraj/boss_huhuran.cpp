@@ -83,7 +83,7 @@ struct boss_huhuranAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff) override
     {
         // Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Frenzy_Timer
@@ -116,7 +116,7 @@ struct boss_huhuranAI : public ScriptedAI
         // Spit Timer
         if (m_uiSpitTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_ACID_SPIT) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_ACID_SPIT) == CAST_OK)
                 m_uiSpitTimer = urand(5000, 10000);
         }
         else
@@ -125,7 +125,7 @@ struct boss_huhuranAI : public ScriptedAI
         // NoxiousPoison_Timer
         if (m_uiNoxiousPoisonTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_NOXIOUS_POISON) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_NOXIOUS_POISON) == CAST_OK)
                 m_uiNoxiousPoisonTimer = urand(12000, 24000);
         }
         else

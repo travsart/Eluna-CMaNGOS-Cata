@@ -33,6 +33,9 @@
 #include "Server/DB2Stores.h"
 #include "Entities/Vehicle.h"
 #include "Maps/TransportSystem.h"
+#ifdef BUILD_ELUNA
+#include "LuaEngine/LuaEngine.h"
+#endif
 
 /* differeces from off:
     -you can uninvite yourself - is is useful
@@ -143,12 +146,12 @@ void WorldSession::HandleGroupInviteOpcode(WorldPacket& recv_data)
     }
 
     Group* initiatorGroup = initiator->GetGroup();
-    if (initiatorGroup && initiatorGroup->isBGGroup())
+    if (initiatorGroup && initiatorGroup->IsBattleGroup())
         initiatorGroup = initiator->GetOriginalGroup();
     if (!initiatorGroup)
         initiatorGroup = initiator->GetGroupInvite();
 
-    if (initiatorGroup && initiatorGroup->isRaidGroup() && !recipient->GetAllowLowLevelRaid() && (recipient->getLevel() < sWorld.getConfig(CONFIG_UINT32_MIN_LEVEL_FOR_RAID)))
+    if (initiatorGroup && initiatorGroup->IsRaidGroup() && !recipient->GetAllowLowLevelRaid() && (recipient->GetLevel() < sWorld.getConfig(CONFIG_UINT32_MIN_LEVEL_FOR_RAID)))
     {
         SendPartyResult(PARTY_OP_INVITE, "", ERR_RAID_DISALLOWED_BY_LEVEL);
         return;
@@ -162,7 +165,7 @@ void WorldSession::HandleGroupInviteOpcode(WorldPacket& recv_data)
     }
 
     Group* recipientGroup = recipient->GetGroup();
-    if (recipientGroup && recipientGroup->isBGGroup())
+    if (recipientGroup && recipientGroup->IsBattleGroup())
         recipientGroup = recipient->GetOriginalGroup();
 
     // player already in another group
@@ -256,6 +259,12 @@ void WorldSession::HandleGroupInviteResponseOpcode(WorldPacket& recv_data)
             SendPartyResult(PARTY_OP_INVITE, "", ERR_GROUP_FULL);
             return;
         }
+
+#ifdef BUILD_ELUNA
+    if (Eluna* e = sWorld.GetEluna())
+        if (!e->OnMemberAccept(group, GetPlayer()))
+            return;
+#endif
 
         Player* leader = sObjectMgr.GetPlayer(group->GetLeaderGuid());
 
@@ -491,7 +500,7 @@ void WorldSession::HandleRaidTargetUpdateOpcode(WorldPacket& recv_data)
     }
     else                                                    // target icon update
     {
-        if (group->isRaidGroup() &&
+        if (group->IsRaidGroup() &&
                 !group->IsLeader(GetPlayer()->GetObjectGuid()) &&
                 !group->IsAssistant(GetPlayer()->GetObjectGuid()))
             return;
@@ -705,7 +714,7 @@ void WorldSession::BuildPartyMemberStatsChangedPacket(Player* player, WorldPacke
         *data << uint16(player->GetMaxPower(powerType));
 
     if (mask & GROUP_UPDATE_FLAG_LEVEL)
-        *data << uint16(player->getLevel());
+        *data << uint16(player->GetLevel());
 
     if (mask & GROUP_UPDATE_FLAG_ZONE)
         *data << uint16(player->GetZoneId());
@@ -908,7 +917,7 @@ void WorldSession::HandleRequestPartyMemberStatsOpcode(WorldPacket& recv_data)
     data << uint8(powerType);                               // GROUP_UPDATE_FLAG_POWER_TYPE
     data << uint16(player->GetPower(powerType));            // GROUP_UPDATE_FLAG_CUR_POWER
     data << uint16(player->GetMaxPower(powerType));         // GROUP_UPDATE_FLAG_MAX_POWER
-    data << uint16(player->getLevel());                     // GROUP_UPDATE_FLAG_LEVEL
+    data << uint16(player->GetLevel());                     // GROUP_UPDATE_FLAG_LEVEL
 
     // verify player coordinates and zoneid to send to teammates
     uint16 iZoneId = 0;

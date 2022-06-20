@@ -51,7 +51,7 @@ void GuardianAI::UpdateAI(const uint32 diff)
     {
         case REACT_AGGRESSIVE:
         case REACT_DEFENSIVE:
-            if (!m_creature->isInCombat() && owner->isInCombat())
+            if (!m_creature->IsInCombat() && owner->IsInCombat())
                 AttackStart(owner->getAttackerForHelper());   // check for getAttackerForHelper() == nullpter in AttackStart()
             break;
         default:
@@ -178,7 +178,7 @@ void GuardianAI::CombatStop()
         return;
 
     // only alive creatures that are not on transport can return to home position
-    if (m_creature->isAlive() && !m_creature->IsBoarded())
+    if (m_creature->IsAlive() && !m_creature->IsBoarded())
         m_creature->GetMotionMaster()->MoveFollow(owner, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
 }
 

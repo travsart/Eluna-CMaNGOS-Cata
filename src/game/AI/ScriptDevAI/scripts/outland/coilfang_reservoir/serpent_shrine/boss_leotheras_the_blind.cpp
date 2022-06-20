@@ -143,7 +143,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
     {
         if (pSummoned->GetEntry() == NPC_SHADOW_LEO)
         {
-            pSummoned->AI()->AttackStart(m_creature->getVictim());
+            pSummoned->AI()->AttackStart(m_creature->GetVictim());
             pSummoned->GetMotionMaster()->MoveFollow(m_creature, 0, 0);
         }
     }
@@ -177,7 +177,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
         }
 
         // Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiFinalFormTimer)
@@ -188,7 +188,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
                 SetCombatMovement(true);
-                DoStartMovement(m_creature->getVictim());
+                DoStartMovement(m_creature->GetVictim());
                 m_uiFinalFormTimer = 0;
             }
             else
@@ -253,7 +253,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
 
             if (m_uiChaosBlastTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CHAOS_BLAST) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CHAOS_BLAST) == CAST_OK)
                     m_uiChaosBlastTimer = urand(2000, 3000);
             }
             else
@@ -268,7 +268,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
                 m_creature->RemoveAurasDueToSpell(SPELL_METAMORPHOSIS);
 
                 SetCombatMovement(true);
-                DoStartMovement(m_creature->getVictim());
+                DoStartMovement(m_creature->GetVictim());
 
                 DoResetThreat();
                 m_bDemonForm = false;

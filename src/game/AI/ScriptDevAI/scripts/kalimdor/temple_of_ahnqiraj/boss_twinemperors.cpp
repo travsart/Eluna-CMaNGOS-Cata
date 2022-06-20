@@ -160,7 +160,7 @@ struct boss_twin_emperorsAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff) override
     {
         // Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Call emperor specific virtual function
@@ -281,7 +281,7 @@ struct boss_veknilashAI : public boss_twin_emperorsAI
     {
         if (m_uiUnbalancingStrikeTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_UNBALANCING_STRIKE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_UNBALANCING_STRIKE) == CAST_OK)
                 m_uiUnbalancingStrikeTimer = urand(8000, 20000);
         }
         else
@@ -385,7 +385,7 @@ struct boss_veklorAI : public boss_twin_emperorsAI
     {
         if (m_uiShadowBoltTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHADOW_BOLT) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SHADOW_BOLT) == CAST_OK)
                 m_uiShadowBoltTimer = 2000;
         }
         else

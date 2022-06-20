@@ -164,7 +164,7 @@ struct boss_nightbaneAI : public npc_escortAI
 
                     m_uiPhase = PHASE_GROUND;
                     SetCombatMovement(true);
-                    DoStartMovement(m_creature->getVictim());
+                    DoStartMovement(m_creature->GetVictim());
                     break;
             }
         }
@@ -172,8 +172,8 @@ struct boss_nightbaneAI : public npc_escortAI
 
     void JustSummoned(Creature* pSummoned) override
     {
-        if (m_creature->getVictim())
-            pSummoned->AI()->AttackStart(m_creature->getVictim());
+        if (m_creature->GetVictim())
+            pSummoned->AI()->AttackStart(m_creature->GetVictim());
     }
 
     // Wrapper to handle movement to the closest trigger
@@ -209,7 +209,7 @@ struct boss_nightbaneAI : public npc_escortAI
 
     void UpdateEscortAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         switch (m_uiPhase)
@@ -253,7 +253,7 @@ struct boss_nightbaneAI : public npc_escortAI
 
                 if (m_uiCleavetimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CLEAVE) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CLEAVE) == CAST_OK)
                         m_uiCleavetimer = urand(6000, 12000);
                 }
                 else

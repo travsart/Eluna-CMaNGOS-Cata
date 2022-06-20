@@ -606,7 +606,7 @@ bool AreaTrigger_at_commander_dawnforge(Player* pPlayer, AreaTriggerEntry const*
     if (!pPlayer->HasAura(SPELL_SUNFURY_DISGUISE, EFFECT_INDEX_0))
         return false;
 
-    if (pPlayer->isAlive() && pPlayer->GetQuestStatus(QUEST_INFO_GATHERING) == QUEST_STATUS_INCOMPLETE)
+    if (pPlayer->IsAlive() && pPlayer->GetQuestStatus(QUEST_INFO_GATHERING) == QUEST_STATUS_INCOMPLETE)
     {
         Creature* pDawnforge = GetClosestCreatureWithEntry(pPlayer, NPC_COMMANDER_DAWNFORGE, 30.0f);
 
@@ -773,7 +773,7 @@ struct npc_maxx_a_million_escortAI : public npc_escortAI
 
     void UpdateEscortAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() ||  !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() ||  !m_creature->GetVictim())
         {
             if (m_uiSubEventTimer)
             {
@@ -1097,12 +1097,12 @@ struct npc_captured_vanguardAI : public npc_escortAI
 
     void UpdateEscortAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiGlaiveTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_GLAIVE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_GLAIVE) == CAST_OK)
                 m_uiGlaiveTimer = urand(5000, 9000);
         }
         else
@@ -1110,7 +1110,7 @@ struct npc_captured_vanguardAI : public npc_escortAI
 
         if (m_uiHamstringTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_HAMSTRING) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_HAMSTRING) == CAST_OK)
                 m_uiHamstringTimer = urand(10000, 16000);
         }
         else
@@ -1413,7 +1413,7 @@ struct npc_drijyaAI : public npc_escortAI
                 m_uiDestroyingTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
     }
 };
@@ -1515,7 +1515,7 @@ struct npc_dimensiusAI : public Scripted_NoMovementAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (!m_bSpawnsFeeding && m_creature->GetHealthPercent() < 75.0f)
@@ -1626,7 +1626,7 @@ struct npc_salhadaarAI : public ScriptedAI
 
     void ReceiveAIEvent(AIEventType eventType, Creature* /*pSender*/, Unit* /*pInvoker*/, uint32 /*uiMiscValue*/) override
     {
-        if (eventType == AI_EVENT_CUSTOM_A && (!m_creature->isInCombat()) && (!m_creature->isDead()))
+        if (eventType == AI_EVENT_CUSTOM_A && (!m_creature->IsInCombat()) && (!m_creature->IsDead()))
         {
             m_creature->RemoveAurasDueToSpell(SPELL_FLOAT);
             DoScriptText(SAY_THREAT, m_creature);
@@ -1655,7 +1655,7 @@ struct npc_salhadaarAI : public ScriptedAI
     {
         m_uiSummoned.push_back(pSummoned->GetObjectGuid());
         pSummoned->CastSpell(pSummoned, SPELL_SALAADIN_OVERSPARK, TRIGGERED_OLD_TRIGGERED);
-        pSummoned->AI()->AttackStart(m_creature->getVictim());
+        pSummoned->AI()->AttackStart(m_creature->GetVictim());
     }
 
     void UpdateAI(const uint32 uiDiff) override
@@ -1695,9 +1695,9 @@ struct npc_salhadaarAI : public ScriptedAI
             else
                 m_uiAttackTimer -= uiDiff;
         }
-        if (m_creature->isInCombat())
+        if (m_creature->IsInCombat())
         {
-            if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
                 return;
 
             if (m_uiUsedMirrorImage == false && m_creature->GetHealthPercent() < 25) // at 25% hp cast mirror image, its two spells
@@ -1778,7 +1778,7 @@ struct npc_energy_ballAI : public ScriptedAI
                 GetCreatureListWithEntryInGrid(creatureList, m_creature, NPC_SALHADAAR, 100.0f);
                 for (std::list<Creature*>::const_iterator itr = creatureList.begin(); itr != creatureList.end(); ++itr)
                 {
-                    if (!(*itr)->isInCombat())
+                    if (!(*itr)->IsInCombat())
                     {
                         m_creature->CastSpell(m_creature, SPELL_SALAADIN_TESLA, TRIGGERED_NONE);
                     }

@@ -193,7 +193,7 @@ struct boss_vaelastraszAI : public ScriptedAI
                         for (std::list<Creature*>::const_iterator itr = lTechniciansList.begin(); itr != lTechniciansList.end(); ++itr)
                         {
                             // Ignore Blackwing Technicians on upper floors and dead ones
-                            if (!((*itr)->isAlive()) || (*itr)->GetPositionZ() > m_creature->GetPositionZ() + 1)
+                            if (!((*itr)->IsAlive()) || (*itr)->GetPositionZ() > m_creature->GetPositionZ() + 1)
                                 continue;
 
                             // Each fleeing part and despawn is handled in DB, we only need to make them run
@@ -282,7 +282,7 @@ struct boss_vaelastraszAI : public ScriptedAI
         }
 
         // Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Yell if hp lower than 15%
@@ -295,7 +295,7 @@ struct boss_vaelastraszAI : public ScriptedAI
         // Cleave Timer
         if (m_uiCleaveTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CLEAVE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CLEAVE) == CAST_OK)
                 m_uiCleaveTimer = 15000;
         }
         else
@@ -304,7 +304,7 @@ struct boss_vaelastraszAI : public ScriptedAI
         // Flame Breath Timer
         if (m_uiFlameBreathTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_FLAME_BREATH) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_FLAME_BREATH) == CAST_OK)
                 m_uiFlameBreathTimer = urand(4000, 8000);
         }
         else
@@ -327,7 +327,7 @@ struct boss_vaelastraszAI : public ScriptedAI
         {
             // have the victim cast the spell on himself otherwise the third effect aura will be applied
             // to Vael instead of the player
-            m_creature->getVictim()->CastSpell(m_creature->getVictim(), SPELL_BURNING_ADRENALINE_TANK, TRIGGERED_OLD_TRIGGERED, nullptr, nullptr, m_creature->GetObjectGuid());
+            m_creature->GetVictim()->CastSpell(m_creature->GetVictim(), SPELL_BURNING_ADRENALINE_TANK, TRIGGERED_OLD_TRIGGERED, nullptr, nullptr, m_creature->GetObjectGuid());
 
             m_uiBurningAdrenalineTankTimer = 45000;
         }
@@ -405,7 +405,7 @@ bool AreaTrigger_at_vaelastrasz(Player* pPlayer, AreaTriggerEntry const* pAt)
 {
     if (pAt->id == AREATRIGGER_VAEL_INTRO)
     {
-        if (pPlayer->isGameMaster() || pPlayer->isDead())
+        if (pPlayer->IsGameMaster() || pPlayer->IsDead())
             return false;
 
         if (instance_blackwing_lair* pInstance = (instance_blackwing_lair*)pPlayer->GetInstanceData())

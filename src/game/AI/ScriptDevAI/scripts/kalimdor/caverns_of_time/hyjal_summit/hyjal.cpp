@@ -83,7 +83,7 @@ bool GossipHello_npc_jaina_proudmoore(Player* pPlayer, Creature* pCreature)
                     else if (pInstance->GetData(TYPE_ANETHERON) == DONE)
                         pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, GOSSIP_ITEM_JAINA_SUCCCESS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
 
-                    if (pPlayer->isGameMaster())
+                    if (pPlayer->IsGameMaster())
                         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_DOT, "[GM] Toggle Debug Timers", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
                 }
             }
@@ -155,7 +155,7 @@ bool GossipHello_npc_thrall(Player* pPlayer, Creature* pCreature)
                     else if (pInstance->GetData(TYPE_AZGALOR) == DONE)
                         pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, GOSSIP_ITEM_THRALL_SUCCESS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
 
-                    if (pPlayer->isGameMaster())
+                    if (pPlayer->IsGameMaster())
                         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_DOT, "[GM] Toggle Debug Timers", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
                 }
             }

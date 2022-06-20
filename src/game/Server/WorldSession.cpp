@@ -46,6 +46,10 @@
 #include <deque>
 #include <cstdarg>
 
+#ifdef BUILD_ELUNA
+#include "LuaEngine/LuaEngine.h"
+#endif
+
 #ifdef BUILD_PLAYERBOT
     #include "PlayerBot/Base/PlayerbotMgr.h"
     #include "PlayerBot/Base/PlayerbotAI.h"
@@ -451,7 +455,7 @@ void WorldSession::LogoutPlayer(bool Save)
             bg->EventPlayerLoggedOut(_player);
 
         ///- Teleport to home if the player is in an invalid instance
-        if (!_player->m_InstanceValid && !_player->isGameMaster())
+        if (!_player->m_InstanceValid && !_player->IsGameMaster())
         {
             _player->TeleportToHomebind();
             // this is a bad place to call for far teleport because we need player to be in world for successful logout
@@ -514,7 +518,7 @@ void WorldSession::LogoutPlayer(bool Save)
 
         // remove player from the group if he is:
         // a) in group; b) not in raid group; c) logging out normally (not being kicked or disconnected)
-        if (_player->GetGroup() && !_player->GetGroup()->isRaidGroup() && m_Socket && !m_Socket->IsClosed())
+        if (_player->GetGroup() && !_player->GetGroup()->IsRaidGroup() && m_Socket && !m_Socket->IsClosed())
             _player->RemoveFromGroup();
 
         ///- Send update to group
@@ -528,6 +532,11 @@ void WorldSession::LogoutPlayer(bool Save)
 #ifdef BUILD_PLAYERBOT
         // Remember player GUID for update SQL below
         uint32 guid = _player->GetGUIDLow();
+#endif
+
+#ifdef BUILD_ELUNA
+        if (Eluna* e = sWorld.GetEluna())
+            e->OnLogout(_player);
 #endif
 
         ///- Remove the player from the world
@@ -1076,6 +1085,12 @@ void WorldSession::SendRedirectClient(std::string& ip, uint16 port)
 
 void WorldSession::ExecuteOpcode(OpcodeHandler const& opHandle, WorldPacket &packet)
 {
+#ifdef BUILD_ELUNA
+    if (Eluna* e = sWorld.GetEluna())
+        if (!e->OnPacketReceive(this, packet))
+            return;
+#endif
+
     // need prevent do internal far teleports in handlers because some handlers do lot steps
     // or call code that can do far teleports in some conditions unexpectedly for generic way work code
     if (_player)

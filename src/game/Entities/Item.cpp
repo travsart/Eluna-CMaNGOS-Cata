@@ -24,6 +24,9 @@
 #include "Entities/ItemEnchantmentMgr.h"
 #include "Server/SQLStorages.h"
 #include "Loot/LootMgr.h"
+#ifdef BUILD_ELUNA
+#include "LuaEngine/LuaEngine.h"
+#endif
 
 void AddItemsSetItem(Player* player, Item* item)
 {
@@ -403,6 +406,13 @@ bool Item::Create(uint32 guidlow, uint32 itemid, Player const* owner)
     return true;
 }
 
+bool Item::IsNotEmptyBag() const
+{
+    if (Bag const* bag = ToBag())
+        return !bag->IsEmpty();
+    return false;
+}
+
 void Item::UpdateDuration(Player* owner, uint32 diff)
 {
     if (!GetUInt32Value(ITEM_FIELD_DURATION))
@@ -412,6 +422,11 @@ void Item::UpdateDuration(Player* owner, uint32 diff)
 
     if (GetUInt32Value(ITEM_FIELD_DURATION) <= diff)
     {
+#ifdef BUILD_ELUNA
+        // used by eluna
+        if (Eluna* e = owner->GetEluna())
+            e->OnExpire(owner, GetProto());
+#endif
         if (uint32 newItemId = sObjectMgr.GetItemExpireConvert(GetEntry()))
             owner->ConvertItem(this, newItemId);
         else
@@ -1328,9 +1343,9 @@ bool ItemRequiredTarget::IsFitToRequirements(Unit* pUnitTarget) const
     switch (m_uiType)
     {
         case ITEM_TARGET_TYPE_CREATURE:
-            return pUnitTarget->isAlive();
+            return pUnitTarget->IsAlive();
         case ITEM_TARGET_TYPE_DEAD:
-            return !pUnitTarget->isAlive();
+            return !pUnitTarget->IsAlive();
         default:
             return false;
     }

@@ -333,7 +333,7 @@ struct boss_warbringer_omroggAI : public ScriptedAI
         else
             m_uiDelayTimer -= uiDiff;
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiBlastCount && m_uiBlastWaveTimer)

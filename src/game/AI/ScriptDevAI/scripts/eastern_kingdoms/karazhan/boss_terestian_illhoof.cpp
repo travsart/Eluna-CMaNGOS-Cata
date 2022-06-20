@@ -171,7 +171,7 @@ struct boss_terestianAI : public ScriptedAI
                 m_uiSummonKilrekTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiSacrificeTimer < uiDiff)
@@ -192,7 +192,7 @@ struct boss_terestianAI : public ScriptedAI
 
         if (m_uiShadowboltTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHADOW_BOLT) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_SHADOW_BOLT) == CAST_OK)
                 m_uiShadowboltTimer = 10000;
         }
         else

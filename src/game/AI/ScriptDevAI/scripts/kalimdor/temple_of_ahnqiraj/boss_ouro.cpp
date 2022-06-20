@@ -134,7 +134,7 @@ struct boss_ouroAI : public Scripted_NoMovementAI
     void UpdateAI(const uint32 uiDiff) override
     {
         // Return since we have no pTarget
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (!m_bSubmerged)
@@ -212,7 +212,7 @@ struct boss_ouroAI : public Scripted_NoMovementAI
             }
 
             // If we are within range melee the target
-            if (m_creature->CanReachWithMeleeAttack(m_creature->getVictim()))
+            if (m_creature->CanReachWithMeleeAttack(m_creature->GetVictim()))
                 DoMeleeAttackIfReady();
             // Spam Boulder spell when enraged and not tanked
             else if (m_bEnraged)

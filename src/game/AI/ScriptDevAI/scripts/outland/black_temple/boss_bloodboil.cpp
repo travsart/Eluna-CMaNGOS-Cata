@@ -134,7 +134,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiArcingSmashTimer < uiDiff)
@@ -147,7 +147,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
 
         if (m_uiFelAcidTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), m_bIsPhase1 ? SPELL_FEL_ACID_1 : SPELL_FEL_ACID_2) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), m_bIsPhase1 ? SPELL_FEL_ACID_1 : SPELL_FEL_ACID_2) == CAST_OK)
                 m_uiFelAcidTimer = 25000;
         }
         else
@@ -158,7 +158,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
         {
             if (m_uiStrikeTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_BEWILDERING_STRIKE) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_BEWILDERING_STRIKE) == CAST_OK)
                     m_uiStrikeTimer = 20000;
             }
             else
@@ -166,7 +166,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
 
             if (m_uiEjectTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_EJECT_1) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_EJECT_1) == CAST_OK)
                     m_uiEjectTimer = 15000;
             }
             else
@@ -174,7 +174,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
 
             if (m_uiAcidicWoundTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_ACIDIC_WOUND) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_ACIDIC_WOUND) == CAST_OK)
                     m_uiAcidicWoundTimer = 10000;
             }
             else
@@ -215,7 +215,7 @@ struct boss_gurtogg_bloodboilAI : public ScriptedAI
 
             if (m_uiEjectTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_EJECT_2) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_EJECT_2) == CAST_OK)
                     m_uiEjectTimer = 15000;
             }
             else

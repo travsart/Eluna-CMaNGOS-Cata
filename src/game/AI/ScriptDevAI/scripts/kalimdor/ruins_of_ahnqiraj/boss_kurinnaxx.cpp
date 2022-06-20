@@ -70,7 +70,7 @@ struct boss_kurinnaxxAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // If we are belowe 30% HP cast enrage
@@ -83,7 +83,7 @@ struct boss_kurinnaxxAI : public ScriptedAI
         // Mortal Wound
         if (m_uiMortalWoundTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_MORTAL_WOUND) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_MORTAL_WOUND) == CAST_OK)
                 m_uiMortalWoundTimer = urand(8000, 10000);
         }
         else
@@ -94,7 +94,7 @@ struct boss_kurinnaxxAI : public ScriptedAI
         {
             Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1);
             if (!pTarget)
-                pTarget = m_creature->getVictim();
+                pTarget = m_creature->GetVictim();
 
             pTarget->CastSpell(pTarget, SPELL_SANDTRAP, TRIGGERED_OLD_TRIGGERED, NULL, NULL, m_creature->GetObjectGuid());
             m_uiSandTrapTimer = urand(10000, 15000);
@@ -118,7 +118,7 @@ struct boss_kurinnaxxAI : public ScriptedAI
         // Wide Slash
         if (m_uiWideSlashTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_WIDE_SLASH) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_WIDE_SLASH) == CAST_OK)
                 m_uiWideSlashTimer = urand(12000, 15000);
         }
         else
@@ -127,7 +127,7 @@ struct boss_kurinnaxxAI : public ScriptedAI
         // Trash
         if (m_uiTrashTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_TRASH) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_TRASH) == CAST_OK)
                 m_uiTrashTimer = urand(12000, 17000);
         }
         else

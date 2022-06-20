@@ -132,7 +132,7 @@ struct boss_ossirianAI : public ScriptedAI
         {
             // Respawn static spawned crystal trigger
             pOssirianTrigger = m_pInstance->GetSingleCreatureFromStorage(NPC_OSSIRIAN_TRIGGER);
-            if (pOssirianTrigger && !pOssirianTrigger->isAlive())
+            if (pOssirianTrigger && !pOssirianTrigger->IsAlive())
                 pOssirianTrigger->Respawn();
         }
         else
@@ -208,7 +208,7 @@ struct boss_ossirianAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Speed Up
@@ -251,7 +251,7 @@ struct boss_ossirianAI : public ScriptedAI
         // Cyclone
         if (m_uiCycloneTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CYCLONE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CYCLONE) == CAST_OK)
                 m_uiCycloneTimer = 20000;
         }
         else

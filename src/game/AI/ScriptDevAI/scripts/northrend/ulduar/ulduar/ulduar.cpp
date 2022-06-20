@@ -84,35 +84,35 @@ bool GossipHello_go_ulduar_teleporter(Player* pPlayer, GameObject* pGo)
     pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TELE_BASE_CAMP, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
     // Formation grounds
-    if (pInstance->GetData(TYPE_LEVIATHAN) != NOT_STARTED || pPlayer->isGameMaster())
+    if (pInstance->GetData(TYPE_LEVIATHAN) != NOT_STARTED || pPlayer->IsGameMaster())
         pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TELE_FORMATION_GROUNDS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
     // Colossal Forge
-    if (pInstance->GetData(TYPE_LEVIATHAN) == DONE || pPlayer->isGameMaster())
+    if (pInstance->GetData(TYPE_LEVIATHAN) == DONE || pPlayer->IsGameMaster())
         pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TELE_COLOSSAL_FORGE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
 
     // Scrapyard
-    if (pInstance->GetData(TYPE_XT002) != NOT_STARTED || pPlayer->isGameMaster())
+    if (pInstance->GetData(TYPE_XT002) != NOT_STARTED || pPlayer->IsGameMaster())
         pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TELE_SCRAPYARD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
 
     // Antechamber
-    if (pInstance->GetData(TYPE_XT002) == DONE || pPlayer->isGameMaster())
+    if (pInstance->GetData(TYPE_XT002) == DONE || pPlayer->IsGameMaster())
         pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TELE_ANTECHAMBER, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
 
     // Shattered walkway
-    if (pInstance->GetData(TYPE_KOLOGARN) == DONE || pPlayer->isGameMaster())
+    if (pInstance->GetData(TYPE_KOLOGARN) == DONE || pPlayer->IsGameMaster())
         pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TELE_WALKWAY, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
 
     // Conservatory of life
-    if (pInstance->GetData(TYPE_AURIAYA) == DONE || pPlayer->isGameMaster())
+    if (pInstance->GetData(TYPE_AURIAYA) == DONE || pPlayer->IsGameMaster())
         pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TELE_CONSERVATORY, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
 
     // Spark of imagination
-    if (pInstance->GetData(TYPE_MIMIRON) != NOT_STARTED || pPlayer->isGameMaster())
+    if (pInstance->GetData(TYPE_MIMIRON) != NOT_STARTED || pPlayer->IsGameMaster())
         pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TELE_SPARK_IMAGINATION, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
 
     // Prison of Yogg-Saron
-    if (pInstance->GetData(TYPE_VEZAX) == DONE || pPlayer->isGameMaster())
+    if (pInstance->GetData(TYPE_VEZAX) == DONE || pPlayer->IsGameMaster())
         pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TELE_YOGG_SARON, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 8);
 
     pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pGo->GetGOInfo()->GetGossipMenuId(), pGo), pGo->GetObjectGuid());
@@ -131,7 +131,7 @@ bool GossipSelect_go_ulduar_teleporter(Player* pPlayer, GameObject* pGO, uint32 
 
     // There needs to be displayed a msg when in Combat, it is likely that this is to be handled by core and spell can-cast check
     // -- TODO -- Remove the combat check when spells are correctly working
-    if (pPlayer->isInCombat())
+    if (pPlayer->IsInCombat())
         return true;
 
     switch (uiAction)
@@ -401,7 +401,7 @@ struct npc_storm_tempered_keeperAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiCheckBuddyTimer)
@@ -422,7 +422,7 @@ struct npc_storm_tempered_keeperAI : public ScriptedAI
                     if (DoCastSpellIfCan(m_creature, SPELL_SEPARATION_ANXIETY) == CAST_OK)
                         m_uiCheckBuddyTimer = 5000;
                 }
-                else if (!pBuddy->isAlive())
+                else if (!pBuddy->IsAlive())
                 {
                     if (DoCastSpellIfCan(m_creature, SPELL_VENGEFUL_SURGE) == CAST_OK)
                         m_uiCheckBuddyTimer = 0;
@@ -480,7 +480,7 @@ struct npc_charged_sphereAI : public ScriptedAI
     void MoveInLineOfSight(Unit* pWho) override
     {
         // cast supercharged if reached the buddy
-        if (!m_bIsCharged && pWho->GetEntry() == m_uiBuddyEntry && pWho->isAlive() && pWho->IsWithinDistInMap(m_creature, 5.0f))
+        if (!m_bIsCharged && pWho->GetEntry() == m_uiBuddyEntry && pWho->IsAlive() && pWho->IsWithinDistInMap(m_creature, 5.0f))
         {
             DoCastSpellIfCan(pWho, SPELL_SUPERCHARGED, CAST_TRIGGERED);
             m_creature->ForcedDespawn(1000);

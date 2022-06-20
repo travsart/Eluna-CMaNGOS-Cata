@@ -180,7 +180,7 @@ struct npc_a_special_surpriseAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (m_playerGuid && !m_creature->getVictim() && m_creature->isAlive())
+        if (m_playerGuid && !m_creature->GetVictim() && m_creature->IsAlive())
         {
             if (m_uiExecuteSpeech_Timer < uiDiff)
             {
@@ -662,12 +662,12 @@ struct npc_death_knight_initiateAI : public ScriptedAI
                 m_uiDuelTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiBloodStrikeTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_BLOOD_STRIKE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_BLOOD_STRIKE) == CAST_OK)
                 m_uiBloodStrikeTimer = 9000;
         }
         else
@@ -675,7 +675,7 @@ struct npc_death_knight_initiateAI : public ScriptedAI
 
         if (m_uiDeathCoilTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_DEATH_COIL) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_DEATH_COIL) == CAST_OK)
                 m_uiDeathCoilTimer = 8000;
         }
         else
@@ -683,7 +683,7 @@ struct npc_death_knight_initiateAI : public ScriptedAI
 
         if (m_uiIcyTouchTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_ICY_TOUCH) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_ICY_TOUCH) == CAST_OK)
                 m_uiIcyTouchTimer = 8000;
         }
         else
@@ -691,7 +691,7 @@ struct npc_death_knight_initiateAI : public ScriptedAI
 
         if (m_uiPlagueStrikeTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_PLAGUE_STRIKE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_PLAGUE_STRIKE) == CAST_OK)
                 m_uiPlagueStrikeTimer = 8000;
         }
         else
@@ -917,12 +917,12 @@ struct npc_unworthy_initiateAI : public ScriptedAI
 
         if (m_uiPhase == PHASE_INACTIVE_OR_COMBAT)
         {
-            if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
                 return;
 
             if (m_uiBloodStrike_Timer < uiDiff)
             {
-                DoCastSpellIfCan(m_creature->getVictim(), SPELL_BLOOD_STRIKE);
+                DoCastSpellIfCan(m_creature->GetVictim(), SPELL_BLOOD_STRIKE);
                 m_uiBloodStrike_Timer = 9000;
             }
             else
@@ -930,7 +930,7 @@ struct npc_unworthy_initiateAI : public ScriptedAI
 
             if (m_uiDeathCoil_Timer < uiDiff)
             {
-                DoCastSpellIfCan(m_creature->getVictim(), SPELL_DEATH_COIL);
+                DoCastSpellIfCan(m_creature->GetVictim(), SPELL_DEATH_COIL);
                 m_uiDeathCoil_Timer = 8000;
             }
             else
@@ -938,7 +938,7 @@ struct npc_unworthy_initiateAI : public ScriptedAI
 
             if (m_uiIcyTouch_Timer < uiDiff)
             {
-                DoCastSpellIfCan(m_creature->getVictim(), SPELL_ICY_TOUCH);
+                DoCastSpellIfCan(m_creature->GetVictim(), SPELL_ICY_TOUCH);
                 m_uiIcyTouch_Timer = 8000;
             }
             else
@@ -946,7 +946,7 @@ struct npc_unworthy_initiateAI : public ScriptedAI
 
             if (m_uiPlagueStrike_Timer < uiDiff)
             {
-                DoCastSpellIfCan(m_creature->getVictim(), SPELL_PLAGUE_STRIKE);
+                DoCastSpellIfCan(m_creature->GetVictim(), SPELL_PLAGUE_STRIKE);
                 m_uiPlagueStrike_Timer = 8000;
             }
             else
@@ -1531,7 +1531,7 @@ struct npc_highlord_darion_mograineAI : public npc_escortAI
             case NPC_WARRIOR_OF_THE_FROZEN_WASTES:
                 m_lAttackersGUIDs.push_back(pSummoned->GetObjectGuid());
                 // make the scourge attack only during the battle
-                if (m_creature->isInCombat())
+                if (m_creature->IsInCombat())
                 {
                     if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                         pSummoned->AI()->AttackStart(pTarget);
@@ -1674,7 +1674,7 @@ struct npc_highlord_darion_mograineAI : public npc_escortAI
                     if (Creature* pTemp = m_pInstance->GetSingleCreatureFromStorage(aLightArmySpawnLoc[i].m_uiEntry))
                     {
                         // normally it shouldn't happen
-                        if (!pTemp->isAlive())
+                        if (!pTemp->IsAlive())
                             pTemp->Respawn();
                         else
                             pTemp->AI()->EnterEvadeMode();
@@ -1716,7 +1716,7 @@ struct npc_highlord_darion_mograineAI : public npc_escortAI
         if (uiMotionType == POINT_MOTION_TYPE && uiPointId == POINT_MOVE_RETURN_BATTLE)
         {
             SetCombatMovement(false);
-            DoStartMovement(m_creature->getVictim());
+            DoStartMovement(m_creature->GetVictim());
         }
     }
 
@@ -1839,7 +1839,7 @@ struct npc_highlord_darion_mograineAI : public npc_escortAI
         for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
         {
             Player* pPlayer = itr->getSource();
-            if (pPlayer && pPlayer->GetQuestStatus(QUEST_ID_LIGHT_OF_DAWN) == QUEST_STATUS_INCOMPLETE && pPlayer->isAlive() && m_creature->IsWithinDistInMap(pPlayer, 50.0f))
+            if (pPlayer && pPlayer->GetQuestStatus(QUEST_ID_LIGHT_OF_DAWN) == QUEST_STATUS_INCOMPLETE && pPlayer->IsAlive() && m_creature->IsWithinDistInMap(pPlayer, 50.0f))
                 pPlayer->CastSpell(pPlayer, SPELL_THE_LIGHT_OF_DAWN_CREDIT, TRIGGERED_OLD_TRIGGERED);
         }
     }
@@ -2492,7 +2492,7 @@ struct npc_highlord_darion_mograineAI : public npc_escortAI
                 else
                     m_uiFightTimer -= uiDiff;
 
-                if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+                if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
                     return;
 
                 // battle sounds
@@ -2533,7 +2533,7 @@ struct npc_highlord_darion_mograineAI : public npc_escortAI
 
                 if (m_uiDeathStrikeTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_DEATH_STRIKE) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_DEATH_STRIKE) == CAST_OK)
                         m_uiDeathStrikeTimer = urand(5000, 10000);
                 }
                 else
@@ -2541,7 +2541,7 @@ struct npc_highlord_darion_mograineAI : public npc_escortAI
 
                 if (m_uiDeathEmbraceTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_DEATH_EMBRACE) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_DEATH_EMBRACE) == CAST_OK)
                         m_uiDeathEmbraceTimer = urand(5000, 10000);
                 }
                 else
@@ -2549,7 +2549,7 @@ struct npc_highlord_darion_mograineAI : public npc_escortAI
 
                 if (m_uiIcyTouchTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_ICY_TOUCH_DARION) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_ICY_TOUCH_DARION) == CAST_OK)
                         m_uiIcyTouchTimer = urand(5000, 10000);
                 }
                 else
@@ -2557,7 +2557,7 @@ struct npc_highlord_darion_mograineAI : public npc_escortAI
 
                 if (m_uiUnholyBlightTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_UNHOLY_BLIGHT) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_UNHOLY_BLIGHT) == CAST_OK)
                         m_uiUnholyBlightTimer = urand(5000, 10000);
                 }
                 else
@@ -2652,7 +2652,7 @@ struct npc_fellow_death_knightAI : public ScriptedAI
 
     void EnterEvadeMode() override
     {
-        if (!m_creature->isAlive())
+        if (!m_creature->IsAlive())
             return;
 
         if (!m_pInstance)
@@ -2707,12 +2707,12 @@ struct npc_fellow_death_knightAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiPlagueStrikeTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_PLAGUE_STRIKE_KNIGHTS) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_PLAGUE_STRIKE_KNIGHTS) == CAST_OK)
                 m_uiPlagueStrikeTimer = urand(5000, 10000);
         }
         else
@@ -2720,7 +2720,7 @@ struct npc_fellow_death_knightAI : public ScriptedAI
 
         if (m_uiIcyTouchTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_ICY_TOUCH_DARION) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_ICY_TOUCH_DARION) == CAST_OK)
                 m_uiIcyTouchTimer = urand(5000, 10000);
         }
         else
@@ -2728,7 +2728,7 @@ struct npc_fellow_death_knightAI : public ScriptedAI
 
         if (m_uiBloodStrikeTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_BLOOD_STRIKE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_BLOOD_STRIKE) == CAST_OK)
                 m_uiBloodStrikeTimer = urand(5000, 10000);
         }
         else
@@ -2869,7 +2869,7 @@ struct npc_scarlet_courierAI : public ScriptedAI
                  m_uiCombatTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         DoMeleeAttackIfReady();

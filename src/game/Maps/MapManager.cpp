@@ -27,6 +27,10 @@
 #include "Grids/CellImpl.h"
 #include "Globals/ObjectMgr.h"
 
+#ifdef BUILD_ELUNA
+#include "LuaEngine/ElunaConfig.h"
+#endif
+
 #define CLASS_LOCK MaNGOS::ClassLevelLockable<MapManager, std::recursive_mutex>
 INSTANTIATE_SINGLETON_2(MapManager, CLASS_LOCK);
 INSTANTIATE_CLASS_MUTEX(MapManager, std::recursive_mutex);
@@ -52,6 +56,7 @@ void
 MapManager::Initialize()
 {
     InitStateMachine();
+
 }
 
 void MapManager::InitStateMachine()

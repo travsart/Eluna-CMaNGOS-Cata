@@ -49,7 +49,7 @@ void AggressorAI::MoveInLineOfSight(Unit* u)
         float attackRadius = m_creature->GetAttackDistance(u);
         if (m_creature->IsWithinDistInMap(u, attackRadius) && m_creature->IsWithinLOSInMap(u))
         {
-            if (!m_creature->getVictim())
+            if (!m_creature->GetVictim())
                 AttackStart(u);
             else if (sMapStore.LookupEntry(m_creature->GetMapId())->IsDungeon())
             {
@@ -62,7 +62,7 @@ void AggressorAI::MoveInLineOfSight(Unit* u)
 
 void AggressorAI::EnterEvadeMode()
 {
-    if (!m_creature->isAlive())
+    if (!m_creature->IsAlive())
     {
         DEBUG_FILTER_LOG(LOG_FILTER_AI_AND_MOVEGENSS, "Creature stopped attacking, he is dead [guid=%u]", m_creature->GetGUIDLow());
         i_victimGuid.Clear();
@@ -77,7 +77,7 @@ void AggressorAI::EnterEvadeMode()
     {
         DEBUG_FILTER_LOG(LOG_FILTER_AI_AND_MOVEGENSS, "Creature stopped attacking, no victim [guid=%u]", m_creature->GetGUIDLow());
     }
-    else if (!victim->isAlive())
+    else if (!victim->IsAlive())
     {
         DEBUG_FILTER_LOG(LOG_FILTER_AI_AND_MOVEGENSS, "Creature stopped attacking, victim is dead [guid=%u]", m_creature->GetGUIDLow());
     }
@@ -96,7 +96,7 @@ void AggressorAI::EnterEvadeMode()
         // i_tracker.Reset(TIME_INTERVAL_LOOK);
     }
 
-    if (!m_creature->isCharmed())
+    if (!m_creature->IsCharmed())
     {
         m_creature->RemoveAllAurasOnEvade();
 
@@ -117,7 +117,7 @@ void AggressorAI::UpdateAI(const uint32 /*diff*/)
     if (!m_creature->SelectHostileTarget())
         return;
 
-    Unit* victim = m_creature->getVictim();
+    Unit* victim = m_creature->GetVictim();
 
     if (!victim)
         return;

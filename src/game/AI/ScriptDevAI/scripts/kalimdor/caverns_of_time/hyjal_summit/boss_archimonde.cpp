@@ -229,7 +229,7 @@ struct boss_archimondeAI : public ScriptedAI
                 m_uiDrainNordrassilTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Start epilogue - fight was won!
@@ -298,7 +298,7 @@ struct boss_archimondeAI : public ScriptedAI
 
         if (m_uiAirBurstTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_AIR_BURST) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_AIR_BURST) == CAST_OK)
             {
                 DoScriptText(urand(0, 1) ? SAY_AIR_BURST1 : SAY_AIR_BURST2, m_creature);
                 m_uiAirBurstTimer = urand(25000, 40000);
@@ -327,7 +327,7 @@ struct boss_archimondeAI : public ScriptedAI
             m_uiDoomfireTimer -= uiDiff;
 
         // If we are within range melee the target
-        if (m_creature->CanReachWithMeleeAttack(m_creature->getVictim()))
+        if (m_creature->CanReachWithMeleeAttack(m_creature->GetVictim()))
             DoMeleeAttackIfReady();
         // Else spam Finger of Death
         else

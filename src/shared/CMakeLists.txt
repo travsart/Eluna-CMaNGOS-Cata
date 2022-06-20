@@ -203,6 +203,11 @@ else()
   endif()
 endif()
 
+# Define BUILD_ELUNA if needed
+if (BUILD_ELUNA)
+  add_definitions(-DBUILD_ELUNA -DCATA -DCMANGOS)
+endif()
+
 # Mark the revision header as being generated.
 set_source_files_properties(${CMAKE_SOURCE_DIR}/src/shared/revision.h
   PROPERTIES GENERATED TRUE

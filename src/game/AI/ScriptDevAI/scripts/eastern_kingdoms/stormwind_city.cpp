@@ -54,7 +54,7 @@ struct npc_bartlebyAI : public ScriptedAI
 
     void AttackedBy(Unit* pAttacker) override
     {
-        if (m_creature->getVictim())
+        if (m_creature->GetVictim())
             return;
 
         if (m_creature->IsFriendlyTo(pAttacker))
@@ -113,7 +113,7 @@ struct npc_dashel_stonefistAI : public ScriptedAI
 
     void AttackedBy(Unit* pAttacker) override
     {
-        if (m_creature->getVictim())
+        if (m_creature->GetVictim())
             return;
 
         if (m_creature->IsFriendlyTo(pAttacker))
@@ -843,7 +843,7 @@ struct npc_reginald_windsorAI : public npc_escortAI, private DialogueHelper
                 {
                     if (Creature* pGuard = m_creature->GetMap()->GetCreature(*itr))
                     {
-                        if (!pGuard->isAlive())
+                        if (!pGuard->IsAlive())
                             continue;
 
                         pGuard->UpdateEntry(NPC_GUARD_ONYXIA);
@@ -958,7 +958,7 @@ struct npc_reginald_windsorAI : public npc_escortAI, private DialogueHelper
                 {
                     if (Creature* pGuard = m_creature->GetMap()->GetCreature(*itr))
                     {
-                        if (!pGuard->isAlive() && pGuard->GetEntry() == NPC_GUARD_ONYXIA)
+                        if (!pGuard->IsAlive() && pGuard->GetEntry() == NPC_GUARD_ONYXIA)
                             ++uiDeadGuardsCount;
                     }
                 }
@@ -974,12 +974,12 @@ struct npc_reginald_windsorAI : public npc_escortAI, private DialogueHelper
                 m_uiGuardCheckTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiHammerTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_HAMMER_OF_JUSTICE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_HAMMER_OF_JUSTICE) == CAST_OK)
                 m_uiHammerTimer = 60000;
         }
         else
@@ -987,7 +987,7 @@ struct npc_reginald_windsorAI : public npc_escortAI, private DialogueHelper
 
         if (m_uiCleaveTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_STRONG_CLEAVE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_STRONG_CLEAVE) == CAST_OK)
                 m_uiCleaveTimer = urand(1000, 5000);
         }
         else

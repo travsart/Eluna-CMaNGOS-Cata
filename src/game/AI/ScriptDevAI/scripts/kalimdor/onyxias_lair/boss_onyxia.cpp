@@ -225,7 +225,7 @@ struct boss_onyxiaAI : public ScriptedAI
 
     void SummonedMovementInform(Creature* pSummoned, uint32 uiMoveType, uint32 uiPointId) override
     {
-        if (uiMoveType != POINT_MOTION_TYPE || uiPointId != 1 || !m_creature->getVictim())
+        if (uiMoveType != POINT_MOTION_TYPE || uiPointId != 1 || !m_creature->GetVictim())
             return;
 
         pSummoned->SetInCombatWithZone();
@@ -309,7 +309,7 @@ struct boss_onyxiaAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         switch (m_uiPhase)
@@ -327,7 +327,7 @@ struct boss_onyxiaAI : public ScriptedAI
             {
                 if (m_uiFlameBreathTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), m_bIsRegularMode ? SPELL_FLAMEBREATH : SPELL_FLAMEBREATH_H) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), m_bIsRegularMode ? SPELL_FLAMEBREATH : SPELL_FLAMEBREATH_H) == CAST_OK)
                         m_uiFlameBreathTimer = urand(10000, 20000);
                 }
                 else
@@ -343,7 +343,7 @@ struct boss_onyxiaAI : public ScriptedAI
 
                 if (m_uiCleaveTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CLEAVE) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CLEAVE) == CAST_OK)
                         m_uiCleaveTimer = urand(2000, 5000);
                 }
                 else
@@ -499,7 +499,7 @@ struct boss_onyxiaAI : public ScriptedAI
                             break;
                         case PHASE_BREATH_POST:
                             m_uiPhase = PHASE_END;
-                            m_creature->SetTargetGuid(m_creature->getVictim()->GetObjectGuid());
+                            m_creature->SetTargetGuid(m_creature->GetVictim()->GetObjectGuid());
                             SetCombatMovement(true, true);
                             DoCastSpellIfCan(m_creature, SPELL_BELLOWINGROAR);
                             break;

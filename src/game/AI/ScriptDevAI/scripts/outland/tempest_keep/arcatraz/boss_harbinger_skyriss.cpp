@@ -97,13 +97,13 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
 
     void JustSummoned(Creature* pSummoned) override
     {
-        if (m_creature->getVictim())
-            pSummoned->AI()->AttackStart(m_creature->getVictim());
+        if (m_creature->GetVictim())
+            pSummoned->AI()->AttackStart(m_creature->GetVictim());
     }
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Check if creature is below 66% or 33%; Also don't allow it to split the third time
@@ -118,7 +118,7 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
         {
             Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1);
             if (!pTarget)
-                pTarget = m_creature->getVictim();
+                pTarget = m_creature->GetVictim();
 
             if (DoCastSpellIfCan(pTarget, m_bIsRegularMode ? SPELL_MIND_REND : SPELL_MIND_REND_H) == CAST_OK)
                 m_uiMindRendTimer = 8000;
@@ -130,7 +130,7 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
         {
             Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1);
             if (!pTarget)
-                pTarget = m_creature->getVictim();
+                pTarget = m_creature->GetVictim();
 
             if (DoCastSpellIfCan(pTarget, SPELL_FEAR) == CAST_OK)
             {
@@ -161,7 +161,7 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
             {
                 Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1);
                 if (!pTarget)
-                    pTarget = m_creature->getVictim();
+                    pTarget = m_creature->GetVictim();
 
                 if (DoCastSpellIfCan(pTarget, SPELL_MANA_BURN_H) == CAST_OK)
                     m_uiManaBurnTimer = urand(16000, 32000);

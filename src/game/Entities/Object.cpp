@@ -41,6 +41,11 @@
 #include "Chat/Chat.h"
 #include "Loot/LootMgr.h"
 #include "Spells/SpellMgr.h"
+#ifdef BUILD_ELUNA
+#include "LuaEngine/LuaEngine.h"
+#include "LuaEngine/ElunaConfig.h"
+#include "LuaEngine/ElunaEventMgr.h"
+#endif
 
 Object::Object(): m_updateFlag(0)
 {
@@ -152,7 +157,7 @@ void Object::BuildCreateUpdateBlockForPlayer(UpdateData* data, Player* target) c
 
     if (isType(TYPEMASK_UNIT))
     {
-        if (((Unit*)this)->getVictim())
+        if (((Unit*)this)->GetVictim())
             updateFlags |= UPDATEFLAG_HAS_ATTACKING_TARGET;
     }
 
@@ -335,7 +340,7 @@ void Object::BuildMovementUpdate(ByteBuffer * data, uint16 updateFlags) const
     if (updateFlags & UPDATEFLAG_HAS_ATTACKING_TARGET)
     {
         ObjectGuid guid;
-        if (Unit* victim = ((Unit*)this)->getVictim())
+        if (Unit* victim = ((Unit*)this)->GetVictim())
             guid = victim->GetObjectGuid();
 
         data->WriteGuidMask<2, 7, 0, 4, 5, 6, 1, 3>(guid);
@@ -495,7 +500,7 @@ void Object::BuildMovementUpdate(ByteBuffer * data, uint16 updateFlags) const
     if (updateFlags & UPDATEFLAG_HAS_ATTACKING_TARGET)
     {
         ObjectGuid guid;
-        if (Unit* victim = ((Unit*)this)->getVictim())
+        if (Unit* victim = ((Unit*)this)->GetVictim())
             guid = victim->GetObjectGuid();
 
         data->WriteGuidBytes<4, 0, 3, 5, 7, 6, 2, 1>(guid);
@@ -524,7 +529,7 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
     {
         if (isType(TYPEMASK_GAMEOBJECT) && !((GameObject*)this)->IsDynTransport())
         {
-            if (((GameObject*)this)->ActivateToQuest(target) || target->isGameMaster())
+            if (((GameObject*)this)->ActivateToQuest(target) || target->IsGameMaster())
                 IsActivateToQuest = true;
 
             updateMask->SetBit(GAMEOBJECT_DYNAMIC);
@@ -542,7 +547,7 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
     {
         if (isType(TYPEMASK_GAMEOBJECT) && !((GameObject*)this)->IsDynTransport())
         {
-            if (((GameObject*)this)->ActivateToQuest(target) || target->isGameMaster())
+            if (((GameObject*)this)->ActivateToQuest(target) || target->IsGameMaster())
                 IsActivateToQuest = true;
 
             updateMask->SetBit(GAMEOBJECT_DYNAMIC);
@@ -649,7 +654,7 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
                 }
 
                 // Gamemasters should be always able to select units - remove not selectable flag
-                else if (index == UNIT_FIELD_FLAGS && target->isGameMaster())
+                else if (index == UNIT_FIELD_FLAGS && target->IsGameMaster())
                 {
                     *data << (m_uint32Values[index] & ~UNIT_FLAG_NOT_SELECTABLE);
                 }
@@ -662,7 +667,7 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
                     uint32 dynflagsValue = m_uint32Values[index];
                     bool setTapFlags = false;
 
-                    if (creature->isAlive())
+                    if (creature->IsAlive())
                     {
                         // Checking SPELL_AURA_EMPATHY and caster
                         if (dynflagsValue & UNIT_DYNFLAG_SPECIALINFO)
@@ -682,7 +687,7 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
 
                         // creature is alive so, not lootable
                         dynflagsValue = dynflagsValue & ~UNIT_DYNFLAG_LOOTABLE;
-                        if (creature->isInCombat())
+                        if (creature->IsInCombat())
                         {
                             // as creature is in combat we have to manage tap flags
                             setTapFlags = true;
@@ -765,7 +770,7 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
                                 *data << uint16(-1);
                                 break;
                             case GAMEOBJECT_TYPE_CHEST:
-                                if (gameObject->getLootState() == GO_READY || gameObject->getLootState() == GO_ACTIVATED)
+                                if (gameObject->GetLootState() == GO_READY || gameObject->GetLootState() == GO_ACTIVATED)
                                     *data << uint16(GO_DYNFLAG_LO_ACTIVATE | GO_DYNFLAG_LO_SPARKLE);
                                 else
                                     *data << uint16(0);
@@ -895,6 +900,13 @@ void Object::SetUInt32Value(uint16 index, uint32 value)
         m_changedValues[index] = true;
         MarkForClientUpdate();
     }
+}
+
+void Object::UpdateUInt32Value(uint16 index, uint32 value)
+{
+    MANGOS_ASSERT(index < m_valuesCount || PrintIndexError(index, true));
+    m_uint32Values[index] = value;
+    m_changedValues[index] = true;
 }
 
 void Object::SetUInt64Value(uint16 index, const uint64& value)
@@ -1167,16 +1179,34 @@ void Object::ForceValuesUpdateAtIndex(uint32 index)
 }
 
 WorldObject::WorldObject() :
+#ifdef BUILD_ELUNA
+    elunaEvents(NULL),
+#endif
     m_transportInfo(nullptr), m_isOnEventNotified(false),
     m_currMap(nullptr), m_mapId(0),
     m_InstanceId(0), m_isActiveObject(false), m_phaseMask(PHASEMASK_NORMAL)
 {
 }
 
+#ifdef BUILD_ELUNA
+WorldObject::~WorldObject()
+{
+    delete elunaEvents;
+    elunaEvents = NULL;
+}
+#endif
+
 void WorldObject::CleanupsBeforeDelete()
 {
     RemoveFromWorld();
 }
+
+#ifdef BUILD_ELUNA
+void WorldObject::Update(uint32 update_diff, uint32 /*time_diff*/)
+{
+    elunaEvents->Update(update_diff);
+}
+#endif
 
 void WorldObject::_Create(uint32 guidlow, HighGuid guidhigh, uint32 phaseMask)
 {
@@ -1805,7 +1835,31 @@ void WorldObject::SetMap(Map* map)
     // lets save current map's Id/instanceId
     m_mapId = map->GetId();
     m_InstanceId = map->GetInstanceId();
+#ifdef BUILD_ELUNA
+    //@todo: possibly look into cleanly clearing all pending events from previous map's event mgr.
+
+    // if multistate, delete elunaEvents and set to nullptr. events shouldn't move across states.
+    // in single state, the timed events should move across maps
+    if (!sElunaConfig->IsElunaCompatibilityMode())
+    {
+        delete elunaEvents;
+        elunaEvents = nullptr; // set to null in case map doesn't use eluna
+    }
+
+    if (Eluna* e = map->GetEluna())
+        if (!elunaEvents)
+            elunaEvents = new ElunaEventProcessor(e, this);
+#endif
 }
+
+#ifdef BUILD_ELUNA
+void WorldObject::ResetMap()
+{
+    delete elunaEvents;
+    elunaEvents = NULL;
+    m_currMap = NULL;
+}
+#endif
 
 void WorldObject::AddToWorld()
 {
@@ -1882,6 +1936,26 @@ Creature* WorldObject::SummonCreature(uint32 id, float x, float y, float z, floa
     // return the creature therewith the summoner has access to it
     return pCreature;
 }
+
+GameObject* WorldObject::SummonGameObject(uint32 id, float x, float y, float z, float angle, uint32 despwtime)
+{
+    GameObject* gameobject = new GameObject;
+    Map* map = GetMap();
+    if (!map)
+    {
+        return NULL;
+    }
+    if (!gameobject->Create(map->GenerateLocalLowGuid(HIGHGUID_GAMEOBJECT), id, map, GetPhaseMask(), x, y, z, angle))
+    {
+        delete gameobject;
+        return NULL;
+    }
+    gameobject->SetRespawnTime(despwtime / IN_MILLISECONDS);
+    map->Add(gameobject);
+    gameobject->AIM_Initialize();
+    return gameobject;
+}
+
 
 // how much space should be left in front of/ behind a mob that already uses a space
 #define OCCUPY_POS_DEPTH_FACTOR                          1.8f
@@ -2516,3 +2590,13 @@ void WorldObject::PrintCooldownList(ChatHandler& chat) const
     chat.PSendSysMessage("Found %u cooldown%s.", cdCount, (cdCount > 1) ? "s" : "");
     chat.PSendSysMessage("Found %u permanent cooldown%s.", permCDCount, (permCDCount > 1) ? "s" : "");
 }
+
+#ifdef BUILD_ELUNA
+Eluna* WorldObject::GetEluna() const
+{
+    if (IsInWorld())
+        return GetMap()->GetEluna();
+
+    return nullptr;
+}
+#endif

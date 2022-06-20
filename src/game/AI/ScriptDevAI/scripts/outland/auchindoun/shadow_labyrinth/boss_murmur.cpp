@@ -79,7 +79,7 @@ struct boss_murmurAI : public Scripted_NoMovementAI
     void UpdateAI(const uint32 uiDiff) override
     {
         // Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // SonicBoom_Timer
@@ -104,7 +104,7 @@ struct boss_murmurAI : public Scripted_NoMovementAI
             m_uiMurmursTouchTimer -= uiDiff;
 
         // Resonance_Timer - cast if no target is in range
-        if (!m_creature->CanReachWithMeleeAttack(m_creature->getVictim()))
+        if (!m_creature->CanReachWithMeleeAttack(m_creature->GetVictim()))
         {
             if (m_uiResonanceTimer < uiDiff)
             {

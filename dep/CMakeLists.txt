@@ -72,6 +72,7 @@ endmacro()
 add_subdirectory(recastnavigation)
 add_subdirectory(src)
 add_subdirectory(g3dlite)
+add_subdirectory(lualib)
 
 if(WIN32)
   if(BUILD_EXTRACTORS)

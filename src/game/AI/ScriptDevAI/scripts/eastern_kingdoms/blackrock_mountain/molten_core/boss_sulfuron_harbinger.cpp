@@ -83,7 +83,7 @@ struct boss_sulfuronAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Demoralizing Shout Timer
@@ -140,7 +140,7 @@ struct boss_sulfuronAI : public ScriptedAI
         // Dark Strike Timer
         if (m_uiDarkstrikeTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_DARK_STRIKE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_DARK_STRIKE) == CAST_OK)
                 m_uiDarkstrikeTimer = urand(15000, 18000);
         }
         else
@@ -173,7 +173,7 @@ struct mob_flamewaker_priestAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Casting Heal to Sulfuron or other Guards.

@@ -110,7 +110,7 @@ struct boss_zumrahAI : public ScriptedAI
     void JustSummoned(Creature* pSummoned) override
     {
         if (pSummoned->GetEntry() == NPC_ZULFARRAK_ZOMBIE || pSummoned->GetEntry() == NPC_ZULFARRAK_DEAD_HERO)
-            pSummoned->AI()->AttackStart(m_creature->getVictim());
+            pSummoned->AI()->AttackStart(m_creature->GetVictim());
     }
 
     GameObject* SelectNearbyShallowGrave()
@@ -127,7 +127,7 @@ struct boss_zumrahAI : public ScriptedAI
         {
             GameObject* pGo = m_creature->GetMap()->GetGameObject(*itr);
             // Go spawned and no looting in process
-            if (pGo && pGo->isSpawned() && pGo->getLootState() == GO_READY)
+            if (pGo && pGo->IsSpawned() && pGo->GetLootState() == GO_READY)
                 lGravesInRange.push_back(pGo);
         }
 
@@ -142,7 +142,7 @@ struct boss_zumrahAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiSpawnZombieTimer)

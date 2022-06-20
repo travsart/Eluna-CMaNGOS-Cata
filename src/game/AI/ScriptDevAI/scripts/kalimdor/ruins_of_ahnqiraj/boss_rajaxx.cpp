@@ -170,7 +170,7 @@ struct npc_general_andorovAI : public ScriptedAI, private DialogueHelper
         m_creature->DeleteThreatList();
         m_creature->CombatStop(true);
 
-        if (m_creature->isAlive())
+        if (m_creature->IsAlive())
         {
             // reset to combat position
             if (m_uiPointId >= 4)
@@ -227,12 +227,12 @@ struct npc_general_andorovAI : public ScriptedAI, private DialogueHelper
                 m_uiMoveTimer -= uiDiff;
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiBashTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_BASH) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_BASH) == CAST_OK)
                 m_uiBashTimer = urand(12000, 15000);
         }
         else
@@ -240,7 +240,7 @@ struct npc_general_andorovAI : public ScriptedAI, private DialogueHelper
 
         if (m_uiStrikeTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_STRIKE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_STRIKE) == CAST_OK)
                 m_uiStrikeTimer = urand(4000, 6000);
         }
         else
@@ -325,11 +325,11 @@ struct npc_kaldorei_eliteAI : public ScriptedAI
         m_creature->CombatStop(true);
 
         // reset only to the last position
-        if (m_creature->isAlive())
+        if (m_creature->IsAlive())
         {
             if (Creature* pAndorov = m_pInstance->GetSingleCreatureFromStorage(NPC_GENERAL_ANDOROV))
             {
-                if (pAndorov->isAlive())
+                if (pAndorov->IsAlive())
                     m_creature->GetMotionMaster()->MoveFollow(pAndorov, m_creature->GetDistance(pAndorov), m_creature->GetAngle(pAndorov));
             }
         }
@@ -341,12 +341,12 @@ struct npc_kaldorei_eliteAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiCleaveTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CLEAVE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_CLEAVE) == CAST_OK)
                 m_uiCleaveTimer = urand(5000, 7000);
         }
         else
@@ -354,7 +354,7 @@ struct npc_kaldorei_eliteAI : public ScriptedAI
 
         if (m_uiStrikeTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_MORTAL_STRIKE) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_MORTAL_STRIKE) == CAST_OK)
                 m_uiStrikeTimer = urand(9000, 13000);
         }
         else

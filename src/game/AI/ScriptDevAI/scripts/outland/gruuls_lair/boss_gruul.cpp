@@ -147,8 +147,8 @@ struct boss_gruulAI : public ScriptedAI
                 // and correct movement, if not already
                 if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() != CHASE_MOTION_TYPE)
                 {
-                    if (m_creature->getVictim())
-                        m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                    if (m_creature->GetVictim())
+                        m_creature->GetMotionMaster()->MoveChase(m_creature->GetVictim());
                 }
             }
         }
@@ -156,7 +156,7 @@ struct boss_gruulAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Gruul can cast this spell up to 30 times
@@ -197,7 +197,7 @@ struct boss_gruulAI : public ScriptedAI
                 if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_TOPAGGRO, 1, SPELL_HURTFUL_STRIKE, SELECT_FLAG_PLAYER))
                     DoCastSpellIfCan(pTarget, SPELL_HURTFUL_STRIKE);
                 else
-                    DoCastSpellIfCan(m_creature->getVictim(), SPELL_HURTFUL_STRIKE);
+                    DoCastSpellIfCan(m_creature->GetVictim(), SPELL_HURTFUL_STRIKE);
 
                 m_uiHurtfulStrikeTimer = 8000;
             }

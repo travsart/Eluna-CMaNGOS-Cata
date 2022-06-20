@@ -248,7 +248,7 @@ struct mob_illidari_councilAI : public ScriptedAI
         for (uint8 i = 0; i < 4; ++i)
         {
             Creature* pMember = m_pInstance->GetSingleCreatureFromStorage(aCouncilMember[i]);
-            if (pMember && pMember->isAlive())
+            if (pMember && pMember->IsAlive())
                 pMember->DealDamage(pMember, pMember->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
         }
 
@@ -386,7 +386,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiBlessingTimer < uiDiff)
@@ -444,7 +444,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
         {
             if (m_uiJudgmentTimer <= uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_JUDGMENT) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_JUDGMENT) == CAST_OK)
                     m_uiJudgmentTimer = 0;
             }
             else
@@ -503,7 +503,7 @@ struct boss_high_nethermancer_zerevorAI : public boss_illidari_councilAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiDampenMagicTimer < uiDiff)
@@ -524,7 +524,7 @@ struct boss_high_nethermancer_zerevorAI : public boss_illidari_councilAI
 
         if (m_uiArcaneBoltTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_ARCANE_BOLT) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_ARCANE_BOLT) == CAST_OK)
                 m_uiArcaneBoltTimer = 3000;
         }
         else
@@ -606,7 +606,7 @@ struct boss_lady_malandeAI : public boss_illidari_councilAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiEmpoweredSmiteTimer < uiDiff)
@@ -694,7 +694,7 @@ struct boss_veras_darkshadowAI : public boss_illidari_councilAI
 
     void UpdateAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_uiVanishEndtimer)
@@ -716,7 +716,7 @@ struct boss_veras_darkshadowAI : public boss_illidari_councilAI
 
         if (m_uiDeadlyPoisonTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_DEADLY_POISON) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_DEADLY_POISON) == CAST_OK)
                 m_uiDeadlyPoisonTimer = urand(4000, 7000);
         }
         else
@@ -724,7 +724,7 @@ struct boss_veras_darkshadowAI : public boss_illidari_councilAI
 
         if (m_uiEnvenomTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_ENVENOM) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature->GetVictim(), SPELL_ENVENOM) == CAST_OK)
                 m_uiEnvenomTimer = 5000;
         }
         else

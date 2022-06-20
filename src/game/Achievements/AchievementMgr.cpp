@@ -45,6 +45,10 @@
 
 #include "Policies/Singleton.h"
 
+#ifdef BUILD_ELUNA
+#include "LuaEngine/LuaEngine.h"
+#endif
+
 INSTANTIATE_SINGLETON_1(AchievementGlobalMgr);
 
 namespace MaNGOS
@@ -286,7 +290,7 @@ bool AchievementCriteriaRequirement::Meets(uint32 criteria_id, Player const* sou
                 return false;
             return target->GetHealth() * 100 <= health.percent * target->GetMaxHealth();
         case ACHIEVEMENT_CRITERIA_REQUIRE_T_PLAYER_DEAD:
-            if (!target || target->GetTypeId() != TYPEID_PLAYER || target->isAlive() || ((Player*)target)->GetDeathTimer() == 0)
+            if (!target || target->GetTypeId() != TYPEID_PLAYER || target->IsAlive() || ((Player*)target)->GetDeathTimer() == 0)
                 return false;
             // flag set == must be same team, not set == different team
             return (((Player*)target)->GetTeam() == source->GetTeam()) == (player_dead.own_team_flag != 0);
@@ -305,7 +309,7 @@ bool AchievementCriteriaRequirement::Meets(uint32 criteria_id, Player const* sou
         case ACHIEVEMENT_CRITERIA_REQUIRE_T_LEVEL:
             if (!target)
                 return false;
-            return target->getLevel() >= level.minlevel;
+            return target->GetLevel() >= level.minlevel;
         case ACHIEVEMENT_CRITERIA_REQUIRE_T_GENDER:
             if (!target)
                 return false;
@@ -976,7 +980,7 @@ void AchievementMgr::UpdateAchievementCriteria(AchievementCriteriaTypes type, ui
                 if (!ok)
                     continue;
 
-                change = GetPlayer()->getLevel();
+                change = GetPlayer()->GetLevel();
                 progressType = PROGRESS_HIGHEST;
                 break;
             }
@@ -2126,6 +2130,11 @@ void AchievementMgr::CompletedAchievement(AchievementEntry const* achievement)
         sAchievementMgr.SetRealmCompleted(achievement);
 
     UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_ACHIEVEMENT);
+
+#ifdef BUILD_ELUNA
+    if (Eluna* e = GetPlayer()->GetEluna())
+        e->OnAchievementComplete(GetPlayer(), achievement->ID);
+#endif
 
     // reward items and titles if any
     AchievementReward const* reward = sAchievementMgr.GetAchievementReward(achievement, GetPlayer()->getGender());

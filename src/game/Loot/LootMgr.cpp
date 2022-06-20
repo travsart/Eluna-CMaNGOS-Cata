@@ -28,6 +28,9 @@
 #include "Server/SQLStorages.h"
 #include "BattleGround/BattleGroundAV.h"
 #include "Entities/ItemEnchantmentMgr.h"
+#ifdef BUILD_ELUNA
+#include "LuaEngine/LuaEngine.h"
+#endif
 
 INSTANTIATE_SINGLETON_1(LootMgr);
 
@@ -477,7 +480,7 @@ bool LootItem::AllowedForPlayer(Player const* player, WorldObject const* lootTar
             if (!itemId)
                 return false;
 
-            if (!player->isGameMaster())
+            if (!player->IsGameMaster())
             {
                 if (currency->Category == CURRENCY_CATEGORY_META)
                     return false;
@@ -1684,7 +1687,7 @@ Loot::Loot(Player* player, Creature* creature, LootType type) :
         {
             m_clientLootType = CLIENT_LOOT_PICKPOCKETING;
 
-            if (!creature->isAlive() || player->getClass() != CLASS_ROGUE)
+            if (!creature->IsAlive() || player->getClass() != CLASS_ROGUE)
                 return;
 
             if (!creatureInfo->LootId || !FillLoot(creatureInfo->PickpocketLootId, LootTemplates_Pickpocketing, player, false))
@@ -1694,8 +1697,8 @@ Loot::Loot(Player* player, Creature* creature, LootType type) :
             }
 
             // Generate extra money for pick pocket loot
-            const uint32 a = urand(0, creature->getLevel() / 2);
-            const uint32 b = urand(0, player->getLevel() / 2);
+            const uint32 a = urand(0, creature->GetLevel() / 2);
+            const uint32 b = urand(0, player->GetLevel() / 2);
             m_gold = uint32(10 * (a + b) * sWorld.getConfig(CONFIG_FLOAT_RATE_DROP_MONEY));
 
             // setting loot right
@@ -1757,7 +1760,7 @@ Loot::Loot(Player* player, GameObject* gameObject, LootType type) :
     }
 
     // generate loot only if ready for open and spawned in world
-    if (gameObject->getLootState() == GO_READY && gameObject->isSpawned())
+    if (gameObject->GetLootState() == GO_READY && gameObject->IsSpawned())
     {
         if ((gameObject->GetEntry() == BG_AV_OBJECTID_MINE_N || gameObject->GetEntry() == BG_AV_OBJECTID_MINE_S))
         {
@@ -1853,9 +1856,9 @@ Loot::Loot(Player* player, Corpse* corpse, LootType type) :
         corpse->lootForBody = true;
         uint32 pLevel;
         if (Player* plr = sObjectAccessor.FindPlayer(corpse->GetOwnerGuid()))
-            pLevel = plr->getLevel();
+            pLevel = plr->GetLevel();
         else
-            pLevel = player->getLevel(); // TODO:: not correct, need to save real player level in the corpse data in case of logout
+            pLevel = player->GetLevel(); // TODO:: not correct, need to save real player level in the corpse data in case of logout
 
         if (player->GetBattleGround()->GetTypeID() == BATTLEGROUND_AV)
             FillLoot(0, LootTemplates_Creature, player, false);
@@ -2003,6 +2006,11 @@ InventoryResult Loot::SendItem(Player* target, LootItem* lootItem)
                 NotifyItemRemoved(lootItem->lootSlot);
 
             target->SendNewItem(newItem, uint32(lootItem->count), false, false, true);
+
+#ifdef BUILD_ELUNA
+            if (Eluna* e = target->GetEluna())
+                e->OnLootItem(target, newItem, lootItem->count, GetLootGuid());
+#endif
 
             lootItem->lootedBy.insert(target->GetObjectGuid());     // mark looted by this target
 
@@ -2183,6 +2191,11 @@ void Loot::SendGold(Player* player)
             data << uint8(0);// 0 is "you share of loot..."
 
             plr->GetSession()->SendPacket(&data);
+
+#ifdef BUILD_ELUNA
+            if (Eluna* e = plr->GetEluna())
+                e->OnLootMoney(plr, money_per_player);
+#endif
         }
     }
     else
@@ -2200,6 +2213,10 @@ void Loot::SendGold(Player* player)
             if (Item* item = player->GetItemByGuid(m_guidTarget))
                 item->SetLootState(ITEM_LOOT_CHANGED);
         }
+#ifdef BUILD_ELUNA
+        if (Eluna* e = player->GetEluna())
+            e->OnLootMoney(player, m_gold);
+#endif
     }
     m_gold = 0;
 

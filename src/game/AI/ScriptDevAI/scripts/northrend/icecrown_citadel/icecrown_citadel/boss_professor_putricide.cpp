@@ -257,7 +257,7 @@ struct boss_professor_putricideAI : public ScriptedAI
         if (m_creature->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE))
             return;
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         // Enrage
@@ -345,7 +345,7 @@ struct boss_professor_putricideAI : public ScriptedAI
                 {
                     m_creature->GetMotionMaster()->Clear();
                     SetCombatMovement(true);
-                    m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                    m_creature->GetMotionMaster()->MoveChase(m_creature->GetVictim());
                     m_uiPhase = PHASE_TWO;
 
                     if (m_pInstance && m_pInstance->IsHeroicDifficulty())
@@ -444,7 +444,7 @@ struct boss_professor_putricideAI : public ScriptedAI
                 {
                     m_creature->GetMotionMaster()->Clear();
                     SetCombatMovement(true);
-                    m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                    m_creature->GetMotionMaster()->MoveChase(m_creature->GetVictim());
                     m_uiPhase = PHASE_THREE;
 
                     if (m_pInstance && m_pInstance->IsHeroicDifficulty())

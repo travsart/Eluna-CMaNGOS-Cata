@@ -51,7 +51,7 @@ CreatureAI::~CreatureAI()
 
 void CreatureAI::AttackedBy(Unit* attacker)
 {
-    if (!m_unit->getVictim())
+    if (!m_unit->GetVictim())
         AttackStart(attacker);
 }
 
@@ -177,12 +177,12 @@ void CreatureAI::SetCombatMovement(bool enable, bool stopOrStartMovement /*=fals
     else
         m_unit->addUnitState(UNIT_STAT_NO_COMBAT_MOVEMENT);
 
-    if (stopOrStartMovement && m_unit->getVictim())     // Only change current movement while in combat
+    if (stopOrStartMovement && m_unit->GetVictim())     // Only change current movement while in combat
     {
         if (!m_unit->IsIncapacitated())
         {
             if (enable)
-                m_unit->GetMotionMaster()->MoveChase(m_unit->getVictim(), m_attackDistance, m_attackAngle, false);
+                m_unit->GetMotionMaster()->MoveChase(m_unit->GetVictim(), m_attackDistance, m_attackAngle, false);
             else if (m_unit->GetMotionMaster()->GetCurrentMovementGeneratorType() == CHASE_MOTION_TYPE)
                 m_unit->StopMoving();
         }

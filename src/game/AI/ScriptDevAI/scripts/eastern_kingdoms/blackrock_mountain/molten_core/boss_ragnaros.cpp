@@ -174,7 +174,7 @@ struct boss_ragnarosAI : public Scripted_NoMovementAI
         if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_TOPAGGRO, 0, uint32(0), SELECT_FLAG_IN_MELEE_RANGE))
         {
             // Target is not current victim, force select and attack it
-            if (pTarget != m_creature->getVictim())
+            if (pTarget != m_creature->GetVictim())
             {
                 AttackStart(pTarget);
                 m_creature->SetInFront(pTarget);
@@ -222,7 +222,7 @@ struct boss_ragnarosAI : public Scripted_NoMovementAI
                 m_uiEnterCombatTimer -= uiDiff;
         }
         // Return since we have no target
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
 
         if (m_bIsSubmerged)
@@ -310,7 +310,7 @@ struct boss_ragnarosAI : public Scripted_NoMovementAI
 
         // Range check for melee target, if nobody is found in range, then cast magma blast on random target
         // If we are within range melee the target (done in CanMeleeTargetInRange())
-        if (m_creature->IsNonMeleeSpellCasted(false) || !m_creature->getVictim())
+        if (m_creature->IsNonMeleeSpellCasted(false) || !m_creature->GetVictim())
             return;
 
         if (!CanMeleeTargetInRange())

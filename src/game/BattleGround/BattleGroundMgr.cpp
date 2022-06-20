@@ -45,6 +45,10 @@
 
 #include "Policies/Singleton.h"
 
+#ifdef BUILD_ELUNA
+#include "LuaEngine/LuaEngine.h"
+#endif
+
 INSTANTIATE_SINGLETON_1(BattleGroundMgr);
 
 /*********************************************************/
@@ -1997,7 +2001,7 @@ void BattleGroundMgr::BuildBattleGroundListPacket(WorldPacket* data, ObjectGuid 
     if (bgTemplate)
     {
         // expected bracket entry
-        if (PvPDifficultyEntry const* bracketEntry = GetBattlegroundBracketByLevel(bgTemplate->GetMapId(), plr->getLevel()))
+        if (PvPDifficultyEntry const* bracketEntry = GetBattlegroundBracketByLevel(bgTemplate->GetMapId(), plr->GetLevel()))
         {
             BattleGroundBracketId bracketId = bracketEntry->GetBracketId();
             ClientBattleGroundIdSet const& ids = m_ClientBattleGroundIds[bgTypeId][bracketId];
