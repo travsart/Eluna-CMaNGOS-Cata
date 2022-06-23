@@ -220,7 +220,7 @@ CombatManeuverReturns PlayerbotPaladinAI::DoNextCombatManeuverPVE(Unit *pTarget)
         if (HealPlayer(GetHealTarget()) & (RETURN_NO_ACTION_OK | RETURN_CONTINUE))
             return RETURN_CONTINUE;
     }
-    else if (m_ai->GetGroupHealer() && m_ai->GetGroupHealer()->isAlive())
+    else if (m_ai->GetGroupHealer() && m_ai->GetGroupHealer()->IsAlive())
     {
         // Desirable? Debatable. We should have faith in the healer. On the other hand this low HP could be considered a crisis,
         // and DPS is not crucial so probably a good thing (which is why I put it in)
@@ -318,7 +318,7 @@ CombatManeuverReturns PlayerbotPaladinAI::HealPlayer(Player* target)
     if (r != RETURN_NO_ACTION_OK)
         return r;
 
-    if (!target->isAlive())
+    if (!target->IsAlive())
     {
         if (REDEMPTION && m_ai->CastSpell(REDEMPTION, *target))
         {
@@ -483,7 +483,7 @@ void PlayerbotPaladinAI::DoNonCombatActions()
     if (!m_ai)   return;
     if (!m_bot)  return;
 
-    if (!m_bot->isAlive() || m_bot->IsInDuel()) return;
+    if (!m_bot->IsAlive() || m_bot->IsInDuel()) return;
     
     CheckAuras();
 

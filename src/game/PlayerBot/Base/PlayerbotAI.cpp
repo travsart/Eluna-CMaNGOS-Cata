@@ -2346,7 +2346,7 @@ void PlayerbotAI::HandleBotOutgoingPacket(const WorldPacket& packet)
         // if someone tries to resurrect, then accept
     case SMSG_RESURRECT_REQUEST:
         {
-            if (!m_bot->isAlive())
+            if (!m_bot->IsAlive())
             {
                 WorldPacket p(packet);
                 ObjectGuid guid;
@@ -2440,7 +2440,7 @@ void PlayerbotAI::HandleBotOutgoingPacket(const WorldPacket& packet)
                     {
                         // calculate skill requirement
                         uint32 skillValue = m_bot->GetPureSkillValue(reqSkill);
-                        uint32 targetLevel = c->getLevel();
+                        uint32 targetLevel = c->GetLevel();
                         uint32 reqSkillValue = targetLevel < 10 ? 0 : targetLevel < 20 ? (targetLevel - 10) * 10 : targetLevel * 5;
                         if (skillValue >= reqSkillValue)
                         {
@@ -3191,7 +3191,7 @@ void PlayerbotAI::DoNextCombatManeuver()
         Attack();
 
     // clear orders if current target for attacks doesn't make sense anymore
-    if (!m_targetCombat || m_targetCombat->isDead() || !m_targetCombat->IsInWorld() || !m_bot->IsHostileTo(m_targetCombat) || !m_bot->IsInMap(m_targetCombat))
+    if (!m_targetCombat || m_targetCombat->IsDead() || !m_targetCombat->IsInWorld() || !m_bot->IsHostileTo(m_targetCombat) || !m_bot->IsInMap(m_targetCombat))
     {
         m_bot->AttackStop();
         m_bot->SetSelectionGuid(ObjectGuid());
@@ -3286,8 +3286,8 @@ void PlayerbotAI::DoCombatMovement()
 bool PlayerbotAI::IsGroupInCombat()
 {
     if (!m_bot) return false;
-    if (!m_bot->isAlive() || m_bot->IsInDuel()) return true; // Let's just say you're otherwise occupied
-    if (m_bot->isInCombat()) return true;
+    if (!m_bot->IsAlive() || m_bot->IsInDuel()) return true; // Let's just say you're otherwise occupied
+    if (m_bot->IsInCombat()) return true;
 
     if (m_bot->GetGroup())
     {
@@ -3295,7 +3295,7 @@ bool PlayerbotAI::IsGroupInCombat()
         for (Group::member_citerator itr = groupSlot.begin(); itr != groupSlot.end(); itr++)
         {
             Player* groupMember = sObjectMgr.GetPlayer(itr->guid);
-            if (!groupMember || !groupMember->isAlive() || groupMember->IsInDuel() || groupMember->isInCombat()) // all occupied in some way
+            if (!groupMember || !groupMember->IsAlive() || groupMember->IsInDuel() || groupMember->IsInCombat()) // all occupied in some way
                 return true;
         }
     }
@@ -3765,7 +3765,7 @@ void PlayerbotAI::DoLoot()
     GameObject *go = m_bot->GetMap()->GetGameObject(m_lootCurrent);
 
     // clear creature or object that is not spawned or if not creature or object
-    if ((c && c->IsDespawned()) || (go && !go->isSpawned()) || (!c && !go))
+    if ((c && c->IsDespawned()) || (go && !go->IsSpawned()) || (!c && !go))
     {
         m_lootCurrent = ObjectGuid();
         return;
@@ -3832,7 +3832,7 @@ void PlayerbotAI::DoLoot()
                     (HasCollectFlag(COLLECT_FLAG_SKIN) && skillId == SKILL_SKINNING)))
                 {
                     // calculate skinning skill requirement
-                    uint32 targetLevel = c->getLevel();
+                    uint32 targetLevel = c->GetLevel();
                     reqSkillValue = targetLevel < 10 ? 0 : targetLevel < 20 ? (targetLevel - 10) * 10 : targetLevel * 5;
                 }
 
@@ -4215,20 +4215,20 @@ bool PlayerbotAI::IsInCombat()
 {
     Pet *pet;
     bool inCombat = false;
-    inCombat |= m_bot->isInCombat();
+    inCombat |= m_bot->IsInCombat();
     pet = m_bot->GetPet();
     if (pet)
-        inCombat |= pet->isInCombat();
-    inCombat |= GetMaster()->isInCombat();
+        inCombat |= pet->IsInCombat();
+    inCombat |= GetMaster()->IsInCombat();
     if (m_bot->GetGroup())
     {
         GroupReference *ref = m_bot->GetGroup()->GetFirstMember();
         while (ref)
         {
-            inCombat |= ref->getSource()->isInCombat();
+            inCombat |= ref->getSource()->IsInCombat();
             pet = ref->getSource()->GetPet();
             if (pet)
-                inCombat |= pet->isInCombat();
+                inCombat |= pet->IsInCombat();
             ref = ref->next();
         }
     }
@@ -4260,7 +4260,7 @@ void PlayerbotAI::UpdateAttackersForTarget(Unit *victim)
         ThreatManager *target = ref->getSource();
         ObjectGuid guid = target->getOwner()->GetObjectGuid();
         m_attackerInfo[guid].attacker = target->getOwner();
-        m_attackerInfo[guid].victim = target->getOwner()->getVictim();
+        m_attackerInfo[guid].victim = target->getOwner()->GetVictim();
         m_attackerInfo[guid].threat = target->getThreat(victim);
         m_attackerInfo[guid].count = 1;
         //m_attackerInfo[guid].source = 1; // source is not used so far.
@@ -4653,7 +4653,7 @@ void PlayerbotAI::MovementReset()
         WorldObject* distTarget = m_followTarget;   // target to distance check
 
         // don't follow while in combat
-        if (m_bot->isInCombat())
+        if (m_bot->IsInCombat())
             return;
 
         Player* pTarget;                            // target is player
@@ -4678,7 +4678,7 @@ void PlayerbotAI::MovementReset()
             return;
         }
 
-        if (m_bot->isAlive() && !m_bot->IsBeingTeleported())
+        if (m_bot->IsAlive() && !m_bot->IsBeingTeleported())
         {
             if (DistOverRide != 0)
             {
@@ -4916,7 +4916,7 @@ void PlayerbotAI::UpdateAI(const uint32 /*p_time*/)
         SetMovementOrder(MOVEMENT_FOLLOW, GetMaster());
     }
 
-    if (!m_bot->isAlive())
+    if (!m_bot->IsAlive())
     {
         if (m_botState == BOTSTATE_DEAD)
         {
@@ -5030,7 +5030,7 @@ void PlayerbotAI::UpdateAI(const uint32 /*p_time*/)
             return;
 
         if (m_bot->GetPetGuid() || spell->CheckCast(true) != SPELL_CAST_OK || !pTarget ||
-            pTarget->isDead() || !m_bot->IsInMap(pTarget) || !(((Creature *) pTarget)->GetCreatureInfo()->CreatureTypeFlags & CREATURE_TYPEFLAGS_TAMEABLE))
+            pTarget->IsDead() || !m_bot->IsInMap(pTarget) || !(((Creature *) pTarget)->GetCreatureInfo()->CreatureTypeFlags & CREATURE_TYPEFLAGS_TAMEABLE))
         {
             MovementReset();
             m_bot->SetSelectionGuid(ObjectGuid());
@@ -5157,7 +5157,7 @@ void PlayerbotAI::UpdateAI(const uint32 /*p_time*/)
     }
 
     // if commanded to follow master and not already following master then follow master
-    if (!m_bot->isInCombat() && !IsMoving())
+    if (!m_bot->IsInCombat() && !IsMoving())
         return MovementReset();
 
     // do class specific non combat actions
@@ -5509,7 +5509,7 @@ bool PlayerbotAI::Buff(uint32 spellId, Unit* target, void (*beforeCast)(Player *
         return false;
 
     // Select appropriate spell rank for target's level
-    spellProto = sSpellMgr.SelectAuraRankForLevel(spellProto, target->getLevel());
+    spellProto = sSpellMgr.SelectAuraRankForLevel(spellProto, target->GetLevel());
     if (!spellProto)
         return false;
 
@@ -7107,7 +7107,7 @@ void PlayerbotAI::findNearbyGO()
 
             float ground_z = map->GetHeightStatic(go->GetPositionX(), go->GetPositionY(), go->GetPositionZ());
             // DEBUG_LOG("ground_z (%f) > INVALID_HEIGHT (%f)",ground_z,INVALID_HEIGHT);
-            if ((ground_z > INVALID_HEIGHT) && go->isSpawned())
+            if ((ground_z > INVALID_HEIGHT) && go->IsSpawned())
                 m_lootTargets.push_back(go->GetObjectGuid());
         }
     }
@@ -7361,7 +7361,7 @@ void PlayerbotAI::findNearbyCreature()
 */
 void PlayerbotAI::GiveLevel(uint32 /*level*/)
 {
-    // Talent function in Player::GetLevel take care of resetting talents in case level < getLevel()
+    // Talent function in Player::GetLevel take care of resetting talents in case level < GetLevel()
     ApplyActiveTalentSpec();
 }
 
@@ -7863,14 +7863,14 @@ void PlayerbotAI::_doSellItem(Item* const item, std::ostringstream &report, std:
         // We'll check to make sure its not a tradeskill tool, quest item etc, things that we don't want to lose.
         if (pProto->SellPrice > 0 && (pProto->Quality == ITEM_QUALITY_NORMAL || pProto->Quality == ITEM_QUALITY_UNCOMMON) && pProto->SubClass != ITEM_SUBCLASS_QUEST)
         {
-            if (pProto->RequiredLevel < (m_bot->getLevel() - m_mgr->gConfigSellLevelDiff) && pProto->SubClass != ITEM_SUBCLASS_WEAPON_MISC && pProto->FoodType == 0)
+            if (pProto->RequiredLevel < (m_bot->GetLevel() - m_mgr->gConfigSellLevelDiff) && pProto->SubClass != ITEM_SUBCLASS_WEAPON_MISC && pProto->FoodType == 0)
             {
                 if (pProto->Class == ITEM_CLASS_WEAPON)
                     autosell = 1;
                 if (pProto->Class == ITEM_CLASS_ARMOR)
                     autosell = 1;
             }
-            if (pProto->SubClass == ITEM_SUBCLASS_FOOD && (pProto->RequiredLevel < (m_bot->getLevel() - m_mgr->gConfigSellLevelDiff)))
+            if (pProto->SubClass == ITEM_SUBCLASS_FOOD && (pProto->RequiredLevel < (m_bot->GetLevel() - m_mgr->gConfigSellLevelDiff)))
             {
                 autosell = 1;
             }
@@ -8618,14 +8618,14 @@ bool PlayerbotAI::DropGarbage(bool bVerbose)
             }
             if (m_dropWhite && item->GetProto()->SellPrice > 0 && (item->GetProto()->Quality == ITEM_QUALITY_NORMAL || item->GetProto()->Quality == ITEM_QUALITY_UNCOMMON) && item->GetProto()->SubClass != ITEM_SUBCLASS_QUEST)
             {
-                if (pProto->RequiredLevel < (m_bot->getLevel() - m_mgr->gConfigSellLevelDiff) && pProto->SubClass != ITEM_SUBCLASS_WEAPON_MISC && pProto->FoodType == 0)
+                if (pProto->RequiredLevel < (m_bot->GetLevel() - m_mgr->gConfigSellLevelDiff) && pProto->SubClass != ITEM_SUBCLASS_WEAPON_MISC && pProto->FoodType == 0)
                 {
                     if (pProto->Class == ITEM_CLASS_WEAPON)
                         autodrop = true;
                     if (pProto->Class == ITEM_CLASS_ARMOR)
                         autodrop = true;
                 }
-                if (pProto->SubClass == ITEM_SUBCLASS_FOOD && (pProto->RequiredLevel < (m_bot->getLevel() - m_mgr->gConfigSellLevelDiff)))
+                if (pProto->SubClass == ITEM_SUBCLASS_FOOD && (pProto->RequiredLevel < (m_bot->GetLevel() - m_mgr->gConfigSellLevelDiff)))
                 {
                     autodrop = true;
                 }
@@ -8658,14 +8658,14 @@ bool PlayerbotAI::DropGarbage(bool bVerbose)
                     }
                     if (m_dropWhite && item->GetProto()->SellPrice > 0 && (item->GetProto()->Quality == ITEM_QUALITY_NORMAL || item->GetProto()->Quality == ITEM_QUALITY_UNCOMMON) && item->GetProto()->SubClass != ITEM_SUBCLASS_QUEST)
                     {
-                        if (pProto->RequiredLevel < (m_bot->getLevel() - m_mgr->gConfigSellLevelDiff) && pProto->SubClass != ITEM_SUBCLASS_WEAPON_MISC && pProto->FoodType == 0)
+                        if (pProto->RequiredLevel < (m_bot->GetLevel() - m_mgr->gConfigSellLevelDiff) && pProto->SubClass != ITEM_SUBCLASS_WEAPON_MISC && pProto->FoodType == 0)
                         {
                             if (pProto->Class == ITEM_CLASS_WEAPON)
                                 autodrop = true;
                             if (pProto->Class == ITEM_CLASS_ARMOR)
                                 autodrop = true;
                         }
-                        if (pProto->SubClass == ITEM_SUBCLASS_FOOD && (pProto->RequiredLevel < (m_bot->getLevel() - m_mgr->gConfigSellLevelDiff)))
+                        if (pProto->SubClass == ITEM_SUBCLASS_FOOD && (pProto->RequiredLevel < (m_bot->GetLevel() - m_mgr->gConfigSellLevelDiff)))
                         {
                             autodrop = true;
                         }
@@ -11182,7 +11182,7 @@ void PlayerbotAI::_HandleCommandSurvey(std::string& /*text*/, Player &fromPlayer
             if (!go)
                 continue;
 
-            if (!go->isSpawned())
+            if (!go->IsSpawned())
                 continue;
 
             detectout << "|cFFFFFF00|Hfound:" << guid << ":" << entry  << ":" <<  "|h[" << go->GetGOInfo()->name << "]|h|r";

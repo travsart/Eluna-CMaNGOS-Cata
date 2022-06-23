@@ -374,7 +374,7 @@ CombatManeuverReturns PlayerbotPriestAI::HealPlayer(Player* target)
     if (r != RETURN_NO_ACTION_OK)
         return r;
 
-    if (!target->isAlive())
+    if (!target->IsAlive())
     {
         if (RESURRECTION && m_ai->In_Reach(target,RESURRECTION) && m_ai->CastSpell(RESURRECTION, *target))
         {
@@ -440,7 +440,7 @@ void PlayerbotPriestAI::DoNonCombatActions()
     if (!m_ai)   return;
     if (!m_bot)  return;
 
-    if (!m_bot->isAlive() || m_bot->IsInDuel()) return;
+    if (!m_bot->IsAlive() || m_bot->IsInDuel()) return;
 
     uint32 spec = m_bot->GetSpec();
 

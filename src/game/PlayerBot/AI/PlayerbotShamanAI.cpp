@@ -290,7 +290,7 @@ CombatManeuverReturns PlayerbotShamanAI::HealPlayer(Player* target)
     if (r != RETURN_NO_ACTION_OK)
         return r;
 
-    if (!target->isAlive())
+    if (!target->IsAlive())
     {
         if (ANCESTRAL_SPIRIT && m_ai->CastSpell(ANCESTRAL_SPIRIT, *target))
         {
@@ -502,7 +502,7 @@ void PlayerbotShamanAI::DoNonCombatActions()
     if (!m_ai)   return;
     if (!m_bot)  return;
 
-    if (!m_bot->isAlive() || m_bot->IsInDuel()) return;
+    if (!m_bot->IsAlive() || m_bot->IsInDuel()) return;
 
     uint32 spec = m_bot->GetSpec();
 
