@@ -22,7 +22,6 @@
 const char Achievementfmt[]="niiissiiiiisii";
 const char AchievementCriteriafmt[]="niiiiiiiixsiiiiixxxxxxx";
 const char AreaTableEntryfmt[]="iiinixxxxxisiiiiixxxxxxxxx";
-const char AreaGroupEntryfmt[]="niiiiiii";
 const char AreaTriggerEntryfmt[]="nifffxxxfffff";
 const char ArmorLocationfmt[]="nfffff";
 const char AuctionHouseEntryfmt[]="niiix";
@@ -31,8 +30,7 @@ const char BarberShopStyleEntryfmt[]="nixxxiii";
 const char BattlemasterListEntryfmt[]="niiiiiiiiixsiiiiiiii";
 const char CharStartOutfitEntryfmt[]="diiiiiiiiiiiiiiiiiiiiiiiiixxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 const char CharTitlesEntryfmt[]="nxsxix";
-const char ChatChannelsEntryfmt[]="iixsx";
-                                                            // ChatChannelsEntryfmt, index not used (more compact store)
+const char ChatChannelsEntryfmt[]="iixsx";       // ChatChannelsEntryfmt, index not used (more compact store)
 const char ChrClassesEntryfmt[]="nixsxxxixiiiii";
 const char ChrRacesEntryfmt[]="nxixiixixxxxixsxxxxxixxx";
 const char ChrClassesXPowerTypesfmt[]="nii";
@@ -43,7 +41,6 @@ const char CreatureFamilyfmt[]="nfifiiiiixsx";
 const char CreatureModelDatafmt[] = "nxxxxxxxxxxxxxxffxxxxxxxxxxxxxx";
 const char CreatureSpellDatafmt[]="niiiixxxx";
 const char DestructibleModelDataFmt[] = "nixxxixxxxixxxxixxxxixxx";
-const char DungeonEncounterfmt[]="niiiisxx";
 const char CreatureTypefmt[]="nxx";
 const char CurrencyTypesfmt[]="nisxxxxiiix";
 const char DurabilityCostsfmt[]="niiiiiiiiiiiiiiiiiiiiiiiiiiiii";

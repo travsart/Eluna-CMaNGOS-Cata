@@ -31,6 +31,8 @@ extern SQLStorage sItemStorage;
 extern SQLStorage sInstanceTemplate;
 extern SQLStorage sWorldTemplate;
 extern SQLStorage sConditionStorage;
+extern SQLStorage sDungeonEncounterStore;
+extern SQLStorage sAreaGroupStore;
 
 extern SQLHashStorage sSpellTemplate;
 extern SQLHashStorage sGOStorage;

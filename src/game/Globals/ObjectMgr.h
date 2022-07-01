@@ -791,6 +791,11 @@ class ObjectMgr
 
         void LoadGossipMenus();
 
+        //void LoadSpellTemplate();
+        void LoadDungeonEncounters();
+        void LoadAreaGroups();
+        void LoadSQLDBCs();
+
         void LoadVendorTemplates();
         void LoadVendors() { LoadVendors("npc_vendor", false); }
         void LoadTrainerTemplates();
