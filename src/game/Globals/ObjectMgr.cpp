@@ -7405,10 +7405,6 @@ void ObjectMgr::LoadSpellTemplate()
         }
     }
 
-    sSpellAuraOptionsStore.Load();
-    sLog.outString(">> Loaded %u spell_aura_option records", sSpellAuraOptionsStore.GetRecordCount());
-    sLog.outString();
-
     sSpellEffectStore.Load();
     sLog.outString(">> Loaded %u spell_effect records", sSpellEffectStore.GetRecordCount());
     sLog.outString();

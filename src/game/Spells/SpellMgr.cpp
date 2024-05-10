@@ -1246,12 +1246,12 @@ struct DoSpellProcEvent
 
         if (spe.procFlags == 0)
         {
-            if (spell->GetProcFlags()==0)
+            if (spell->ProcFlags==0)
                 sLog.outErrorDb("Spell %u listed in `spell_proc_event` probally not triggered spell (no proc flags)", spell->Id);
         }
         else
         {
-            if (spell->GetProcFlags()==spe.procFlags)
+            if (spell->ProcFlags==spe.procFlags)
                 sLog.outErrorDb("Spell %u listed in `spell_proc_event` has exactly same proc flags as in spell.dbc, field value redundant", spell->Id);
             else
                 isCustom = true;
@@ -1266,7 +1266,7 @@ struct DoSpellProcEvent
         }
         else
         {
-            if (spell->GetProcChance()==spe.customChance)
+            if (spell->ProcChance==spe.customChance)
                 sLog.outErrorDb("Spell %u listed in `spell_proc_event` has exactly same custom chance as in spell.dbc, field value redundant", spell->Id);
             else
                 isCustom = true;

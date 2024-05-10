@@ -5060,7 +5060,7 @@ bool Unit::AddSpellAuraHolder(SpellAuraHolder* holder)
             if (foundHolder->GetCasterGuid() == holder->GetCasterGuid())
             {
                 // Aura can stack on self -> Stack it;
-                if (aurSpellInfo->GetStackAmount())
+                if (aurSpellInfo->StackAmount)
                 {
                     // can be created with >1 stack by some spell mods
                     foundHolder->ModStackAmount(holder->GetStackAmount());

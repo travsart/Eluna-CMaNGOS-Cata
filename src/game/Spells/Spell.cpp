@@ -6895,7 +6895,7 @@ bool Spell::CanAutoCast(Unit* target)
             continue;
         if(spellEffect->Effect == SPELL_EFFECT_APPLY_AURA)
         {
-            if( m_spellInfo->GetStackAmount() <= 1)
+            if( m_spellInfo->StackAmount <= 1)
             {
                 if (target->HasAura(m_spellInfo->Id, SpellEffectIndex(j)))
                     return false;
@@ -6903,7 +6903,7 @@ bool Spell::CanAutoCast(Unit* target)
             else
             {
                 if(Aura* aura = target->GetAura(m_spellInfo->Id, SpellEffectIndex(j)))
-                    if(aura->GetStackAmount() >= m_spellInfo->GetStackAmount())
+                    if(aura->GetStackAmount() >= m_spellInfo->StackAmount)
                         return false;
             }
         }

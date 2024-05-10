@@ -7154,7 +7154,7 @@ void Spell::EffectWeaponDmg(SpellEffectEntry const* effect)
 
                 // Devastate causing Sunder Armor Effect
                 // and no need to cast over max stack amount
-                if (!sunder || sunder->GetStackAmount() < sunder->GetSpellProto()->GetStackAmount())
+                if (!sunder || sunder->GetStackAmount() < sunder->GetSpellProto()->StackAmount)
                     m_caster->CastSpell(unitTarget, 58567, TRIGGERED_OLD_TRIGGERED);
             }
             break;
@@ -8995,7 +8995,7 @@ void Spell::EffectScriptEffect(SpellEffectEntry const* effect)
 
                     if (SpellAuraHolder* pHolder = unitTarget->GetSpellAuraHolder(m_spellInfo->Id))
                     {
-                        if (pHolder->GetStackAmount() + 1 >= m_spellInfo->GetStackAmount())
+                        if (pHolder->GetStackAmount() + 1 >= m_spellInfo->StackAmount)
                         {
                             // Gluttonous Lurkers: Summon Gorged Lurking Basilisk
                             unitTarget->CastSpell(m_caster, 50928, TRIGGERED_OLD_TRIGGERED);
@@ -9371,7 +9371,7 @@ void Spell::EffectScriptEffect(SpellEffectEntry const* effect)
                         unitTarget->RemoveAurasDueToSpell(62239);
                     else
                     {
-                        uint32 stackAmount = urand(1, GetSpellStore()->LookupEntry<SpellEntry>(62239)->GetStackAmount());
+                        uint32 stackAmount = urand(1, GetSpellStore()->LookupEntry<SpellEntry>(62239)->StackAmount);
 
                         for (uint8 i = 0; i < stackAmount; ++i)
                             unitTarget->CastSpell(unitTarget, 62239, TRIGGERED_OLD_TRIGGERED);

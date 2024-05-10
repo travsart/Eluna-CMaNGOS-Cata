@@ -415,7 +415,7 @@ bool Unit::IsTriggeredAtSpellProcEvent(Unit* pVictim, SpellAuraHolder* holder, S
     if (spellProcEvent && spellProcEvent->procFlags)        // if exist get custom spellProcEvent->procFlags
         EventProcFlag = spellProcEvent->procFlags;
     else
-        EventProcFlag = spellProto->GetProcFlags();         // else get from spell proto
+        EventProcFlag = spellProto->ProcFlags;         // else get from spell proto
     // Continue if no trigger exist
     if (!EventProcFlag)
         return false;
@@ -466,7 +466,7 @@ bool Unit::IsTriggeredAtSpellProcEvent(Unit* pVictim, SpellAuraHolder* holder, S
         }
     }
     // Get chance from spell
-    float chance = (float)spellProto->GetProcChance();
+    float chance = (float)spellProto->ProcChance;
     // If in spellProcEvent exist custom chance, chance = spellProcEvent->customChance;
     if (spellProcEvent && spellProcEvent->customChance)
         chance = spellProcEvent->customChance;
@@ -1108,7 +1108,7 @@ SpellAuraProcResult Unit::HandleDummyAuraProc(Unit* pVictim, uint32 damage, Aura
                     else if (aurHolder->GetStackAmount() + 1 == 6)
                         CastSpell(this, 72523, TRIGGERED_OLD_TRIGGERED);       // Shadowmourne Visual High
                     // full stack
-                    else if (aurHolder->GetStackAmount() + 1 >= aurHolder->GetSpellProto()->GetStackAmount())
+                    else if (aurHolder->GetStackAmount() + 1 >= aurHolder->GetSpellProto()->StackAmount)
                     {
                         RemoveAurasDueToSpell(triggered_spell_id);
                         CastSpell(this, 71904, TRIGGERED_OLD_TRIGGERED);       // Chaos Bane
@@ -2237,7 +2237,7 @@ SpellAuraProcResult Unit::HandleDummyAuraProc(Unit* pVictim, uint32 damage, Aura
                     SpellEntry const* mote = sSpellTemplate.LookupEntry<SpellEntry>(71432);
                     if (!mote)
                         return SPELL_AURA_PROC_FAILED;
-                    uint32 maxStack = mote->GetStackAmount() - (dummySpell->Id == 71545 ? 1 : 0);
+                    uint32 maxStack = mote->StackAmount - (dummySpell->Id == 71545 ? 1 : 0);
 
                     SpellAuraHolder* aurHolder = GetSpellAuraHolder(71432);
                     if (aurHolder && uint32(aurHolder->GetStackAmount() + 1) >= maxStack)

@@ -7954,7 +7954,7 @@ void Player::_HandleDeadlyPoison(Unit* Target, WeaponAttackType attType, SpellEn
             break;
         }
     }
-    if (dPoison && dPoison->GetStackAmount() == spellInfo->GetStackAmount())
+    if (dPoison && dPoison->GetStackAmount() == spellInfo->StackAmount)
     {
         Item* otherWeapon = GetWeaponForAttack(attType == BASE_ATTACK ? OFF_ATTACK : BASE_ATTACK);
         if (!otherWeapon)
@@ -8017,7 +8017,7 @@ void Player::CastItemCombatSpell(Unit* Target, WeaponAttackType attType)
         if (m_extraAttacks && IsSpellHaveEffect(spellInfo, SPELL_EFFECT_ADD_EXTRA_ATTACKS))
             return;
 
-        float chance = (float)spellInfo->GetProcChance();
+        float chance = (float)spellInfo->ProcChance;
 
         if (spellData.SpellPPMRate)
         {
@@ -15999,7 +15999,7 @@ void Player::_LoadAuras(QueryResult* result, uint32 timediff)
             }
 
             // prevent wrong values of remaincharges
-            if (uint32 procCharges = spellproto->GetProcCharges())
+            if (uint32 procCharges = spellproto->ProcCharges)
             {
                 if (remaincharges <= 0 || remaincharges > procCharges)
                     remaincharges = procCharges;
@@ -16007,7 +16007,7 @@ void Player::_LoadAuras(QueryResult* result, uint32 timediff)
             else
                 remaincharges = 0;
 
-            uint32 defstackamount = spellproto->GetStackAmount();
+            uint32 defstackamount = spellproto->StackAmount;
             if (!defstackamount)
                 stackcount = 1;
             else if (defstackamount < stackcount)

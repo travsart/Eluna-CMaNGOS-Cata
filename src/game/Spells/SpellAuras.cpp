@@ -1053,7 +1053,7 @@ struct ReapplyAffectedPassiveAurasHelper
 void Aura::ReapplyAffectedPassiveAuras()
 {
     // not reapply spell mods with charges (use original value because processed and at remove)
-    if (GetSpellProto()->GetProcCharges())
+    if (GetSpellProto()->ProcCharges)
         return;
 
     // not reapply some spell mods ops (mostly speedup case)
@@ -5471,7 +5471,7 @@ void Aura::HandlePrayerOfMending(bool apply, bool /*Real*/)
 {
     if (apply) // only on initial cast apply SP
         if (const SpellEntry* entry = GetSpellProto())
-            if (GetHolder()->GetAuraCharges() == entry->GetProcCharges())
+            if (GetHolder()->GetAuraCharges() == entry->ProcCharges)
                 m_modifier.m_amount = GetCaster()->SpellHealingBonusDone(GetTarget(), GetSpellProto(), m_modifier.m_amount, HEAL);
 }
 
@@ -9124,7 +9124,7 @@ SpellAuraHolder::SpellAuraHolder(SpellEntry const* spellproto, Unit* target, Wor
     m_isPassive      = IsPassiveSpell(spellproto);
     m_isDeathPersist = IsDeathPersistentSpell(spellproto);
     m_trackedAuraType= IsSingleTargetSpell(spellproto) ? TRACK_AURA_TYPE_SINGLE_TARGET : IsSpellHaveAura(spellproto, SPELL_AURA_CONTROL_VEHICLE) ? TRACK_AURA_TYPE_CONTROL_VEHICLE : TRACK_AURA_TYPE_NOT_TRACKED;
-    m_procCharges = m_spellProto->GetProcCharges();
+    m_procCharges = m_spellProto->ProcCharges;
 
     m_isRemovedOnShapeLost = (GetCasterGuid() == m_target->GetObjectGuid() &&
                               m_spellProto->GetStances() &&
@@ -9161,7 +9161,7 @@ SpellAuraHolder::SpellAuraHolder(SpellEntry const* spellproto, Unit* target, Wor
         case 65294:                                         // Empowered
         case 71564:                                         // Deadly Precision
         case 74396:                                         // Fingers of Frost
-            m_stackAmount = m_spellProto->GetStackAmount();
+            m_stackAmount = m_spellProto->StackAmount;
             break;
     }
 
@@ -9500,7 +9500,7 @@ void SpellAuraHolder::CleanupTriggeredSpells()
 
 bool SpellAuraHolder::ModStackAmount(int32 num)
 {
-    uint32 protoStackAmount = m_spellProto->GetStackAmount();
+    uint32 protoStackAmount = m_spellProto->StackAmount;
 
     // Can`t mod
     if (!protoStackAmount)
@@ -9581,7 +9581,7 @@ bool SpellAuraHolder::IsWeaponBuffCoexistableWith(SpellAuraHolder const* ref) co
         return false;
 
     // Exclude Stackable Buffs [ie: Blood Reserve]
-    if (GetSpellProto()->GetStackAmount())
+    if (GetSpellProto()->StackAmount)
         return false;
 
     // only self applied player buffs
@@ -9605,7 +9605,7 @@ bool SpellAuraHolder::IsNeedVisibleSlot(Unit const* caster) const
 {
     bool totemAura = caster && caster->GetTypeId() == TYPEID_UNIT && ((Creature*)caster)->IsTotem();
 
-    if (m_spellProto->GetProcFlags())
+    if (m_spellProto->ProcFlags)
         return true;
     else if (IsSpellTriggerSpellByAura(m_spellProto))
         return true;

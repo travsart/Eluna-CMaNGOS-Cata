@@ -1428,7 +1428,7 @@ void Pet::_LoadAuras(uint32 timediff)
             }
 
             // prevent wrong values of remaincharges
-            uint32 procCharges = spellproto->GetProcCharges();
+            uint32 procCharges = spellproto->ProcCharges;
             if (procCharges)
             {
                 if (remaincharges <= 0 || remaincharges > procCharges)
@@ -1437,7 +1437,7 @@ void Pet::_LoadAuras(uint32 timediff)
             else
                 remaincharges = 0;
 
-            uint32 defstackamount = spellproto->GetStackAmount();
+            uint32 defstackamount = spellproto->StackAmount;
             if (!defstackamount)
                 stackcount = 1;
             else if (defstackamount < stackcount)

@@ -39,11 +39,6 @@ ClassFamilyMask const& SpellEntry::GetEffectSpellClassMask(SpellEffectIndex eff)
     return emptyCFM;
 }
 
-SpellAuraOptionsEntry const* SpellEntry::GetSpellAuraOptions() const
-{
-    return SpellAuraOptionsId ? sSpellAuraOptionsStore.LookupEntry<SpellAuraOptionsEntry>(SpellAuraOptionsId) : NULL;
-}
-
 SpellAuraRestrictionsEntry const* SpellEntry::GetSpellAuraRestrictions() const
 {
     return SpellAuraRestrictionsId ? sSpellAuraRestrictionsStore.LookupEntry(SpellAuraRestrictionsId) : NULL;
@@ -203,28 +198,10 @@ uint32 SpellEntry::GetMaxAffectedTargets() const
     return target ? target->MaxAffectedTargets : 0;
 }
 
-uint32 SpellEntry::GetStackAmount() const
-{
-    SpellAuraOptionsEntry const* aura = GetSpellAuraOptions();
-    return aura ? aura->StackAmount : 0;
-}
-
 uint32 SpellEntry::GetManaCostPercentage() const
 {
     SpellPowerEntry const* power = GetSpellPower();
     return power ? power->ManaCostPercentage : 0;
-}
-
-uint32 SpellEntry::GetProcCharges() const
-{
-    SpellAuraOptionsEntry const* aura = GetSpellAuraOptions();
-    return aura ? aura->procCharges : 0;
-}
-
-uint32 SpellEntry::GetProcChance() const
-{
-    SpellAuraOptionsEntry const* aura = GetSpellAuraOptions();
-    return aura ? aura->procChance : 0;
 }
 
 uint32 SpellEntry::GetMaxLevel() const
@@ -315,12 +292,6 @@ uint32 SpellEntry::GetStancesNot() const
 {
     SpellShapeshiftEntry const* ss = GetSpellShapeshift();
     return ss ? ss->StancesNot : 0;
-}
-
-uint32 SpellEntry::GetProcFlags() const
-{
-    SpellAuraOptionsEntry const* aura = GetSpellAuraOptions();
-    return aura ? aura->procFlags : 0;
 }
 
 uint32 SpellEntry::GetChannelInterruptFlags() const
