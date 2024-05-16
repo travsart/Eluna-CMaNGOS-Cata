@@ -7128,7 +7128,7 @@ void Unit::ModifyAuraState(AuraState flag, bool apply)
                     if (itr->second.state == PLAYERSPELL_REMOVED) continue;
                     SpellEntry const* spellInfo = sSpellTemplate.LookupEntry<SpellEntry>(itr->first);
                     if (!spellInfo || !IsPassiveSpell(spellInfo)) continue;
-                    if (AuraState(spellInfo->GetCasterAuraState()) == flag)
+                    if (AuraState(spellInfo->CasterAuraState) == flag)
                         CastSpell(this, itr->first, TRIGGERED_OLD_TRIGGERED, nullptr);
                 }
             }
@@ -7146,7 +7146,7 @@ void Unit::ModifyAuraState(AuraState flag, bool apply)
                 for (Unit::SpellAuraHolderMap::iterator itr = tAuras.begin(); itr != tAuras.end();)
                 {
                     SpellEntry const* spellProto = (*itr).second->GetSpellProto();
-                    if (AuraState(spellProto->GetCasterAuraState()) == flag)
+                    if (AuraState(spellProto->CasterAuraState) == flag)
                     {
                         RemoveSpellAuraHolder(itr->second);
                         itr = tAuras.begin();

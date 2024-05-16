@@ -3629,8 +3629,7 @@ bool Player::IsNeedCastPassiveLikeSpellAtLearn(SpellEntry const* spellInfo) cons
     bool need_cast = (!shapeShift || !shapeShift->Stances || (!form && spellInfo->HasAttribute(SPELL_ATTR_EX2_NOT_NEED_SHAPESHIFT)));
 
     // Check CasterAuraStates
-    SpellAuraRestrictionsEntry const* auraRestrictions = spellInfo->GetSpellAuraRestrictions();
-    return need_cast && (!auraRestrictions || !auraRestrictions->CasterAuraState || HasAuraState(AuraState(auraRestrictions->CasterAuraState)));
+    return need_cast && (!spellInfo->CasterAuraState || HasAuraState(AuraState(spellInfo->CasterAuraState)));
 }
 
 void Player::learnSpell(uint32 spell_id, bool dependent)

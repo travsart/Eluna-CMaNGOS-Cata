@@ -1721,20 +1721,6 @@ struct ClassFamilyMask
 #define MAX_SPELL_TOTEMS 2
 #define MAX_SPELL_TOTEM_CATEGORIES 2
 
-// SpellAuraRestrictions.dbc
-struct SpellAuraRestrictionsEntry
-{
-    //uint32    Id;                                         // 0        m_ID
-    uint32    CasterAuraState;                              // 1        m_casterAuraState
-    uint32    TargetAuraState;                              // 2        m_targetAuraState
-    uint32    CasterAuraStateNot;                           // 3        m_excludeCasterAuraState
-    uint32    TargetAuraStateNot;                           // 4        m_excludeTargetAuraState
-    uint32    casterAuraSpell;                              // 5        m_casterAuraSpell
-    uint32    targetAuraSpell;                              // 6        m_targetAuraSpell
-    uint32    excludeCasterAuraSpell;                       // 7        m_excludeCasterAuraSpell
-    uint32    excludeTargetAuraSpell;                       // 8        m_excludeTargetAuraSpell
-};
-
 // SpellCastingRequirements.dbc
 struct SpellCastingRequirementsEntry
 {
@@ -2089,32 +2075,38 @@ struct SpellEntry
     uint32 SpellDifficultyId;                               // 29       m_spellDifficultyID - id from SpellDifficulty.dbc
     //float unk_f1;                                         // 30       unk1
     uint32 SpellScalingId;                                  // 31       SpellScaling.dbc
-    uint32 StackAmount;                                     // 32
-    uint32 ProcChance;                                      // 33
-    uint32 ProcCharges;                                     // 34
-    uint32 ProcFlags;                                       // 35
-    uint32 SpellAuraRestrictionsId;                         // 36       SpellAuraRestrictions.dbc
-    uint32 SpellCastingRequirementsId;                      // 37       SpellCastingRequirements.dbc
-    uint32 SpellCategoriesId;                               // 38       SpellCategories.dbc
-    uint32 SpellClassOptionsId;                             // 39       SpellClassOptions.dbc
-    uint32 SpellCooldownsId;                                // 40       SpellCooldowns.dbc
-    //uint32 unkIndex7;                                     // 41       unk2, all zeros...
-    uint32 SpellEquippedItemsId;                            // 42       SpellEquippedItems.dbc
-    uint32 SpellInterruptsId;                               // 43       SpellInterrupts.dbc
-    uint32 SpellLevelsId;                                   // 44       SpellLevels.dbc
-    uint32 SpellPowerId;                                    // 45       SpellPower.dbc
-    uint32 SpellReagentsId;                                 // 46       SpellReagents.dbc
-    uint32 SpellShapeshiftId;                               // 47       SpellShapeshift.dbc
-    uint32 SpellTargetRestrictionsId;                       // 48       SpellTargetRestrictions.dbc
-    uint32 SpellTotemsId;                                   // 49       SpellTotems.dbc
-    //uint32 ResearchProjectId;                             // 50       ResearchProject.dbc
+    uint32 StackAmount;                                     // 32       m_cumulativeAura
+    uint32 ProcChance;                                      // 33       m_procChance
+    uint32 ProcCharges;                                     // 34       m_procCharges
+    uint32 ProcFlags;                                       // 35       m_procTypeMask
+    uint32 CasterAuraState;                                 // 36       m_casterAuraState
+    uint32 TargetAuraState;                                 // 37       m_targetAuraState
+    uint32 CasterAuraStateNot;                              // 38       m_excludeCasterAuraState
+    uint32 TargetAuraStateNot;                              // 39       m_excludeTargetAuraState
+    uint32 casterAuraSpell;                                 // 40       m_casterAuraSpell
+    uint32 targetAuraSpell;                                 // 41       m_targetAuraSpell
+    uint32 excludeCasterAuraSpell;                          // 42       m_excludeCasterAuraSpell
+    uint32 excludeTargetAuraSpell;                          // 43       m_excludeTargetAuraSpell
+    uint32 SpellCastingRequirementsId;                      // 44       SpellCastingRequirements.dbc
+    uint32 SpellCategoriesId;                               // 45       SpellCategories.dbc
+    uint32 SpellClassOptionsId;                             // 46       SpellClassOptions.dbc
+    uint32 SpellCooldownsId;                                // 47       SpellCooldowns.dbc
+    //uint32 unkIndex7;                                     // 48       unk2, all zeros...
+    uint32 SpellEquippedItemsId;                            // 49       SpellEquippedItems.dbc
+    uint32 SpellInterruptsId;                               // 50       SpellInterrupts.dbc
+    uint32 SpellLevelsId;                                   // 51       SpellLevels.dbc
+    uint32 SpellPowerId;                                    // 52       SpellPower.dbc
+    uint32 SpellReagentsId;                                 // 53       SpellReagents.dbc
+    uint32 SpellShapeshiftId;                               // 54       SpellShapeshift.dbc
+    uint32 SpellTargetRestrictionsId;                       // 55       SpellTargetRestrictions.dbc
+    uint32 SpellTotemsId;                                   // 56       SpellTotems.dbc
+    //uint32 ResearchProjectId;                             // 57       ResearchProject.dbc
 
     // helpers
     int32 CalculateSimpleValue(SpellEffectIndex eff) const;
     ClassFamilyMask const& GetEffectSpellClassMask(SpellEffectIndex eff) const;
 
     // struct access functions
-    SpellAuraRestrictionsEntry const* GetSpellAuraRestrictions() const;
     SpellCastingRequirementsEntry const* GetSpellCastingRequirements() const;
     SpellCategoriesEntry const* GetSpellCategories() const;
     SpellClassOptionsEntry const* GetSpellClassOptions() const;
@@ -2147,7 +2139,6 @@ struct SpellEntry
     uint32 GetMaxAffectedTargets() const;
     uint32 GetManaCostPercentage() const;
     uint32 GetMaxLevel() const;
-    uint32 GetTargetAuraState() const;
     uint32 GetManaPerSecond() const;
     uint32 GetRequiresSpellFocus() const;
     uint32 GetSpellEffectIdByIndex(SpellEffectIndex index) const;
@@ -2163,7 +2154,6 @@ struct SpellEntry
     uint32 GetStancesNot() const;
     uint32 GetChannelInterruptFlags() const;
     uint32 GetManaCostPerLevel() const;
-    uint32 GetCasterAuraState() const;
     uint32 GetTargets() const;
     uint32 GetEffectApplyAuraNameByIndex(SpellEffectIndex index) const;
 

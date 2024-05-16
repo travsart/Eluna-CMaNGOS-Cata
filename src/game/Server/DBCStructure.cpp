@@ -39,11 +39,6 @@ ClassFamilyMask const& SpellEntry::GetEffectSpellClassMask(SpellEffectIndex eff)
     return emptyCFM;
 }
 
-SpellAuraRestrictionsEntry const* SpellEntry::GetSpellAuraRestrictions() const
-{
-    return SpellAuraRestrictionsId ? sSpellAuraRestrictionsStore.LookupEntry(SpellAuraRestrictionsId) : NULL;
-}
-
 SpellCastingRequirementsEntry const* SpellEntry::GetSpellCastingRequirements() const
 {
     return SpellCastingRequirementsId ? sSpellCastingRequirementsStore.LookupEntry(SpellCastingRequirementsId) : NULL;
@@ -210,12 +205,6 @@ uint32 SpellEntry::GetMaxLevel() const
     return levels ? levels->maxLevel : 0;
 }
 
-uint32 SpellEntry::GetTargetAuraState() const
-{
-    SpellAuraRestrictionsEntry const* aura = GetSpellAuraRestrictions();
-    return aura ? aura->TargetAuraState : 0;
-}
-
 uint32 SpellEntry::GetManaPerSecond() const
 {
     SpellPowerEntry const* power = GetSpellPower();
@@ -304,12 +293,6 @@ uint32 SpellEntry::GetManaCostPerLevel() const
 {
     SpellPowerEntry const* power = GetSpellPower();
     return power ? power->manaCostPerlevel : 0;
-}
-
-uint32 SpellEntry::GetCasterAuraState() const
-{
-    SpellAuraRestrictionsEntry const* aura = GetSpellAuraRestrictions();
-    return aura ? aura->CasterAuraState : 0;
 }
 
 uint32 SpellEntry::GetTargets() const

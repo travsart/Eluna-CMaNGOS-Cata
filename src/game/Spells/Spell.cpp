@@ -5275,27 +5275,26 @@ SpellCastResult Spell::CheckCast(bool strict)
         }
     }
 
-    SpellAuraRestrictionsEntry const* auraRestrictions = m_spellInfo->GetSpellAuraRestrictions();
-
     // caster state requirements
-    if(auraRestrictions && auraRestrictions->CasterAuraState && !m_caster->HasAuraState(AuraState(auraRestrictions->CasterAuraState)))
+    if(m_spellInfo->CasterAuraState && !m_caster->HasAuraState(AuraState(m_spellInfo->CasterAuraState)))
         return SPELL_FAILED_CASTER_AURASTATE;
-    if(auraRestrictions && auraRestrictions->CasterAuraStateNot && m_caster->HasAuraState(AuraState(auraRestrictions->CasterAuraStateNot)))
+
+    if(m_spellInfo->CasterAuraStateNot && m_caster->HasAuraState(AuraState(m_spellInfo->CasterAuraStateNot)))
         return SPELL_FAILED_CASTER_AURASTATE;
 
     // Caster aura req check if need
-    if(auraRestrictions && auraRestrictions->casterAuraSpell && !m_caster->HasAura(auraRestrictions->casterAuraSpell))
+    if(m_spellInfo->casterAuraSpell && !m_caster->HasAura(m_spellInfo->casterAuraSpell))
         return SPELL_FAILED_CASTER_AURASTATE;
-    if(auraRestrictions && auraRestrictions->excludeCasterAuraSpell)
+    if(m_spellInfo->excludeCasterAuraSpell)
     {
         // Special cases of non existing auras handling
-        if(auraRestrictions->excludeCasterAuraSpell == 61988)
+        if(m_spellInfo->excludeCasterAuraSpell == 61988)
         {
             // Avenging Wrath Marker
             if (m_caster->HasAura(61987))
                 return SPELL_FAILED_CASTER_AURASTATE;
         }
-        else if(m_caster->HasAura(auraRestrictions->excludeCasterAuraSpell))
+        else if(m_caster->HasAura(m_spellInfo->excludeCasterAuraSpell))
             return SPELL_FAILED_CASTER_AURASTATE;
     }
 
@@ -5327,26 +5326,26 @@ SpellCastResult Spell::CheckCast(bool strict)
     if(Unit *target = m_targets.getUnitTarget())
     {
         // target state requirements (not allowed state), apply to self also
-        if(auraRestrictions && auraRestrictions->TargetAuraStateNot && target->HasAuraState(AuraState(auraRestrictions->TargetAuraStateNot)))
+        if(m_spellInfo->TargetAuraStateNot && target->HasAuraState(AuraState(m_spellInfo->TargetAuraStateNot)))
             return SPELL_FAILED_TARGET_AURASTATE;
 
         if (!m_IsTriggeredSpell && IsDeathOnlySpell(m_spellInfo) && target->IsAlive())
             return SPELL_FAILED_TARGET_NOT_DEAD;
 
         // Target aura req check if need
-        if(auraRestrictions && auraRestrictions->targetAuraSpell && !target->HasAura(auraRestrictions->targetAuraSpell))
+        if(m_spellInfo->targetAuraSpell && !target->HasAura(m_spellInfo->targetAuraSpell))
             return SPELL_FAILED_CASTER_AURASTATE;
 
-        if(auraRestrictions && auraRestrictions->excludeTargetAuraSpell)
+        if(m_spellInfo->excludeTargetAuraSpell)
         {
             // Special cases of non existing auras handling
-            if (auraRestrictions->excludeTargetAuraSpell == 61988)
+            if (m_spellInfo->excludeTargetAuraSpell == 61988)
             {
                 // Avenging Wrath Marker
                 if (target->HasAura(61987))
                     return SPELL_FAILED_CASTER_AURASTATE;
             }
-            else if (target->HasAura(auraRestrictions->excludeTargetAuraSpell))
+            else if (target->HasAura(m_spellInfo->excludeTargetAuraSpell))
                 return SPELL_FAILED_CASTER_AURASTATE;
         }
 
@@ -5362,8 +5361,8 @@ SpellCastResult Spell::CheckCast(bool strict)
         if (non_caster_target)
         {
             // target state requirements (apply to non-self only), to allow cast affects to self like Dirty Deeds
-            if (auraRestrictions && auraRestrictions->TargetAuraState && !target->HasAuraStateForCaster(AuraState(auraRestrictions->TargetAuraState), m_caster->GetObjectGuid()) &&
-                !m_caster->IsIgnoreUnitState(m_spellInfo, auraRestrictions->TargetAuraState == AURA_STATE_FROZEN ? IGNORE_UNIT_TARGET_NON_FROZEN : IGNORE_UNIT_TARGET_STATE))
+            if (m_spellInfo->TargetAuraState && !target->HasAuraStateForCaster(AuraState(m_spellInfo->TargetAuraState), m_caster->GetObjectGuid()) &&
+                !m_caster->IsIgnoreUnitState(m_spellInfo, m_spellInfo->TargetAuraState == AURA_STATE_FROZEN ? IGNORE_UNIT_TARGET_NON_FROZEN : IGNORE_UNIT_TARGET_STATE))
                 return SPELL_FAILED_TARGET_AURASTATE;
 
             // Not allow casting on flying player
@@ -7711,14 +7710,10 @@ bool Spell::CheckTarget(Unit* target, SpellEffectIndex eff)
     }
 
     // Check Aura spell req (need for AoE spells)
-    SpellAuraRestrictionsEntry const* auraRestrictions = m_spellInfo->GetSpellAuraRestrictions();
-    if(auraRestrictions)
-    {
-        if(auraRestrictions->targetAuraSpell && !target->HasAura(auraRestrictions->targetAuraSpell))
-            return false;
-        if (auraRestrictions->excludeTargetAuraSpell && target->HasAura(auraRestrictions->excludeTargetAuraSpell))
-            return false;
-    }
+    if(m_spellInfo->targetAuraSpell && !target->HasAura(m_spellInfo->targetAuraSpell))
+        return false;
+    if (m_spellInfo->excludeTargetAuraSpell && target->HasAura(m_spellInfo->excludeTargetAuraSpell))
+        return false;
 
     if (target != m_caster)
     {

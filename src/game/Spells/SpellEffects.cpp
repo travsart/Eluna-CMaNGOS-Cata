@@ -533,7 +533,7 @@ void Spell::EffectSchoolDMG(SpellEffectEntry const* effect)
                         damage += (counter * owner->CalculateSpellDamage(unitTarget, m_spellInfo, EFFECT_INDEX_2) * damage) / 100.0f;
                 }
                 // Conflagrate - consumes Immolate or Shadowflame
-                else if (m_spellInfo->GetTargetAuraState() == AURA_STATE_CONFLAGRATE)
+                else if (m_spellInfo->TargetAuraState == AURA_STATE_CONFLAGRATE)
                 {
                     Aura const* aura = nullptr;                // found req. aura for damage calculation
 
@@ -4860,7 +4860,7 @@ void Spell::EffectHeal(SpellEffectEntry const* /*effect*/)
         else if (m_spellInfo->Id == 48743)
             addhealth = addhealth * unitTarget->GetMaxHealth() / 100;
         // Swiftmend - consumes Regrowth or Rejuvenation
-        else if (m_spellInfo->GetTargetAuraState() == AURA_STATE_SWIFTMEND && unitTarget->HasAuraState(AURA_STATE_SWIFTMEND))
+        else if (m_spellInfo->TargetAuraState == AURA_STATE_SWIFTMEND && unitTarget->HasAuraState(AURA_STATE_SWIFTMEND))
         {
             Unit::AuraList const& RejorRegr = unitTarget->GetAurasByType(SPELL_AURA_PERIODIC_HEAL);
             // find most short by duration
