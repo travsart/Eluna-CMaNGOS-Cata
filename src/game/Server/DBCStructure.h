@@ -1778,15 +1778,6 @@ struct SpellClassOptionsEntry
         bool IsFitToFamilyMask(SpellFamily family, T t) const;
 };
 
-// SpellCooldowns.dbc
-struct SpellCooldownsEntry
-{
-    //uint32    Id;                                         // 0        m_ID
-    uint32    CategoryRecoveryTime;                         // 1        m_categoryRecoveryTime
-    uint32    RecoveryTime;                                 // 2        m_recoveryTime
-    uint32    StartRecoveryTime;                            // 3        m_startRecoveryTime
-};
-
 // SpellDifficulty.dbc
 struct SpellDifficultyEntry
 {
@@ -2080,17 +2071,19 @@ struct SpellEntry
     uint32 RequiresSpellFocus;                              // 46       m_requiresSpellFocus
     uint32 SpellCategoriesId;                               // 47       SpellCategories.dbc
     uint32 SpellClassOptionsId;                             // 48       SpellClassOptions.dbc
-    uint32 SpellCooldownsId;                                // 49       SpellCooldowns.dbc
-    //uint32 unkIndex7;                                     // 50       unk2, all zeros...
-    uint32 SpellEquippedItemsId;                            // 51       SpellEquippedItems.dbc
-    uint32 SpellInterruptsId;                               // 52       SpellInterrupts.dbc
-    uint32 SpellLevelsId;                                   // 53       SpellLevels.dbc
-    uint32 SpellPowerId;                                    // 54       SpellPower.dbc
-    uint32 SpellReagentsId;                                 // 55       SpellReagents.dbc
-    uint32 SpellShapeshiftId;                               // 56       SpellShapeshift.dbc
-    uint32 SpellTargetRestrictionsId;                       // 57       SpellTargetRestrictions.dbc
-    uint32 SpellTotemsId;                                   // 58       SpellTotems.dbc
-    //uint32 ResearchProjectId;                             // 59       ResearchProject.dbc
+    uint32  CategoryRecoveryTime;                           // 49       m_categoryRecoveryTime
+    uint32  RecoveryTime;                                   // 50       m_recoveryTime
+    uint32  StartRecoveryTime;                              // 51       m_startRecoveryTime
+    //uint32 unkIndex7;                                     // 52       unk2, all zeros...
+    uint32 SpellEquippedItemsId;                            // 53       SpellEquippedItems.dbc
+    uint32 SpellInterruptsId;                               // 54       SpellInterrupts.dbc
+    uint32 SpellLevelsId;                                   // 55       SpellLevels.dbc
+    uint32 SpellPowerId;                                    // 56       SpellPower.dbc
+    uint32 SpellReagentsId;                                 // 57       SpellReagents.dbc
+    uint32 SpellShapeshiftId;                               // 58       SpellShapeshift.dbc
+    uint32 SpellTargetRestrictionsId;                       // 59       SpellTargetRestrictions.dbc
+    uint32 SpellTotemsId;                                   // 60       SpellTotems.dbc
+    //uint32 ResearchProjectId;                             // 61       ResearchProject.dbc
 
     // helpers
     int32 CalculateSimpleValue(SpellEffectIndex eff) const;
@@ -2099,7 +2092,6 @@ struct SpellEntry
     // struct access functions
     SpellCategoriesEntry const* GetSpellCategories() const;
     SpellClassOptionsEntry const* GetSpellClassOptions() const;
-    SpellCooldownsEntry const* GetSpellCooldowns() const;
     SpellEffectEntry const* GetSpellEffect(SpellEffectIndex eff) const;
     SpellEquippedItemsEntry const* GetSpellEquippedItems() const;
     SpellInterruptsEntry const* GetSpellInterrupts() const;
@@ -2115,10 +2107,7 @@ struct SpellEntry
     uint32 GetManaCost() const;
     uint32 GetPreventionType() const;
     uint32 GetCategory() const;
-    uint32 GetStartRecoveryTime() const;
     uint32 GetMechanic() const;
-    uint32 GetRecoveryTime() const;
-    uint32 GetCategoryRecoveryTime() const;
     uint32 GetStartRecoveryCategory() const;
     uint32 GetSpellLevel() const;
     int32 GetEquippedItemClass() const;

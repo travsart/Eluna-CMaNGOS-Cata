@@ -49,11 +49,6 @@ SpellClassOptionsEntry const* SpellEntry::GetSpellClassOptions() const
     return SpellClassOptionsId ? sSpellClassOptionsStore.LookupEntry(SpellClassOptionsId) : NULL;
 }
 
-SpellCooldownsEntry const* SpellEntry::GetSpellCooldowns() const
-{
-    return SpellCooldownsId ? sSpellCooldownsStore.LookupEntry(SpellCooldownsId) : NULL;
-}
-
 SpellEffectEntry const* SpellEntry::GetSpellEffect(SpellEffectIndex eff) const
 {
     return GetSpellEffectEntry(Id, eff);
@@ -122,28 +117,10 @@ uint32 SpellEntry::GetCategory() const
     return cat ? cat->Category : 0;
 }
 
-uint32 SpellEntry::GetStartRecoveryTime() const
-{
-    SpellCooldownsEntry const* cd = GetSpellCooldowns();
-    return cd ? cd->StartRecoveryTime : 0;
-}
-
 uint32 SpellEntry::GetMechanic() const
 {
     SpellCategoriesEntry const* cat = GetSpellCategories();
     return cat ? cat->Mechanic : 0;
-}
-
-uint32 SpellEntry::GetRecoveryTime() const
-{
-    SpellCooldownsEntry const* cd = GetSpellCooldowns();
-    return cd ? cd->RecoveryTime : 0;
-}
-
-uint32 SpellEntry::GetCategoryRecoveryTime() const
-{
-    SpellCooldownsEntry const* cd = GetSpellCooldowns();
-    return cd ? cd->CategoryRecoveryTime : 0;
 }
 
 uint32 SpellEntry::GetStartRecoveryCategory() const

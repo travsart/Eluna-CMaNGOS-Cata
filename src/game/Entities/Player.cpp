@@ -3905,7 +3905,7 @@ void Player::RemoveArenaSpellCooldowns()
 {
     // remove cooldowns on spells that has < 10 min CD (since patch 3.3, before it was 15 min)
     const uint32 MaxCDDelay = 10 * MINUTE * IN_MILLISECONDS;
-    auto cdCheck = [&](SpellEntry const& spellEntry) -> bool { return (spellEntry.GetRecoveryTime() < MaxCDDelay && (spellEntry.GetCategoryRecoveryTime() < MaxCDDelay)); };
+    auto cdCheck = [&](SpellEntry const& spellEntry) -> bool { return (spellEntry.RecoveryTime < MaxCDDelay && (spellEntry.CategoryRecoveryTime < MaxCDDelay)); };
     RemoveSomeCooldown(cdCheck);
 }
 
@@ -10769,7 +10769,7 @@ Item* Player::EquipItem(uint16 pos, Item* pItem, bool update)
                     sLog.outError("Weapon switch cooldown spell %u couldn't be found in Spell.dbc", cooldownSpell);
                 else
                 {
-                    m_weaponChangeTimer = spellProto->GetStartRecoveryTime();
+                    m_weaponChangeTimer = spellProto->StartRecoveryTime;
                     AddGCD(*spellProto, 0, true);
                 }
             }
@@ -24385,7 +24385,7 @@ void Player::ResetDeathTimer()
 
 void Player::AddGCD(SpellEntry const& spellEntry, uint32 forcedDuration /*= 0*/, bool updateClient /*= false*/)
 {
-    int32 gcdDuration = spellEntry.GetStartRecoveryTime();
+    int32 gcdDuration = spellEntry.StartRecoveryTime;
     if (!gcdDuration)
         return;
 
@@ -24417,8 +24417,8 @@ void Player::AddGCD(SpellEntry const& spellEntry, uint32 forcedDuration /*= 0*/,
 void Player::AddCooldown(SpellEntry const& spellEntry, ItemPrototype const* itemProto /*= nullptr*/, bool permanent /*= false*/, uint32 forcedDuration /*= 0*/)
 {
     uint32 spellCategory = spellEntry.GetCategory();
-    int32 recTime = spellEntry.GetRecoveryTime(); // int because of spellmod calculations
-    int32 categoryRecTime = spellEntry.GetCategoryRecoveryTime(); // int because of spellmod calculations
+    int32 recTime = spellEntry.RecoveryTime; // int because of spellmod calculations
+    int32 categoryRecTime = spellEntry.CategoryRecoveryTime; // int because of spellmod calculations
     uint32 itemId = 0;
 
     if (itemProto)
