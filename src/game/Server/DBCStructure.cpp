@@ -39,11 +39,6 @@ ClassFamilyMask const& SpellEntry::GetEffectSpellClassMask(SpellEffectIndex eff)
     return emptyCFM;
 }
 
-SpellCastingRequirementsEntry const* SpellEntry::GetSpellCastingRequirements() const
-{
-    return SpellCastingRequirementsId ? sSpellCastingRequirementsStore.LookupEntry(SpellCastingRequirementsId) : NULL;
-}
-
 SpellCategoriesEntry const* SpellEntry::GetSpellCategories() const
 {
     return SpellCategoriesId ? sSpellCategoriesStore.LookupEntry(SpellCategoriesId) : NULL;
@@ -211,12 +206,6 @@ uint32 SpellEntry::GetManaPerSecond() const
     return power ? power->manaPerSecond : 0;
 }
 
-uint32 SpellEntry::GetRequiresSpellFocus() const
-{
-    SpellCastingRequirementsEntry const* castReq = GetSpellCastingRequirements();
-    return castReq ? castReq->RequiresSpellFocus : 0;
-}
-
 uint32 SpellEntry::GetSpellEffectIdByIndex(SpellEffectIndex index) const
 {
     SpellEffectEntry const* effect = GetSpellEffect(index);
@@ -233,18 +222,6 @@ uint32 SpellEntry::GetEffectImplicitTargetAByIndex(SpellEffectIndex index) const
 {
     SpellEffectEntry const* effect = GetSpellEffect(index);
     return effect ? effect->EffectImplicitTargetA : TARGET_NONE;
-}
-
-int32 SpellEntry::GetAreaGroupId() const
-{
-    SpellCastingRequirementsEntry const* castReq = GetSpellCastingRequirements();
-    return castReq ? castReq->AreaGroupId : 0;
-}
-
-uint32 SpellEntry::GetFacingCasterFlags() const
-{
-    SpellCastingRequirementsEntry const* castReq = GetSpellCastingRequirements();
-    return castReq ? castReq->FacingCasterFlags : 0;
 }
 
 uint32 SpellEntry::GetBaseLevel() const

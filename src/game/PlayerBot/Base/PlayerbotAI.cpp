@@ -1837,7 +1837,7 @@ void PlayerbotAI::HandleBotOutgoingPacket(const WorldPacket& packet)
                     }
                 case SPELL_FAILED_REQUIRES_SPELL_FOCUS: // 102
                     {
-                        switch (spellInfo->GetRequiresSpellFocus()) // SpellFocusObject.dbc id
+                        switch (spellInfo->RequiresSpellFocus)
                         {
                         case 1:  // need an anvil
                             out << "|cffff0000I require an anvil.";
@@ -1852,7 +1852,7 @@ void PlayerbotAI::HandleBotOutgoingPacket(const WorldPacket& packet)
                             out << "|cffff0000I require a cooking fire.";
                             break;
                         default:
-                            out << "|cffff0000I Require Spell Focus on " << spellInfo->GetRequiresSpellFocus();
+                            out << "|cffff0000I Require Spell Focus on " << spellInfo->RequiresSpellFocus;
                         }
                         break;
                     }

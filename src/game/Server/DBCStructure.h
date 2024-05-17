@@ -1721,18 +1721,6 @@ struct ClassFamilyMask
 #define MAX_SPELL_TOTEMS 2
 #define MAX_SPELL_TOTEM_CATEGORIES 2
 
-// SpellCastingRequirements.dbc
-struct SpellCastingRequirementsEntry
-{
-    //uint32    Id;                                         // 0        m_ID
-    uint32    FacingCasterFlags;                            // 1        m_facingCasterFlags
-    //uint32    MinFactionId;                               // 2        m_minFactionID not used
-    //uint32    MinReputation;                              // 3        m_minReputation not used
-    int32     AreaGroupId;                                  // 4        m_requiredAreaGroupId
-    //uint32    RequiredAuraVision;                         // 5        m_requiredAuraVision not used
-    uint32    RequiresSpellFocus;                           // 6        m_requiresSpellFocus
-};
-
 // SpellCastTimes.dbc
 struct SpellCastTimesEntry
 {
@@ -2087,27 +2075,28 @@ struct SpellEntry
     uint32 targetAuraSpell;                                 // 41       m_targetAuraSpell
     uint32 excludeCasterAuraSpell;                          // 42       m_excludeCasterAuraSpell
     uint32 excludeTargetAuraSpell;                          // 43       m_excludeTargetAuraSpell
-    uint32 SpellCastingRequirementsId;                      // 44       SpellCastingRequirements.dbc
-    uint32 SpellCategoriesId;                               // 45       SpellCategories.dbc
-    uint32 SpellClassOptionsId;                             // 46       SpellClassOptions.dbc
-    uint32 SpellCooldownsId;                                // 47       SpellCooldowns.dbc
-    //uint32 unkIndex7;                                     // 48       unk2, all zeros...
-    uint32 SpellEquippedItemsId;                            // 49       SpellEquippedItems.dbc
-    uint32 SpellInterruptsId;                               // 50       SpellInterrupts.dbc
-    uint32 SpellLevelsId;                                   // 51       SpellLevels.dbc
-    uint32 SpellPowerId;                                    // 52       SpellPower.dbc
-    uint32 SpellReagentsId;                                 // 53       SpellReagents.dbc
-    uint32 SpellShapeshiftId;                               // 54       SpellShapeshift.dbc
-    uint32 SpellTargetRestrictionsId;                       // 55       SpellTargetRestrictions.dbc
-    uint32 SpellTotemsId;                                   // 56       SpellTotems.dbc
-    //uint32 ResearchProjectId;                             // 57       ResearchProject.dbc
+    uint32 FacingCasterFlags;                               // 44       m_facingCasterFlags
+    int32  AreaGroupId;                                     // 45       m_requiredAreaGroupId
+    uint32 RequiresSpellFocus;                              // 46       m_requiresSpellFocus
+    uint32 SpellCategoriesId;                               // 47       SpellCategories.dbc
+    uint32 SpellClassOptionsId;                             // 48       SpellClassOptions.dbc
+    uint32 SpellCooldownsId;                                // 49       SpellCooldowns.dbc
+    //uint32 unkIndex7;                                     // 50       unk2, all zeros...
+    uint32 SpellEquippedItemsId;                            // 51       SpellEquippedItems.dbc
+    uint32 SpellInterruptsId;                               // 52       SpellInterrupts.dbc
+    uint32 SpellLevelsId;                                   // 53       SpellLevels.dbc
+    uint32 SpellPowerId;                                    // 54       SpellPower.dbc
+    uint32 SpellReagentsId;                                 // 55       SpellReagents.dbc
+    uint32 SpellShapeshiftId;                               // 56       SpellShapeshift.dbc
+    uint32 SpellTargetRestrictionsId;                       // 57       SpellTargetRestrictions.dbc
+    uint32 SpellTotemsId;                                   // 58       SpellTotems.dbc
+    //uint32 ResearchProjectId;                             // 59       ResearchProject.dbc
 
     // helpers
     int32 CalculateSimpleValue(SpellEffectIndex eff) const;
     ClassFamilyMask const& GetEffectSpellClassMask(SpellEffectIndex eff) const;
 
     // struct access functions
-    SpellCastingRequirementsEntry const* GetSpellCastingRequirements() const;
     SpellCategoriesEntry const* GetSpellCategories() const;
     SpellClassOptionsEntry const* GetSpellClassOptions() const;
     SpellCooldownsEntry const* GetSpellCooldowns() const;
@@ -2140,12 +2129,9 @@ struct SpellEntry
     uint32 GetManaCostPercentage() const;
     uint32 GetMaxLevel() const;
     uint32 GetManaPerSecond() const;
-    uint32 GetRequiresSpellFocus() const;
     uint32 GetSpellEffectIdByIndex(SpellEffectIndex index) const;
     uint32 GetAuraInterruptFlags() const;
     uint32 GetEffectImplicitTargetAByIndex(SpellEffectIndex index) const;
-    int32 GetAreaGroupId() const;
-    uint32 GetFacingCasterFlags() const;
     uint32 GetBaseLevel() const;
     uint32 GetInterruptFlags() const;
     uint32 GetTargetCreatureType() const;

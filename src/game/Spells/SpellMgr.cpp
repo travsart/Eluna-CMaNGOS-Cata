@@ -4093,7 +4093,7 @@ void SpellMgr::LoadSpellAreas()
 SpellCastResult SpellMgr::GetSpellAllowedInLocationError(SpellEntry const* spellInfo, uint32 map_id, uint32 zone_id, uint32 area_id, Player const* player)
 {
     // normal case
-    int32 areaGroupId = spellInfo->GetAreaGroupId();
+    int32 areaGroupId = spellInfo->AreaGroupId;
     if (areaGroupId > 0)
     {
         bool found = false;

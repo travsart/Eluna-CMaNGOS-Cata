@@ -4172,7 +4172,7 @@ void Spell::SendCastResult(Player* caster, SpellEntry const* spellInfo, uint8 ca
             data << uint32(0);                              // unknown, value 1 seen for 14177 (update cooldowns on client flag)
             break;
         case SPELL_FAILED_REQUIRES_SPELL_FOCUS:
-            data << uint32(spellInfo->GetRequiresSpellFocus());
+            data << uint32(spellInfo->RequiresSpellFocus);
             break;
         case SPELL_FAILED_REQUIRES_AREA:                    // AreaTable.dbc id
             // hardcode areas limitation case
@@ -5619,10 +5619,10 @@ SpellCastResult Spell::CheckCast(bool strict)
     }
 
     // check spell focus object
-    if (m_spellInfo->GetRequiresSpellFocus())
+    if (m_spellInfo->RequiresSpellFocus)
     {
         GameObject* ok = nullptr;
-        MaNGOS::GameObjectFocusCheck go_check(m_caster, m_spellInfo->GetRequiresSpellFocus());
+        MaNGOS::GameObjectFocusCheck go_check(m_caster, m_spellInfo->RequiresSpellFocus);
         MaNGOS::GameObjectSearcher<MaNGOS::GameObjectFocusCheck> checker(ok, go_check);
         Cell::VisitGridObjects(m_caster, checker, m_caster->GetMap()->GetVisibilityDistance());
 
@@ -6490,7 +6490,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 // Ignore map check if spell have AreaId. AreaId already checked and this prevent special mount spells
                 if (m_caster->GetTypeId() == TYPEID_PLAYER &&
                     !m_IsTriggeredSpell &&
-                    !m_spellInfo->GetAreaGroupId() &&
+                    !m_spellInfo->AreaGroupId &&
                     (m_caster->GetMap() && !m_caster->GetMap()->IsMountAllowed()))
                 {
                     return SPELL_FAILED_NO_MOUNTS_ALLOWED;
@@ -6972,7 +6972,7 @@ SpellCastResult Spell::CheckRange(bool strict)
         if (min_range && dist < min_range)
             return SPELL_FAILED_TOO_CLOSE;
         if( m_caster->GetTypeId() == TYPEID_PLAYER &&
-            (m_spellInfo->GetFacingCasterFlags() & SPELL_FACING_FLAG_INFRONT) && !m_caster->HasInArc(target))
+            (m_spellInfo->FacingCasterFlags & SPELL_FACING_FLAG_INFRONT) && !m_caster->HasInArc(target))
             return SPELL_FAILED_UNIT_NOT_INFRONT;
     }
 
