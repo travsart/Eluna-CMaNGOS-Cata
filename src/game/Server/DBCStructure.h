@@ -1840,17 +1840,6 @@ struct SpellFocusObjectEntry
     //char*     Name;                                       // 1        m_name_lang
 };
 
-// SpellInterrupts.dbc
-struct SpellInterruptsEntry
-{
-    //uint32    Id;                                         // 0        m_ID
-    uint32    AuraInterruptFlags;                           // 1        m_auraInterruptFlags
-    //uint32                                                // 2        4.0.0
-    uint32    ChannelInterruptFlags;                        // 3        m_channelInterruptFlags
-    //uint32                                                // 4        4.0.0
-    uint32    InterruptFlags;                               // 5        m_interruptFlags
-};
-
 // SpellItemEnchantment.dbc
 struct SpellItemEnchantmentEntry
 {
@@ -2069,14 +2058,16 @@ struct SpellEntry
     int32  EquippedItemClass;                               // 53       m_equippedItemClass (value)
     int32  EquippedItemInventoryTypeMask;                   // 54       m_equippedItemInvTypes (mask)
     int32  EquippedItemSubClassMask;                        // 55       m_equippedItemSubclass (mask)
-    uint32 SpellInterruptsId;                               // 56       SpellInterrupts.dbc
-    uint32 SpellLevelsId;                                   // 57       SpellLevels.dbc
-    uint32 SpellPowerId;                                    // 58       SpellPower.dbc
-    uint32 SpellReagentsId;                                 // 59       SpellReagents.dbc
-    uint32 SpellShapeshiftId;                               // 60       SpellShapeshift.dbc
-    uint32 SpellTargetRestrictionsId;                       // 61       SpellTargetRestrictions.dbc
-    uint32 SpellTotemsId;                                   // 62       SpellTotems.dbc
-    //uint32 ResearchProjectId;                             // 63       ResearchProject.dbc
+    uint32 AuraInterruptFlags;                              // 56       m_auraInterruptFlags
+    uint32 ChannelInterruptFlags;                           // 57       m_channelInterruptFlags
+    uint32 InterruptFlags;                                  // 58       m_interruptFlags
+    uint32 SpellLevelsId;                                   // 59       SpellLevels.dbc
+    uint32 SpellPowerId;                                    // 60       SpellPower.dbc
+    uint32 SpellReagentsId;                                 // 61       SpellReagents.dbc
+    uint32 SpellShapeshiftId;                               // 62       SpellShapeshift.dbc
+    uint32 SpellTargetRestrictionsId;                       // 63       SpellTargetRestrictions.dbc
+    uint32 SpellTotemsId;                                   // 64       SpellTotems.dbc
+    //uint32 ResearchProjectId;                             // 65       ResearchProject.dbc
 
     // helpers
     int32 CalculateSimpleValue(SpellEffectIndex eff) const;
@@ -2086,7 +2077,6 @@ struct SpellEntry
     SpellCategoriesEntry const* GetSpellCategories() const;
     SpellClassOptionsEntry const* GetSpellClassOptions() const;
     SpellEffectEntry const* GetSpellEffect(SpellEffectIndex eff) const;
-    SpellInterruptsEntry const* GetSpellInterrupts() const;
     SpellLevelsEntry const* GetSpellLevels() const;
     SpellPowerEntry const* GetSpellPower() const;
     SpellReagentsEntry const* GetSpellReagents() const;
@@ -2110,15 +2100,12 @@ struct SpellEntry
     uint32 GetMaxLevel() const;
     uint32 GetManaPerSecond() const;
     uint32 GetSpellEffectIdByIndex(SpellEffectIndex index) const;
-    uint32 GetAuraInterruptFlags() const;
     uint32 GetEffectImplicitTargetAByIndex(SpellEffectIndex index) const;
     uint32 GetBaseLevel() const;
-    uint32 GetInterruptFlags() const;
     uint32 GetTargetCreatureType() const;
     int32 GetEffectMiscValue(SpellEffectIndex index) const;
     uint32 GetStances() const;
     uint32 GetStancesNot() const;
-    uint32 GetChannelInterruptFlags() const;
     uint32 GetManaCostPerLevel() const;
     uint32 GetTargets() const;
     uint32 GetEffectApplyAuraNameByIndex(SpellEffectIndex index) const;

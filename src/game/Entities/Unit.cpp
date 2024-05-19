@@ -1328,7 +1328,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
                     {
                         if (spell->getState() == SPELL_STATE_CASTING)
                         {
-                            if(spell->m_spellInfo->GetInterruptFlags() & SPELL_INTERRUPT_FLAG_ABORT_ON_DMG)
+                            if(spell->m_spellInfo->InterruptFlags & SPELL_INTERRUPT_FLAG_ABORT_ON_DMG)
                                 pVictim->InterruptSpell(CurrentSpellTypes(i));
                             else
                                 spell->Delayed();
@@ -1341,7 +1341,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
             {
                 if (spell->CanBeInterrupted())
                 {
-                    uint32 channelInterruptFlags = spell->m_spellInfo->GetChannelInterruptFlags();
+                    uint32 channelInterruptFlags = spell->m_spellInfo->ChannelInterruptFlags;
                     if( channelInterruptFlags & CHANNEL_FLAG_DELAY )
                     {
                         if (pVictim != this)                // don't shorten the duration of channeling if you damage yourself
@@ -5717,7 +5717,7 @@ void Unit::RemoveAurasWithInterruptFlags(uint32 flags)
 {
     for (SpellAuraHolderMap::iterator iter = m_spellAuraHolders.begin(); iter != m_spellAuraHolders.end();)
     {
-        if (iter->second->GetSpellProto()->GetAuraInterruptFlags() & flags)
+        if (iter->second->GetSpellProto()->AuraInterruptFlags & flags)
         {
             RemoveSpellAuraHolder(iter->second);
             iter = m_spellAuraHolders.begin();
@@ -5759,7 +5759,7 @@ void Unit::RemoveAurasOnCast(SpellEntry const* castedSpellEntry)
         SpellEntry const* spellEntry = holder->GetSpellProto();
         bool removeThisHolder = false;
 
-        if (spellEntry->GetAuraInterruptFlags() & AURA_INTERRUPT_FLAG_UNK2)
+        if (spellEntry->AuraInterruptFlags & AURA_INTERRUPT_FLAG_UNK2)
         {
             if (castedSpellEntry->HasAttribute(SPELL_ATTR_EX_NOT_BREAK_STEALTH))
             {
@@ -11715,7 +11715,7 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
             const SpellEntry* se = itr->second->GetSpellProto();
 
             // check if the aura is interruptible by damage and if its not just added by this spell (spell who is responsible for this damage is procSpell)
-            if (se->GetAuraInterruptFlags() & AURA_INTERRUPT_FLAG_DAMAGE && (!procSpell || procSpell->Id != se->Id))
+            if (se->AuraInterruptFlags & AURA_INTERRUPT_FLAG_DAMAGE && (!procSpell || procSpell->Id != se->Id))
             {
                 DEBUG_FILTER_LOG(LOG_FILTER_SPELL_CAST, "ProcDamageAndSpell: Added Spell %u to 'remove aura due to spell' list! Reason: Damage received.", se->Id);
                 removedSpells.push_back(se->Id);
@@ -12319,7 +12319,7 @@ bool Unit::hasNegativeAuraWithInterruptFlag(uint32 flag)
 {
     for (SpellAuraHolderMap::const_iterator iter = m_spellAuraHolders.begin(); iter != m_spellAuraHolders.end(); ++iter)
     {
-        if (!iter->second->IsPositive() && iter->second->GetSpellProto()->GetAuraInterruptFlags() & flag)
+        if (!iter->second->IsPositive() && iter->second->GetSpellProto()->AuraInterruptFlags & flag)
             return true;
     }
     return false;

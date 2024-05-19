@@ -2312,7 +2312,7 @@ void PlayerbotAI::HandleBotOutgoingPacket(const WorldPacket& packet)
             if (!pSpellInfo)
                 return;
 
-            if (pSpellInfo->GetAuraInterruptFlags() & AURA_INTERRUPT_FLAG_NOT_SEATED)
+            if (pSpellInfo->AuraInterruptFlags & AURA_INTERRUPT_FLAG_NOT_SEATED)
                 return;
 
             SetIgnoreUpdateTime((msTime / 1000) + 1);

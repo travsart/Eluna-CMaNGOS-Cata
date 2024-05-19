@@ -441,9 +441,6 @@ Spell::Spell(Unit* caster, SpellEntry const* info, uint32 triggeredFlags, Object
         m_spellInfo = info;
 
     m_triggeredBySpellInfo = triggeredBy;
-
-    m_spellInterrupts = m_spellInfo->GetSpellInterrupts();
-
     m_caster = caster;
     m_referencedFromCurrentSpell = false;
     m_executedCurrently = false;
@@ -3926,7 +3923,6 @@ void Spell::update(uint32 difftime)
     }
 
     SpellEffectEntry const* spellEffect = m_spellInfo->GetSpellEffect(EFFECT_INDEX_0);
-    SpellInterruptsEntry const* spellInterrupts = m_spellInfo->GetSpellInterrupts();
 
     if (m_CastItemGuid && !m_CastItem)
     {
@@ -3944,7 +3940,7 @@ void Spell::update(uint32 difftime)
         if (m_spellState == SPELL_STATE_CHANNELING && !m_spellInfo->HasAttribute(SPELL_ATTR_EX5_CAN_CHANNEL_WHEN_MOVING))
             cancel();
         // don't cancel for melee, autorepeat, triggered and instant spells
-        else if(!IsNextMeleeSwingSpell() && !IsAutoRepeat() && !m_IsTriggeredSpell && (spellInterrupts && spellInterrupts->InterruptFlags & SPELL_INTERRUPT_FLAG_MOVEMENT))
+        else if(!IsNextMeleeSwingSpell() && !IsAutoRepeat() && !m_IsTriggeredSpell && (m_spellInfo->InterruptFlags & SPELL_INTERRUPT_FLAG_MOVEMENT))
             cancel();
     }
 
@@ -3983,7 +3979,7 @@ void Spell::update(uint32 difftime)
                     }
 
                     // check if player has turned if flag is set
-                    if( spellInterrupts && (spellInterrupts->ChannelInterruptFlags & CHANNEL_FLAG_TURNING) && m_castOrientation != m_caster->GetOrientation() )
+                    if((m_spellInfo->ChannelInterruptFlags & CHANNEL_FLAG_TURNING) && m_castOrientation != m_caster->GetOrientation() )
                         cancel();
                 }
 
@@ -5303,7 +5299,7 @@ SpellCastResult Spell::CheckCast(bool strict)
         {
             // skip stuck spell to allow use it in falling case and apply spell limitations at movement
             if ((!((Player*)m_caster)->m_movementInfo.HasMovementFlag(MOVEFLAG_FALLINGFAR) || m_spellInfo->GetSpellEffectIdByIndex(EFFECT_INDEX_0) != SPELL_EFFECT_STUCK) &&
-                (IsAutoRepeat() || (m_spellInfo->GetAuraInterruptFlags() & AURA_INTERRUPT_FLAG_NOT_SEATED) != 0))
+                (IsAutoRepeat() || (m_spellInfo->AuraInterruptFlags & AURA_INTERRUPT_FLAG_NOT_SEATED) != 0))
                 return SPELL_FAILED_MOVING;
         }
 
@@ -7549,7 +7545,7 @@ void Spell::Delayed()
         return;
 
     // spells not loosing casting time ( slam, dynamites, bombs.. )
-    if(!(m_spellInfo->GetInterruptFlags() & SPELL_INTERRUPT_FLAG_DAMAGE))
+    if(!(m_spellInfo->InterruptFlags & SPELL_INTERRUPT_FLAG_DAMAGE))
         return;
 
     // check pushback reduce

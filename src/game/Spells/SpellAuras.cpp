@@ -5203,7 +5203,7 @@ void Aura::HandleAuraModEffectImmunity(bool apply, bool /*Real*/)
     Unit* target = GetTarget();
 
     // when removing flag aura, handle flag drop
-    if (target->GetTypeId() == TYPEID_PLAYER && (GetSpellProto()->GetAuraInterruptFlags() & AURA_INTERRUPT_FLAG_IMMUNE_OR_LOST_SELECTION))
+    if (target->GetTypeId() == TYPEID_PLAYER && (GetSpellProto()->AuraInterruptFlags & AURA_INTERRUPT_FLAG_IMMUNE_OR_LOST_SELECTION))
     {
         Player* player = static_cast<Player*>(target);
 
@@ -7910,7 +7910,7 @@ void Aura::PeriodicTick()
             if (int32(powerType) != m_modifier.m_miscvalue)
                 return;
 
-            if ( spellProto->GetAuraInterruptFlags() & AURA_INTERRUPT_FLAG_NOT_SEATED )
+            if ( spellProto->AuraInterruptFlags & AURA_INTERRUPT_FLAG_NOT_SEATED )
             {
                 // eating anim
                 target->HandleEmoteCommand(EMOTE_ONESHOT_EAT);
@@ -9280,7 +9280,7 @@ void SpellAuraHolder::_AddSpellAuraHolder()
         //*****************************************************
 
         // Sitdown on apply aura req seated
-        if (m_spellProto->GetAuraInterruptFlags() & AURA_INTERRUPT_FLAG_NOT_SEATED && !m_target->IsSitState())
+        if (m_spellProto->AuraInterruptFlags & AURA_INTERRUPT_FLAG_NOT_SEATED && !m_target->IsSitState())
             m_target->SetStandState(UNIT_STAND_STATE_SIT);
 
         // register aura diminishing on apply

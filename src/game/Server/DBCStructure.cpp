@@ -54,11 +54,6 @@ SpellEffectEntry const* SpellEntry::GetSpellEffect(SpellEffectIndex eff) const
     return GetSpellEffectEntry(Id, eff);
 }
 
-SpellInterruptsEntry const* SpellEntry::GetSpellInterrupts() const
-{
-    return SpellInterruptsId ? sSpellInterruptsStore.LookupEntry(SpellInterruptsId) : NULL;
-}
-
 SpellLevelsEntry const* SpellEntry::GetSpellLevels() const
 {
     return SpellLevelsId ? sSpellLevelsStore.LookupEntry(SpellLevelsId) : NULL;
@@ -178,12 +173,6 @@ uint32 SpellEntry::GetSpellEffectIdByIndex(SpellEffectIndex index) const
     return effect ? effect->Effect : SPELL_EFFECT_NONE;
 }
 
-uint32 SpellEntry::GetAuraInterruptFlags() const
-{
-    SpellInterruptsEntry const* interrupt = GetSpellInterrupts();
-    return interrupt ? interrupt->AuraInterruptFlags : 0;
-}
-
 uint32 SpellEntry::GetEffectImplicitTargetAByIndex(SpellEffectIndex index) const
 {
     SpellEffectEntry const* effect = GetSpellEffect(index);
@@ -194,12 +183,6 @@ uint32 SpellEntry::GetBaseLevel() const
 {
     SpellLevelsEntry const* levels = GetSpellLevels();
     return levels ? levels->baseLevel : 0;
-}
-
-uint32 SpellEntry::GetInterruptFlags() const
-{
-    SpellInterruptsEntry const* interrupt = GetSpellInterrupts();
-    return interrupt ? interrupt->InterruptFlags : 0;
 }
 
 uint32 SpellEntry::GetTargetCreatureType() const
@@ -224,12 +207,6 @@ uint32 SpellEntry::GetStancesNot() const
 {
     SpellShapeshiftEntry const* ss = GetSpellShapeshift();
     return ss ? ss->StancesNot : 0;
-}
-
-uint32 SpellEntry::GetChannelInterruptFlags() const
-{
-    SpellInterruptsEntry const* interrupt = GetSpellInterrupts();
-    return interrupt ? interrupt->ChannelInterruptFlags : 0;
 }
 
 uint32 SpellEntry::GetManaCostPerLevel() const

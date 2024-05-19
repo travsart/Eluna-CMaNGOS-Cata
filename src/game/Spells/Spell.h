@@ -503,7 +503,6 @@ class Spell
 
         SpellEntry const* m_spellInfo;
         SpellEntry const* m_triggeredBySpellInfo;
-        SpellInterruptsEntry const* m_spellInterrupts;
         int32 m_currentBasePoints[MAX_EFFECT_INDEX];        // cache SpellEntry::CalculateSimpleValue and use for set custom base points
 
         ObjectGuid m_CastItemGuid;
@@ -532,8 +531,8 @@ class Spell
             return  m_spellInfo->HasAttribute(SPELL_ATTR_RANGED);
         }
         bool IsChannelActive() const { return m_caster->GetUInt32Value(UNIT_CHANNEL_SPELL) != 0; }
-        bool IsMeleeAttackResetSpell() const { return !m_IsTriggeredSpell && m_spellInterrupts && (m_spellInterrupts->InterruptFlags & SPELL_INTERRUPT_FLAG_AUTOATTACK);  }
-        bool IsRangedAttackResetSpell() const { return !m_IsTriggeredSpell && IsRangedSpell() && m_spellInterrupts && (m_spellInterrupts->InterruptFlags & SPELL_INTERRUPT_FLAG_AUTOATTACK); }
+        bool IsMeleeAttackResetSpell() const { return !m_IsTriggeredSpell && (m_spellInfo->InterruptFlags & SPELL_INTERRUPT_FLAG_AUTOATTACK);  }
+        bool IsRangedAttackResetSpell() const { return !m_IsTriggeredSpell && IsRangedSpell() && (m_spellInfo->InterruptFlags & SPELL_INTERRUPT_FLAG_AUTOATTACK); }
 
         bool IsDeletable() const { return !m_referencedFromCurrentSpell && !m_executedCurrently; }
         void SetReferencedFromCurrent(bool yes) { m_referencedFromCurrentSpell = yes; }

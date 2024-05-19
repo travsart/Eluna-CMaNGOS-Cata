@@ -443,14 +443,13 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
         return SPELL_NORMAL;
 
     SpellClassOptionsEntry const* classOpt = spellInfo->GetSpellClassOptions();
-    SpellInterruptsEntry const* interrupts = spellInfo->GetSpellInterrupts();
 
     switch(spellInfo->GetSpellFamilyName())
     {
         case SPELLFAMILY_GENERIC:
         {
             // Food / Drinks (mostly)
-            if(interrupts && interrupts->AuraInterruptFlags & AURA_INTERRUPT_FLAG_NOT_SEATED)
+            if(spellInfo->AuraInterruptFlags & AURA_INTERRUPT_FLAG_NOT_SEATED)
             {
                 bool food = false;
                 bool drink = false;
@@ -532,7 +531,7 @@ SpellSpecific GetSpellSpecific(uint32 spellId)
         {
             // "Well Fed" buff from Blessed Sunfruit, Blessed Sunfruit Juice, Alterac Spring Water
             if (spellInfo->HasAttribute(SPELL_ATTR_CASTABLE_WHILE_SITTING) &&
-                (interrupts && interrupts->InterruptFlags & SPELL_INTERRUPT_FLAG_AUTOATTACK) &&
+                (spellInfo->InterruptFlags & SPELL_INTERRUPT_FLAG_AUTOATTACK) &&
                 (spellInfo->SpellIconID == 52 || spellInfo->SpellIconID == 79))
                 return SPELL_WELL_FED;
             break;
