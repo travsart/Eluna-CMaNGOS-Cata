@@ -4347,7 +4347,7 @@ void Spell::EffectTriggerSpell(SpellEffectEntry const* effect)
     Unit* caster = m_caster;
 
     // some triggered spells require specific equipment
-    if (spellInfo->GetEquippedItemClass() >=0 && m_caster->GetTypeId()==TYPEID_PLAYER)
+    if (spellInfo->EquippedItemClass >=0 && m_caster->GetTypeId()==TYPEID_PLAYER)
     {
         // main hand weapon required
         if (spellInfo->HasAttribute(SPELL_ATTR_EX3_MAIN_HAND))
@@ -5527,19 +5527,14 @@ void Spell::EffectProficiency(SpellEffectEntry const* /*effect*/)
         return;
     Player *p_target = (Player*)unitTarget;
 
-    SpellEquippedItemsEntry const* eqItems = m_spellInfo->GetSpellEquippedItems();
-
-    if (!eqItems)
-        return;
-
-    if (eqItems->EquippedItemClass == ITEM_CLASS_WEAPON && !(p_target->GetWeaponProficiency() & eqItems->EquippedItemSubClassMask))
+    if (m_spellInfo->EquippedItemClass == ITEM_CLASS_WEAPON && !(p_target->GetWeaponProficiency() & m_spellInfo->EquippedItemSubClassMask))
     {
-        p_target->AddWeaponProficiency(eqItems->EquippedItemSubClassMask);
+        p_target->AddWeaponProficiency(m_spellInfo->EquippedItemSubClassMask);
         p_target->SendProficiency(ITEM_CLASS_WEAPON, p_target->GetWeaponProficiency());
     }
-    if (eqItems->EquippedItemClass == ITEM_CLASS_ARMOR && !(p_target->GetArmorProficiency() & eqItems->EquippedItemSubClassMask))
+    if (m_spellInfo->EquippedItemClass == ITEM_CLASS_ARMOR && !(p_target->GetArmorProficiency() & m_spellInfo->EquippedItemSubClassMask))
     {
-        p_target->AddArmorProficiency(eqItems->EquippedItemSubClassMask);
+        p_target->AddArmorProficiency(m_spellInfo->EquippedItemSubClassMask);
         p_target->SendProficiency(ITEM_CLASS_ARMOR, p_target->GetArmorProficiency());
     }
 }

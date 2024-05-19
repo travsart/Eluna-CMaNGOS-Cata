@@ -1833,15 +1833,6 @@ struct SpellEffectEntry
     }
 };
 
-// SpellEquippedItems.dbc
-struct SpellEquippedItemsEntry
-{
-    //uint32    Id;                                         // 0        m_ID
-    int32     EquippedItemClass;                            // 1        m_equippedItemClass (value)
-    int32     EquippedItemInventoryTypeMask;                // 2        m_equippedItemInvTypes (mask)
-    int32     EquippedItemSubClassMask;                     // 3        m_equippedItemSubclass (mask)
-};
-
 // SpellFocusObject.dbc
 struct SpellFocusObjectEntry
 {
@@ -2075,15 +2066,17 @@ struct SpellEntry
     uint32  RecoveryTime;                                   // 50       m_recoveryTime
     uint32  StartRecoveryTime;                              // 51       m_startRecoveryTime
     //uint32 unkIndex7;                                     // 52       unk2, all zeros...
-    uint32 SpellEquippedItemsId;                            // 53       SpellEquippedItems.dbc
-    uint32 SpellInterruptsId;                               // 54       SpellInterrupts.dbc
-    uint32 SpellLevelsId;                                   // 55       SpellLevels.dbc
-    uint32 SpellPowerId;                                    // 56       SpellPower.dbc
-    uint32 SpellReagentsId;                                 // 57       SpellReagents.dbc
-    uint32 SpellShapeshiftId;                               // 58       SpellShapeshift.dbc
-    uint32 SpellTargetRestrictionsId;                       // 59       SpellTargetRestrictions.dbc
-    uint32 SpellTotemsId;                                   // 60       SpellTotems.dbc
-    //uint32 ResearchProjectId;                             // 61       ResearchProject.dbc
+    int32  EquippedItemClass;                               // 53       m_equippedItemClass (value)
+    int32  EquippedItemInventoryTypeMask;                   // 54       m_equippedItemInvTypes (mask)
+    int32  EquippedItemSubClassMask;                        // 55       m_equippedItemSubclass (mask)
+    uint32 SpellInterruptsId;                               // 56       SpellInterrupts.dbc
+    uint32 SpellLevelsId;                                   // 57       SpellLevels.dbc
+    uint32 SpellPowerId;                                    // 58       SpellPower.dbc
+    uint32 SpellReagentsId;                                 // 59       SpellReagents.dbc
+    uint32 SpellShapeshiftId;                               // 60       SpellShapeshift.dbc
+    uint32 SpellTargetRestrictionsId;                       // 61       SpellTargetRestrictions.dbc
+    uint32 SpellTotemsId;                                   // 62       SpellTotems.dbc
+    //uint32 ResearchProjectId;                             // 63       ResearchProject.dbc
 
     // helpers
     int32 CalculateSimpleValue(SpellEffectIndex eff) const;
@@ -2093,7 +2086,6 @@ struct SpellEntry
     SpellCategoriesEntry const* GetSpellCategories() const;
     SpellClassOptionsEntry const* GetSpellClassOptions() const;
     SpellEffectEntry const* GetSpellEffect(SpellEffectIndex eff) const;
-    SpellEquippedItemsEntry const* GetSpellEquippedItems() const;
     SpellInterruptsEntry const* GetSpellInterrupts() const;
     SpellLevelsEntry const* GetSpellLevels() const;
     SpellPowerEntry const* GetSpellPower() const;
@@ -2110,7 +2102,6 @@ struct SpellEntry
     uint32 GetMechanic() const;
     uint32 GetStartRecoveryCategory() const;
     uint32 GetSpellLevel() const;
-    int32 GetEquippedItemClass() const;
     SpellFamily GetSpellFamilyName() const;
     uint32 GetDmgClass() const;
     uint32 GetDispel() const;

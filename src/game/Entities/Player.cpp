@@ -7709,7 +7709,7 @@ void Player::_ApplyWeaponDependentAuraMods(Item* item, WeaponAttackType attackTy
 void Player::_ApplyWeaponDependentAuraCritMod(Item* item, WeaponAttackType attackType, Aura* aura, bool apply)
 {
     // generic not weapon specific case processes in aura code
-    if(aura->GetSpellProto()->GetEquippedItemClass() == -1)
+    if(aura->GetSpellProto()->EquippedItemClass == -1)
         return;
 
     BaseModGroup mod;
@@ -7735,7 +7735,7 @@ void Player::_ApplyWeaponDependentAuraDamageMod(Item* item, WeaponAttackType att
         return;
 
     // generic not weapon specific case processes in aura code
-    if(aura->GetSpellProto()->GetEquippedItemClass() == -1)
+    if(aura->GetSpellProto()->EquippedItemClass == -1)
         return;
 
     UnitMods unitMod;
@@ -20909,7 +20909,7 @@ void Player::AutoUnequipOffhandIfNeed()
 
 bool Player::HasItemFitToSpellReqirements(SpellEntry const* spellInfo, Item const* ignoreItem)
 {
-    int32 itemClass = spellInfo->GetEquippedItemClass();
+    int32 itemClass = spellInfo->EquippedItemClass;
     if(itemClass < 0)
         return true;
 
@@ -24203,10 +24203,10 @@ bool Player::FitArmorSpecializationRules(SpellEntry const * spellProto) const
     if (!HasSpell(armorSpecToClass[getClass()]))
         return false;
 
-    if (SpellEquippedItemsEntry const * itemsEntry = spellProto->GetSpellEquippedItems())
+    if (spellProto->EquippedItemClass != -1 && spellProto->EquippedItemSubClassMask != 0 && spellProto->EquippedItemInventoryTypeMask != 0)
     {
         // there spells check items with inventory types which are in EquippedItemInventoryTypeMask
-        uint32 inventoryTypeMask = itemsEntry->EquippedItemInventoryTypeMask;
+        uint32 inventoryTypeMask = spellProto->EquippedItemInventoryTypeMask;
         // get slots that should be check for item presence and SpellEquippedItemsEntry match
         uint32 slotMask = 0;
         uint8 slots[4];
@@ -24231,10 +24231,10 @@ bool Player::FitArmorSpecializationRules(SpellEntry const * spellProto) const
                 if (!item)
                     return false;
 
-                if (item->GetProto()->Class != itemsEntry->EquippedItemClass)
+                if (item->GetProto()->Class != spellProto->EquippedItemClass)
                     return false;
 
-                if (((1 << item->GetProto()->SubClass) & itemsEntry->EquippedItemSubClassMask) == 0)
+                if (((1 << item->GetProto()->SubClass) & spellProto->EquippedItemSubClassMask) == 0)
                     return false;
             }
         }

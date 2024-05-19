@@ -54,11 +54,6 @@ SpellEffectEntry const* SpellEntry::GetSpellEffect(SpellEffectIndex eff) const
     return GetSpellEffectEntry(Id, eff);
 }
 
-SpellEquippedItemsEntry const* SpellEntry::GetSpellEquippedItems() const
-{
-    return SpellEquippedItemsId ? sSpellEquippedItemsStore.LookupEntry(SpellEquippedItemsId) : NULL;
-}
-
 SpellInterruptsEntry const* SpellEntry::GetSpellInterrupts() const
 {
     return SpellInterruptsId ? sSpellInterruptsStore.LookupEntry(SpellInterruptsId) : NULL;
@@ -133,12 +128,6 @@ uint32 SpellEntry::GetSpellLevel() const
 {
     SpellLevelsEntry const* levels = GetSpellLevels();
     return levels ? levels->spellLevel : 0;
-}
-
-int32 SpellEntry::GetEquippedItemClass() const
-{
-    SpellEquippedItemsEntry const* items = GetSpellEquippedItems();
-    return items ? items->EquippedItemClass : -1;
 }
 
 SpellFamily SpellEntry::GetSpellFamilyName() const
