@@ -2460,7 +2460,7 @@ bool ChatHandler::HandleLearnAllMySpellsCommand(char* /*args*/)
             continue;
 
         // skip other spell families
-        if( spellInfo->GetSpellFamilyName() != family)
+        if( spellInfo->SpellFamilyName != family)
             continue;
 
         // skip spells with first rank learned as talent (and all talents then also)

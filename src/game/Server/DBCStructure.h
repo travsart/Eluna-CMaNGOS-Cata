@@ -1742,42 +1742,6 @@ struct SpellCategoriesEntry
     uint32    StartRecoveryCategory;                        // 6        m_startRecoveryCategory
 };
 
-// SpellClassOptions.dbc
-struct SpellClassOptionsEntry
-{
-    //uint32    Id;                                         // 0        m_ID
-    //uint32    modalNextSpell;                             // 1        m_modalNextSpell not used
-    ClassFamilyMask SpellFamilyFlags;                       // 2-4      m_spellClassMask NOTE: size is 12 bytes!!!
-    uint32    SpellFamilyName;                              // 5        m_spellClassSet
-    //char*   Description;                                  // 6 4.0.0
-    // helpers
-
-    bool IsFitToFamilyMask(uint64 familyFlags, uint32 familyFlags2 = 0) const
-    {
-        return SpellFamilyFlags.IsFitToFamilyMask(familyFlags, familyFlags2);
-    }
-
-    bool IsFitToFamily(SpellFamily family, uint64 familyFlags, uint32 familyFlags2 = 0) const
-    {
-        return SpellFamily(SpellFamilyName) == family && IsFitToFamilyMask(familyFlags, familyFlags2);
-    }
-
-    bool IsFitToFamilyMask(ClassFamilyMask const& mask) const
-    {
-        return SpellFamilyFlags.IsFitToFamilyMask(mask);
-    }
-
-    bool IsFitToFamily(SpellFamily family, ClassFamilyMask const& mask) const
-    {
-        return SpellFamily(SpellFamilyName) == family && IsFitToFamilyMask(mask);
-    }
-
-    private:
-        // catch wrong uses
-        template<typename T>
-        bool IsFitToFamilyMask(SpellFamily family, T t) const;
-};
-
 // SpellDifficulty.dbc
 struct SpellDifficultyEntry
 {
@@ -2050,24 +2014,25 @@ struct SpellEntry
     int32  AreaGroupId;                                     // 45       m_requiredAreaGroupId
     uint32 RequiresSpellFocus;                              // 46       m_requiresSpellFocus
     uint32 SpellCategoriesId;                               // 47       SpellCategories.dbc
-    uint32 SpellClassOptionsId;                             // 48       SpellClassOptions.dbc
-    uint32  CategoryRecoveryTime;                           // 49       m_categoryRecoveryTime
-    uint32  RecoveryTime;                                   // 50       m_recoveryTime
-    uint32  StartRecoveryTime;                              // 51       m_startRecoveryTime
-    //uint32 unkIndex7;                                     // 52       unk2, all zeros...
-    int32  EquippedItemClass;                               // 53       m_equippedItemClass (value)
-    int32  EquippedItemInventoryTypeMask;                   // 54       m_equippedItemInvTypes (mask)
-    int32  EquippedItemSubClassMask;                        // 55       m_equippedItemSubclass (mask)
-    uint32 AuraInterruptFlags;                              // 56       m_auraInterruptFlags
-    uint32 ChannelInterruptFlags;                           // 57       m_channelInterruptFlags
-    uint32 InterruptFlags;                                  // 58       m_interruptFlags
-    uint32 SpellLevelsId;                                   // 59       SpellLevels.dbc
-    uint32 SpellPowerId;                                    // 60       SpellPower.dbc
-    uint32 SpellReagentsId;                                 // 61       SpellReagents.dbc
-    uint32 SpellShapeshiftId;                               // 62       SpellShapeshift.dbc
-    uint32 SpellTargetRestrictionsId;                       // 63       SpellTargetRestrictions.dbc
-    uint32 SpellTotemsId;                                   // 64       SpellTotems.dbc
-    //uint32 ResearchProjectId;                             // 65       ResearchProject.dbc
+    uint32    SpellFamilyName;                              // 48       m_spellClassSet
+    ClassFamilyMask SpellFamilyFlags;                       // 49-51    m_spellClassMask NOTE: size is 12 bytes!!!
+    uint32  CategoryRecoveryTime;                           // 52       m_categoryRecoveryTime
+    uint32  RecoveryTime;                                   // 53       m_recoveryTime
+    uint32  StartRecoveryTime;                              // 54       m_startRecoveryTime
+    //uint32 unkIndex7;                                     // 55       unk2, all zeros...
+    int32  EquippedItemClass;                               // 56       m_equippedItemClass (value)
+    int32  EquippedItemInventoryTypeMask;                   // 57       m_equippedItemInvTypes (mask)
+    int32  EquippedItemSubClassMask;                        // 58       m_equippedItemSubclass (mask)
+    uint32 AuraInterruptFlags;                              // 59       m_auraInterruptFlags
+    uint32 ChannelInterruptFlags;                           // 60       m_channelInterruptFlags
+    uint32 InterruptFlags;                                  // 61       m_interruptFlags
+    uint32 SpellLevelsId;                                   // 62       SpellLevels.dbc
+    uint32 SpellPowerId;                                    // 63       SpellPower.dbc
+    uint32 SpellReagentsId;                                 // 64       SpellReagents.dbc
+    uint32 SpellShapeshiftId;                               // 65       SpellShapeshift.dbc
+    uint32 SpellTargetRestrictionsId;                       // 66       SpellTargetRestrictions.dbc
+    uint32 SpellTotemsId;                                   // 67       SpellTotems.dbc
+    //uint32 ResearchProjectId;                             // 68       ResearchProject.dbc
 
     // helpers
     int32 CalculateSimpleValue(SpellEffectIndex eff) const;
@@ -2075,7 +2040,6 @@ struct SpellEntry
 
     // struct access functions
     SpellCategoriesEntry const* GetSpellCategories() const;
-    SpellClassOptionsEntry const* GetSpellClassOptions() const;
     SpellEffectEntry const* GetSpellEffect(SpellEffectIndex eff) const;
     SpellLevelsEntry const* GetSpellLevels() const;
     SpellPowerEntry const* GetSpellPower() const;
@@ -2092,7 +2056,6 @@ struct SpellEntry
     uint32 GetMechanic() const;
     uint32 GetStartRecoveryCategory() const;
     uint32 GetSpellLevel() const;
-    SpellFamily GetSpellFamilyName() const;
     uint32 GetDmgClass() const;
     uint32 GetDispel() const;
     uint32 GetMaxAffectedTargets() const;
@@ -2112,26 +2075,22 @@ struct SpellEntry
 
     bool IsFitToFamilyMask(uint64 familyFlags, uint32 familyFlags2 = 0) const
     {
-        SpellClassOptionsEntry const* classOpt = GetSpellClassOptions();
-        return classOpt && classOpt->IsFitToFamilyMask(familyFlags, familyFlags2);
+        return SpellFamilyFlags.IsFitToFamilyMask(familyFlags, familyFlags2);
     }
 
     bool IsFitToFamily(SpellFamily family, uint64 familyFlags, uint32 familyFlags2 = 0) const
     {
-        SpellClassOptionsEntry const* classOpt = GetSpellClassOptions();
-        return classOpt && classOpt->IsFitToFamily(family, familyFlags, familyFlags2);
+        return SpellFamily(SpellFamilyName) == family && IsFitToFamilyMask(familyFlags, familyFlags2);
     }
 
     bool IsFitToFamilyMask(ClassFamilyMask const& mask) const
     {
-        SpellClassOptionsEntry const* classOpt = GetSpellClassOptions();
-        return classOpt && classOpt->IsFitToFamilyMask(mask);
+        return SpellFamilyFlags.IsFitToFamilyMask(mask);
     }
 
     bool IsFitToFamily(SpellFamily family, ClassFamilyMask const& mask) const
     {
-        SpellClassOptionsEntry const* classOpt = GetSpellClassOptions();
-        return classOpt && classOpt->IsFitToFamily(family, mask);
+        return SpellFamily(SpellFamilyName) == family && IsFitToFamilyMask(mask);
     }
 
     inline bool HasAttribute(SpellAttributes attribute) const { return (Attributes & attribute) != 0; }

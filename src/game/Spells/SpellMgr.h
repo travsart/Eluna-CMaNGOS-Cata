@@ -227,9 +227,8 @@ inline bool IsAllowingDeadTarget(SpellEntry const* spellInfo)
 
 inline bool IsElementalShield(SpellEntry const* spellInfo)
 {
-    SpellClassOptionsEntry const* classOptions = spellInfo->GetSpellClassOptions();
     // family flags 10 (Lightning), 42 (Earth), 37 (Water), proc shield from T2 8 pieces bonus
-    return (classOptions && classOptions->SpellFamilyFlags & uint64(0x42000000400)) || spellInfo->Id == 23552;
+    return (spellInfo->SpellFamilyFlags & uint64(0x42000000400)) || spellInfo->Id == 23552;
 }
 
 inline bool IsExplicitDiscoverySpell(SpellEntry const* spellInfo)
@@ -338,12 +337,7 @@ inline bool IsSpellEffectAbleToCrit(const SpellEntry* entry, SpellEffectIndex in
         case SPELL_EFFECT_NORMALIZED_WEAPON_DMG:
             return true;
         case SPELL_EFFECT_ENERGIZE: // Mana Potion and similar spells, Lay on hands
-            SpellClassOptionsEntry const* classOptions = entry->GetSpellClassOptions();
-
-            if (!classOptions)
-                return false;
-
-            return (spellEffect->EffectMiscValue == POWER_MANA && classOptions->SpellFamilyName && entry->GetDmgClass());
+            return (spellEffect->EffectMiscValue == POWER_MANA && entry->SpellFamilyName && entry->GetDmgClass());
     }
     return false;
 }
@@ -1230,7 +1224,7 @@ inline bool IsAutoRepeatRangedSpell(SpellEntry const* spellInfo)
 
 inline bool IsSpellRequiresRangedAP(SpellEntry const* spellInfo)
 {
-    return (spellInfo->GetSpellFamilyName() == SPELLFAMILY_HUNTER && spellInfo->GetDmgClass() != SPELL_DAMAGE_CLASS_MELEE);
+    return (spellInfo->SpellFamilyName == SPELLFAMILY_HUNTER && spellInfo->GetDmgClass() != SPELL_DAMAGE_CLASS_MELEE);
 }
 
 uint32 GetAffectedTargets(SpellEntry const* spellInfo, Unit* caster);

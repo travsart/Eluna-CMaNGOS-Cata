@@ -44,11 +44,6 @@ SpellCategoriesEntry const* SpellEntry::GetSpellCategories() const
     return SpellCategoriesId ? sSpellCategoriesStore.LookupEntry(SpellCategoriesId) : NULL;
 }
 
-SpellClassOptionsEntry const* SpellEntry::GetSpellClassOptions() const
-{
-    return SpellClassOptionsId ? sSpellClassOptionsStore.LookupEntry(SpellClassOptionsId) : NULL;
-}
-
 SpellEffectEntry const* SpellEntry::GetSpellEffect(SpellEffectIndex eff) const
 {
     return GetSpellEffectEntry(Id, eff);
@@ -123,12 +118,6 @@ uint32 SpellEntry::GetSpellLevel() const
 {
     SpellLevelsEntry const* levels = GetSpellLevels();
     return levels ? levels->spellLevel : 0;
-}
-
-SpellFamily SpellEntry::GetSpellFamilyName() const
-{
-    SpellClassOptionsEntry const* classOpt = GetSpellClassOptions();
-    return classOpt ? SpellFamily(classOpt->SpellFamilyName) : SPELLFAMILY_GENERIC;
 }
 
 uint32 SpellEntry::GetDmgClass() const

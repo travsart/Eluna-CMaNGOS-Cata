@@ -865,7 +865,7 @@ void Spell::prepareDataForTriggerSystem()
 
     if (!m_canTrigger)                                      // Exceptions (some periodic triggers)
     {
-        switch (m_spellInfo->GetSpellFamilyName())
+        switch (m_spellInfo->SpellFamilyName)
         {
             case SPELLFAMILY_MAGE:
                 // Arcane Missles / Blizzard triggers need do it
@@ -1326,16 +1326,15 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
 
         // Haunt (NOTE: for avoid use additional field damage stored in dummy value (replace unused 100%)
         // apply before deal damage because aura can be removed at target kill
-        SpellClassOptionsEntry const *classOpt = m_spellInfo->GetSpellClassOptions();
-        if (classOpt && classOpt->SpellFamilyName == SPELLFAMILY_WARLOCK && m_spellInfo->SpellIconID == 3172 &&
-            (classOpt->SpellFamilyFlags & uint64(0x0004000000000000)))
+        if (m_spellInfo->SpellFamilyName == SPELLFAMILY_WARLOCK && m_spellInfo->SpellIconID == 3172 &&
+            (m_spellInfo->SpellFamilyFlags & uint64(0x0004000000000000)))
             if(Aura* dummy = unitTarget->GetDummyAura(m_spellInfo->Id))
                 dummy->GetModifier()->m_amount = damageInfo.damage;
 
         caster->DealSpellDamage(&damageInfo, true);
 
         // Scourge Strike, here because needs to use final damage in second part of the spell
-        if (classOpt && classOpt->SpellFamilyName == SPELLFAMILY_DEATHKNIGHT && classOpt->SpellFamilyFlags & uint64(0x0800000000000000))
+        if (m_spellInfo->SpellFamilyName == SPELLFAMILY_DEATHKNIGHT && m_spellInfo->SpellFamilyFlags & uint64(0x0800000000000000))
         {
             uint32 count = 0;
             Unit::SpellAuraHolderMap const& auras = unitTarget->GetSpellAuraHolderMap();
@@ -1763,7 +1762,6 @@ class ChainHealingFullHealth
 void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList& targetUnitMap)
 {
     SpellEffectEntry const* spellEffect = m_spellInfo->GetSpellEffect(effIndex);
-    SpellClassOptionsEntry const* classOpt = m_spellInfo->GetSpellClassOptions();
     if (!spellEffect)
         return;
 
@@ -2351,7 +2349,7 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
                         targetUnitMap.push_back(target);
             }
             // Circle of Healing
-            else if (m_spellInfo->GetSpellFamilyName() == SPELLFAMILY_PRIEST && m_spellInfo->SpellVisual[0] == 8253)
+            else if (m_spellInfo->SpellFamilyName == SPELLFAMILY_PRIEST && m_spellInfo->SpellVisual[0] == 8253)
             {
                 Unit* target = m_targets.getUnitTarget();
                 if (!target)
@@ -2365,7 +2363,7 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
                 FillRaidOrPartyHealthPriorityTargets(targetUnitMap, m_caster, target, radius, count, true, false, true);
             }
             // Wild Growth
-            else if (m_spellInfo->GetSpellFamilyName() == SPELLFAMILY_DRUID && m_spellInfo->SpellIconID == 2864)
+            else if (m_spellInfo->SpellFamilyName == SPELLFAMILY_DRUID && m_spellInfo->SpellIconID == 2864)
             {
                 Unit* target = m_targets.getUnitTarget();
                 if (!target)
@@ -3463,10 +3461,8 @@ void Spell::cast(bool skipCheck)
         }
     }
 
-    SpellClassOptionsEntry const* classOpt = m_spellInfo->GetSpellClassOptions();
-
     // different triggered (for caster) and precast (casted before apply effect to target) cases
-    switch(m_spellInfo->GetSpellFamilyName())
+    switch(m_spellInfo->SpellFamilyName)
     {
         case SPELLFAMILY_GENERIC:
         {
@@ -3500,7 +3496,7 @@ void Spell::cast(bool skipCheck)
         case SPELLFAMILY_MAGE:
         {
             // Ice Block
-            if (classOpt && classOpt->SpellFamilyFlags & uint64(0x0000008000000000))
+            if (m_spellInfo->SpellFamilyFlags & uint64(0x0000008000000000))
                 AddPrecastSpell(41425);                     // Hypothermia
             // Icy Veins
             else if (m_spellInfo->Id == 12472)
@@ -3520,13 +3516,13 @@ void Spell::cast(bool skipCheck)
         case SPELLFAMILY_WARRIOR:
         {
             // Shield Slam
-            if (classOpt && (classOpt->SpellFamilyFlags & uint64(0x0000020000000000)) && m_spellInfo->GetCategory()==1209)
+            if ((m_spellInfo->SpellFamilyFlags & uint64(0x0000020000000000)) && m_spellInfo->GetCategory()==1209)
             {
                 if (m_caster->HasAura(58375))               // Glyph of Blocking
                     AddTriggeredSpell(58374);               // Glyph of Blocking
             }
             // Bloodrage
-            if (classOpt && (classOpt->SpellFamilyFlags & uint64(0x0000000000000100)))
+            if (m_spellInfo->SpellFamilyFlags & uint64(0x0000000000000100))
             {
                 if (m_caster->HasAura(70844))               // Item - Warrior T10 Protection 4P Bonus
                     AddTriggeredSpell(70845);               // Stoicism
@@ -3543,10 +3539,10 @@ void Spell::cast(bool skipCheck)
         {
             // Power Word: Shield
             if (m_spellInfo->GetMechanic() == MECHANIC_SHIELD &&
-                (classOpt && classOpt->SpellFamilyFlags & uint64(0x0000000000000001)))
+                (m_spellInfo->SpellFamilyFlags & uint64(0x0000000000000001)))
                 AddPrecastSpell(6788);                      // Weakened Soul
             // Prayer of Mending (jump animation), we need formal caster instead original for correct animation
-            else if (classOpt && classOpt->SpellFamilyFlags & uint64(0x0000002000000000))
+            else if (m_spellInfo->SpellFamilyFlags & uint64(0x0000002000000000))
                 AddTriggeredSpell(41637);
 
             switch (m_spellInfo->Id)
@@ -3619,20 +3615,20 @@ void Spell::cast(bool skipCheck)
                     AddPrecastSpell(67485);                 // Hand of Rekoning (no typos in name ;) )
             }
             // Divine Shield, Divine Protection or Hand of Protection
-            else if (classOpt && classOpt->SpellFamilyFlags & uint64(0x0000000000400080))
+            else if (m_spellInfo->SpellFamilyFlags & uint64(0x0000000000400080))
             {
                 AddPrecastSpell(25771);                     // Forbearance
                 AddPrecastSpell(61987);                     // Avenging Wrath Marker
             }
             // Lay on Hands
-            else if (classOpt && classOpt->SpellFamilyFlags & uint64(0x0000000000008000))
+            else if (m_spellInfo->SpellFamilyFlags & uint64(0x0000000000008000))
             {
                 // only for self cast
                 if (m_caster == m_targets.getUnitTarget())
                     AddPrecastSpell(25771);                 // Forbearance
             }
             // Avenging Wrath
-            else if (classOpt && classOpt->SpellFamilyFlags & uint64(0x0000200000000000))
+            else if (m_spellInfo->SpellFamilyFlags & uint64(0x0000200000000000))
                 AddPrecastSpell(61987);                     // Avenging Wrath Marker
             break;
         }
@@ -3649,7 +3645,7 @@ void Spell::cast(bool skipCheck)
             else if (m_spellInfo->Id == 58875)
                 AddPrecastSpell(58876);
             // Totem of Wrath
-            else if (spellEffect && spellEffect->Effect==SPELL_EFFECT_APPLY_AREA_AURA_RAID && classOpt && classOpt->SpellFamilyFlags & uint64(0x0000000004000000))
+            else if (spellEffect && spellEffect->Effect==SPELL_EFFECT_APPLY_AREA_AURA_RAID && m_spellInfo->SpellFamilyFlags & uint64(0x0000000004000000))
                 // only for main totem spell cast
                 AddTriggeredSpell(30708);                   // Totem of Wrath
             break;
@@ -5314,8 +5310,6 @@ SpellCastResult Spell::CheckCast(bool strict)
     if (!m_caster->IsInCombat() && m_spellInfo->HasAttribute(SPELL_ATTR_STOP_ATTACK_TARGET) && m_spellInfo->HasAttribute(SPELL_ATTR_EX2_UNK26))
         return SPELL_FAILED_CASTER_AURASTATE;
 
-    SpellClassOptionsEntry const* classOptions = m_spellInfo->GetSpellClassOptions();
-
     if(Unit *target = m_targets.getUnitTarget())
     {
         // target state requirements (not allowed state), apply to self also
@@ -5416,7 +5410,7 @@ SpellCastResult Spell::CheckCast(bool strict)
             // Some special spells with non-caster only mode
 
             // Fire Shield
-            if (classOptions && classOptions->SpellFamilyName == SPELLFAMILY_WARLOCK &&
+            if (m_spellInfo->SpellFamilyName == SPELLFAMILY_WARLOCK &&
                 m_spellInfo->SpellIconID == 16)
                 return SPELL_FAILED_BAD_TARGETS;
 
@@ -5425,8 +5419,8 @@ SpellCastResult Spell::CheckCast(bool strict)
                 return SPELL_FAILED_BAD_TARGETS;
 
             // Lay on Hands (self cast)
-            if (classOptions && classOptions->SpellFamilyName == SPELLFAMILY_PALADIN &&
-                classOptions->SpellFamilyFlags & uint64(0x0000000000008000))
+            if (m_spellInfo->SpellFamilyName == SPELLFAMILY_PALADIN &&
+                m_spellInfo->SpellFamilyFlags & uint64(0x0000000000008000))
             {
                 if (target->HasAura(25771))                 // Forbearance
                     return SPELL_FAILED_CASTER_AURASTATE;
@@ -5914,7 +5908,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                         return SPELL_FAILED_UNIT_NOT_INFRONT;
                 }
                 // Fire Nova
-                if (m_spellInfo->GetSpellFamilyName() == SPELLFAMILY_SHAMAN && m_spellInfo->SpellIconID == 33)
+                if (m_spellInfo->SpellFamilyName == SPELLFAMILY_SHAMAN && m_spellInfo->SpellIconID == 33)
                 {
                     // fire totems slot
                     if (!m_caster->GetTotemGuid(TOTEM_SLOT_FIRE))
@@ -6771,7 +6765,7 @@ SpellCastResult Spell::CheckCasterAuras() const
     if (unitflag & UNIT_FLAG_STUNNED)
     {
         // Pain Suppression (have SPELL_ATTR_EX5_USABLE_WHILE_STUNNED that must be used only with glyph)
-        if (m_spellInfo->GetSpellFamilyName() == SPELLFAMILY_PRIEST && m_spellInfo->SpellIconID == 2178)
+        if (m_spellInfo->SpellFamilyName == SPELLFAMILY_PRIEST && m_spellInfo->SpellIconID == 2178)
         {
             if (!m_caster->HasAura(63248))                  // Glyph of Pain Suppression
                 spellUsableWhileStunned = false;
@@ -7655,7 +7649,7 @@ bool Spell::CheckTargetCreatureType(Unit* target) const
     uint32 spellCreatureTargetMask = m_spellInfo->GetTargetCreatureType();
 
     // Curse of Doom: not find another way to fix spell target check :/
-    if (m_spellInfo->GetSpellFamilyName() == SPELLFAMILY_WARLOCK && m_spellInfo->GetCategory() == 1179)
+    if (m_spellInfo->SpellFamilyName == SPELLFAMILY_WARLOCK && m_spellInfo->GetCategory() == 1179)
     {
         // not allow cast at player
         if (target->GetTypeId() == TYPEID_PLAYER)
@@ -8357,7 +8351,7 @@ void Spell::GetSpellRangeAndRadius(SpellEffectEntry const* spellEffect, float& r
         }
     }
 
-    switch (m_spellInfo->GetSpellFamilyName())
+    switch (m_spellInfo->SpellFamilyName)
     {
         case SPELLFAMILY_PALADIN:
             if (m_spellInfo->Id == 20424)                   // Seal of Command (2 more target for single targeted spell)
@@ -8377,7 +8371,7 @@ void Spell::GetSpellRangeAndRadius(SpellEffectEntry const* spellEffect, float& r
     }
 
     // custom radius cases
-    switch (m_spellInfo->GetSpellFamilyName())
+    switch (m_spellInfo->SpellFamilyName)
     {
         case SPELLFAMILY_GENERIC:
         {

@@ -212,7 +212,6 @@ extern DBCStorage <SpellRangeEntry>              sSpellRangeStore;
 extern DBCStorage <SpellRuneCostEntry>           sSpellRuneCostStore;
 extern DBCStorage <SpellShapeshiftFormEntry>     sSpellShapeshiftFormStore;
 extern DBCStorage <SpellCategoriesEntry>         sSpellCategoriesStore;
-extern DBCStorage <SpellClassOptionsEntry>       sSpellClassOptionsStore;
 extern DBCStorage <SpellLevelsEntry>             sSpellLevelsStore;
 extern DBCStorage <SpellPowerEntry>              sSpellPowerStore;
 extern DBCStorage <SpellReagentsEntry>           sSpellReagentsStore;
