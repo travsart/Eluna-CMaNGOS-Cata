@@ -49,17 +49,6 @@ SpellScalingEntry const* SpellEntry::GetSpellScaling() const
     return SpellScalingId ? sSpellScalingStore.LookupEntry(SpellScalingId) : NULL;
 }
 
-SpellTargetRestrictionsEntry const* SpellEntry::GetSpellTargetRestrictions() const
-{
-    return SpellTargetRestrictionsId ? sSpellTargetRestrictionsStore.LookupEntry(SpellTargetRestrictionsId) : NULL;
-}
-
-uint32 SpellEntry::GetMaxAffectedTargets() const
-{
-    SpellTargetRestrictionsEntry const* target = GetSpellTargetRestrictions();
-    return target ? target->MaxAffectedTargets : 0;
-}
-
 uint32 SpellEntry::GetSpellEffectIdByIndex(SpellEffectIndex index) const
 {
     SpellEffectEntry const* effect = GetSpellEffect(index);
@@ -72,22 +61,10 @@ uint32 SpellEntry::GetEffectImplicitTargetAByIndex(SpellEffectIndex index) const
     return effect ? effect->EffectImplicitTargetA : TARGET_NONE;
 }
 
-uint32 SpellEntry::GetTargetCreatureType() const
-{
-    SpellTargetRestrictionsEntry const* target = GetSpellTargetRestrictions();
-    return target ? target->TargetCreatureType : 0;
-}
-
 int32 SpellEntry::GetEffectMiscValue(SpellEffectIndex index) const
 {
     SpellEffectEntry const* effect = GetSpellEffect(index);
     return effect ? effect->EffectMiscValue : 0;
-}
-
-uint32 SpellEntry::GetTargets() const
-{
-    SpellTargetRestrictionsEntry const* target = GetSpellTargetRestrictions();
-    return target ? target->Targets : 0;
 }
 
 uint32 SpellEntry::GetEffectApplyAuraNameByIndex(SpellEffectIndex index) const

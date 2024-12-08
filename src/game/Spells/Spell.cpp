@@ -1766,7 +1766,7 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
         return;
 
     uint32 EffectChainTarget = spellEffect ? spellEffect->EffectChainTarget : 0;
-    uint32 unMaxTargets = m_spellInfo->GetMaxAffectedTargets();
+    uint32 unMaxTargets = m_spellInfo->MaxAffectedTargets;
 
     float radius;
     GetSpellRangeAndRadius(spellEffect, radius, EffectChainTarget); 
@@ -5562,9 +5562,8 @@ SpellCastResult Spell::CheckCast(bool strict)
         if (target->HasAuraType(SPELL_AURA_SPIRIT_OF_REDEMPTION))
             return SPELL_FAILED_BAD_TARGETS;
 
-        if (SpellTargetRestrictionsEntry const* spellTargetRestriction = m_spellInfo->GetSpellTargetRestrictions())
-            if (spellTargetRestriction->MaxTargetLevel && target->GetLevel() > spellTargetRestriction->MaxTargetLevel)
-                return SPELL_FAILED_HIGHLEVEL;
+        if (m_spellInfo->MaxTargetLevel && target->GetLevel() > m_spellInfo->MaxTargetLevel)
+            return SPELL_FAILED_HIGHLEVEL;
     }
     // zone check
     uint32 zone, area;
@@ -7624,7 +7623,7 @@ void Spell::UpdatePointers()
 
 bool Spell::CheckTargetCreatureType(Unit* target) const
 {
-    uint32 spellCreatureTargetMask = m_spellInfo->GetTargetCreatureType();
+    uint32 spellCreatureTargetMask = m_spellInfo->TargetCreatureType;
 
     // Curse of Doom: not find another way to fix spell target check :/
     if (m_spellInfo->SpellFamilyName == SPELLFAMILY_WARLOCK && m_spellInfo->Category == 1179)
@@ -8342,7 +8341,7 @@ void Spell::GetSpellRangeAndRadius(SpellEffectEntry const* spellEffect, float& r
                         if(SpellEffectEntry const* spellEffect = currSpell->m_spellInfo->GetSpellEffect(SpellEffectIndex(i)))
                             if(spellEffect->EffectChainTarget > 0)
                                 EffectChainTarget = 0;      // no chain targets
-                    if (currSpell->m_spellInfo->GetMaxAffectedTargets() > 0)
+                    if (currSpell->m_spellInfo->MaxAffectedTargets > 0)
                         EffectChainTarget = 0;              // no chain targets
                 }
             }

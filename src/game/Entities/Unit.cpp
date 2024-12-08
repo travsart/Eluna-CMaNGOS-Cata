@@ -1559,9 +1559,9 @@ SpellCastResult Unit::CastSpell(Unit* Victim, SpellEntry const* spellInfo, uint3
     SpellCastTargets targets;
     targets.setUnitTarget(Victim);
 
-    if (spellInfo->GetTargets() & TARGET_FLAG_DEST_LOCATION)
+    if (spellInfo->Targets & TARGET_FLAG_DEST_LOCATION)
         targets.setDestination(Victim->GetPositionX(), Victim->GetPositionY(), Victim->GetPositionZ());
-    if (spellInfo->GetTargets() & TARGET_FLAG_SOURCE_LOCATION)
+    if (spellInfo->Targets & TARGET_FLAG_SOURCE_LOCATION)
         if (WorldObject* caster = spell->GetCastingObject())
             targets.setSource(caster->GetPositionX(), caster->GetPositionY(), caster->GetPositionZ());
 
@@ -1622,9 +1622,9 @@ SpellCastResult Unit::CastCustomSpell(Unit* Victim, SpellEntry const* spellInfo,
     targets.setUnitTarget(Victim);
     spell->m_CastItem = castItem;
 
-    if (spellInfo->GetTargets() & TARGET_FLAG_DEST_LOCATION)
+    if (spellInfo->Targets & TARGET_FLAG_DEST_LOCATION)
         targets.setDestination(Victim->GetPositionX(), Victim->GetPositionY(), Victim->GetPositionZ());
-    if (spellInfo->GetTargets() & TARGET_FLAG_SOURCE_LOCATION)
+    if (spellInfo->Targets & TARGET_FLAG_SOURCE_LOCATION)
         if (WorldObject* caster = spell->GetCastingObject())
             targets.setSource(caster->GetPositionX(), caster->GetPositionY(), caster->GetPositionZ());
 
@@ -1675,9 +1675,9 @@ SpellCastResult Unit::CastSpell(float x, float y, float z, SpellEntry const* spe
 
     SpellCastTargets targets;
 
-    if (spellInfo->GetTargets() & TARGET_FLAG_DEST_LOCATION)
+    if (spellInfo->Targets & TARGET_FLAG_DEST_LOCATION)
         targets.setDestination(x, y, z);
-    if (spellInfo->GetTargets() & TARGET_FLAG_SOURCE_LOCATION)
+    if (spellInfo->Targets & TARGET_FLAG_SOURCE_LOCATION)
         targets.setSource(x, y, z);
 
     // Spell cast with x,y,z but without dbc target-mask, set destination

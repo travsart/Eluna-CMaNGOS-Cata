@@ -1893,17 +1893,6 @@ struct SpellShapeshiftFormEntry
     //uint32 unk6;                                          // 20
 };
 
-// SpellTargetRestrictions.dbc
-struct SpellTargetRestrictionsEntry
-{
-    //uint32    Id;                                         // 0        m_ID
-    float     MaxTargetRadius;                              // 1 - m_maxTargetRadius
-    uint32    MaxAffectedTargets;                           // 1 - m_maxTargets
-    uint32    MaxTargetLevel;                               // 2 - m_maxTargetLevel
-    uint32    TargetCreatureType;                           // 3 - m_targetCreatureType
-    uint32    Targets;                                      // 4 - m_targets
-};
-
 struct SpellEntry
 {
     uint32    Id;                                           // 0        m_ID
@@ -1984,10 +1973,14 @@ struct SpellEntry
     float  ManaCostPercentageFloat;                         // 78       4.3.0
     int32  Reagent[MAX_SPELL_REAGENTS];                     // 79-86    m_reagent
     uint32 ReagentCount[MAX_SPELL_REAGENTS];                // 87-94    m_reagentCount
-    uint32 SpellTargetRestrictionsId;                       // 95       SpellTargetRestrictions.dbc
-    uint32 TotemCategory[MAX_SPELL_TOTEM_CATEGORIES];       // 96-97    m_requiredTotemCategoryID
-    uint32 Totem[MAX_SPELL_TOTEMS];                         // 98-99    m_totem
-    //uint32 ResearchProjectId;                             // 100      ResearchProject.dbc
+    float  MaxTargetRadius;                                 // 95       m_maxTargetRadius
+    uint32 MaxAffectedTargets;                              // 96       m_maxTargets
+    uint32 MaxTargetLevel;                                  // 97       m_maxTargetLevel
+    uint32 TargetCreatureType;                              // 98       m_targetCreatureType
+    uint32 Targets;                                         // 99       m_targets
+    uint32 TotemCategory[MAX_SPELL_TOTEM_CATEGORIES];       // 100-101  m_requiredTotemCategoryID
+    uint32 Totem[MAX_SPELL_TOTEMS];                         // 102-103  m_totem
+    //uint32 ResearchProjectId;                             // 104      ResearchProject.dbc
 
     // helpers
     int32 CalculateSimpleValue(SpellEffectIndex eff) const;
@@ -1996,15 +1989,11 @@ struct SpellEntry
     // struct access functions
     SpellEffectEntry const* GetSpellEffect(SpellEffectIndex eff) const;
     SpellScalingEntry const* GetSpellScaling() const;
-    SpellTargetRestrictionsEntry const* GetSpellTargetRestrictions() const;
 
     // single fields
-    uint32 GetMaxAffectedTargets() const;
     uint32 GetSpellEffectIdByIndex(SpellEffectIndex index) const;
     uint32 GetEffectImplicitTargetAByIndex(SpellEffectIndex index) const;
-    uint32 GetTargetCreatureType() const;
     int32 GetEffectMiscValue(SpellEffectIndex index) const;
-    uint32 GetTargets() const;
     uint32 GetEffectApplyAuraNameByIndex(SpellEffectIndex index) const;
 
     bool IsFitToFamilyMask(uint64 familyFlags, uint32 familyFlags2 = 0) const

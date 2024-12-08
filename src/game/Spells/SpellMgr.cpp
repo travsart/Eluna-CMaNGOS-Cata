@@ -984,7 +984,7 @@ uint32 GetAffectedTargets(SpellEntry const * spellInfo, Unit * caster)
             break;
     }
 
-    return spellInfo->GetMaxAffectedTargets();
+    return spellInfo->MaxAffectedTargets;
 }
 
 SpellCastResult GetErrorAtShapeshiftedCast(SpellEntry const* spellInfo, uint32 form)
