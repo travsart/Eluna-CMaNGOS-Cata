@@ -179,8 +179,6 @@ PetFamilySpellsStore sPetFamilySpellsStore;
 
 DBCStorage <SpellScalingEntry> sSpellScalingStore(SpellScalingEntryfmt);
 
-SpellEffectMap sSpellEffectMap;
-
 //Keep in DBC
 
 DBCStorage <SpellCastTimesEntry> sSpellCastTimesStore(SpellCastTimefmt);
@@ -576,25 +574,6 @@ void LoadDBCStores(const std::string& dataPath)
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sSkillRaceClassInfoStore,  dbcPath,"SkillRaceClassInfo.dbc");
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sSoundEntriesStore,        dbcPath,"SoundEntries.dbc");
 
-    for(uint32 i = 1; i < sSpellEffectStore.GetMaxEntry(); ++i)
-    {
-        if (SpellEffectEntry const *spellEffect = sSpellEffectStore.LookupEntry<SpellEffectEntry>(i))
-        {
-            switch (spellEffect->EffectApplyAuraName)
-            {
-                case SPELL_AURA_MOD_INCREASE_ENERGY:
-                case SPELL_AURA_MOD_INCREASE_ENERGY_PERCENT:
-                case SPELL_AURA_PERIODIC_MANA_LEECH:
-                case SPELL_AURA_PERIODIC_ENERGIZE:
-                case SPELL_AURA_POWER_BURN_MANA:
-                    MANGOS_ASSERT(spellEffect->EffectMiscValue >= 0 && spellEffect->EffectMiscValue < MAX_POWERS);
-                    break;
-            }
-
-            sSpellEffectMap[spellEffect->EffectSpellId].effects[spellEffect->EffectIndex] = spellEffect;
-        }
-    }
-
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sSpellScalingStore,        dbcPath,"SpellScaling.dbc");
 
     for (uint32 j = 0; j < sSkillLineAbilityStore.GetNumRows(); ++j)
@@ -716,9 +695,8 @@ void LoadDBCStores(const std::string& dataPath)
         for(uint32 i = 1; i < sSpellTemplate.GetMaxEntry(); ++i)
             if(SpellEntry const* sInfo = sSpellTemplate.LookupEntry<SpellEntry> (i))
                 for(int j=0; j < MAX_EFFECT_INDEX; ++j)
-                    if(SpellEffectEntry const* effect = sInfo->GetSpellEffect(SpellEffectIndex(j)))
-                        if(effect->Effect==123 /*SPELL_EFFECT_SEND_TAXI*/)
-                            spellPaths.insert(effect->EffectMiscValue);
+                    if(sInfo->Effect[j] == 123 /*SPELL_EFFECT_SEND_TAXI*/)
+                        spellPaths.insert(sInfo->EffectMiscValue[j]);
 
         memset(sTaxiNodesMask,0,sizeof(sTaxiNodesMask));
         memset(sOldContinentsNodesMask,0,sizeof(sTaxiNodesMask));
@@ -850,15 +828,6 @@ TalentSpellPos const* GetTalentSpellPos(uint32 spellId)
         return nullptr;
 
     return &itr->second;
-}
-
-SpellEffectEntry const* GetSpellEffectEntry(uint32 spellId, SpellEffectIndex effect)
-{
-    SpellEffectMap::const_iterator itr = sSpellEffectMap.find(spellId);
-    if(itr == sSpellEffectMap.end())
-        return NULL;
-
-    return itr->second.effects[effect];
 }
 
 uint32 GetTalentSpellCost(TalentSpellPos const* pos)

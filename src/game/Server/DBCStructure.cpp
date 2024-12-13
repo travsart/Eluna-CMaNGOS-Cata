@@ -22,53 +22,7 @@
 #include "Globals/SharedDefines.h"
 #include "Server/SQLStorages.h"
 
-int32 SpellEntry::CalculateSimpleValue(SpellEffectIndex eff) const
-{
-    if(SpellEffectEntry const* effectEntry = GetSpellEffectEntry(Id, eff))
-        return effectEntry->CalculateSimpleValue();
-    return 0;
-}
-
-ClassFamilyMask const& SpellEntry::GetEffectSpellClassMask(SpellEffectIndex eff) const
-{
-    if (SpellEffectEntry const* effectEntry = GetSpellEffectEntry(Id, eff))
-        return effectEntry->EffectSpellClassMask;
-
-    static ClassFamilyMask const emptyCFM;
-
-    return emptyCFM;
-}
-
-SpellEffectEntry const* SpellEntry::GetSpellEffect(SpellEffectIndex eff) const
-{
-    return GetSpellEffectEntry(Id, eff);
-}
-
 SpellScalingEntry const* SpellEntry::GetSpellScaling() const
 {
     return SpellScalingId ? sSpellScalingStore.LookupEntry(SpellScalingId) : NULL;
-}
-
-uint32 SpellEntry::GetSpellEffectIdByIndex(SpellEffectIndex index) const
-{
-    SpellEffectEntry const* effect = GetSpellEffect(index);
-    return effect ? effect->Effect : SPELL_EFFECT_NONE;
-}
-
-uint32 SpellEntry::GetEffectImplicitTargetAByIndex(SpellEffectIndex index) const
-{
-    SpellEffectEntry const* effect = GetSpellEffect(index);
-    return effect ? effect->EffectImplicitTargetA : TARGET_NONE;
-}
-
-int32 SpellEntry::GetEffectMiscValue(SpellEffectIndex index) const
-{
-    SpellEffectEntry const* effect = GetSpellEffect(index);
-    return effect ? effect->EffectMiscValue : 0;
-}
-
-uint32 SpellEntry::GetEffectApplyAuraNameByIndex(SpellEffectIndex index) const
-{
-    SpellEffectEntry const* effect = GetSpellEffect(index);
-    return effect ? effect->EffectApplyAuraName : 0;
 }

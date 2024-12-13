@@ -106,22 +106,15 @@ WeaponAttackType GetWeaponAttackType(SpellEntry const* spellInfo);
 
 inline bool IsSpellHaveEffect(SpellEntry const* spellInfo, SpellEffects effect)
 {
-    for(int i = 0; i < MAX_EFFECT_INDEX; ++i)
-    {
-        if(SpellEffectEntry const* effectEntry = spellInfo->GetSpellEffect(SpellEffectIndex(i)))
-            if(SpellEffects(effectEntry->Effect) == effect)
-                return true;
-    }
+    for(unsigned int i : spellInfo->Effect)
+        if(SpellEffects(i) == effect)
+            return true;
     return false;
 }
 
 inline bool IsAuraApplyEffect(SpellEntry const* spellInfo, SpellEffectIndex effecIdx)
 {
-    SpellEffectEntry const* spellEffect = spellInfo->GetSpellEffect(SpellEffectIndex(effecIdx));
-    if (!spellEffect)
-        return false;
-
-    switch (spellEffect->Effect)
+    switch (spellInfo->Effect[effecIdx])
     {
         case SPELL_EFFECT_APPLY_AURA:
         case SPELL_EFFECT_PERSISTENT_AREA_AURA:
@@ -133,7 +126,6 @@ inline bool IsAuraApplyEffect(SpellEntry const* spellInfo, SpellEffectIndex effe
         case SPELL_EFFECT_APPLY_AREA_AURA_OWNER:
             return true;
     }
-
     return false;
 }
 
@@ -149,10 +141,7 @@ inline bool IsSpellAppliesAura(SpellEntry const* spellInfo, uint32 effectMask = 
 
 inline bool IsEffectHandledOnDelayedSpellLaunch(SpellEntry const* spellInfo, SpellEffectIndex effecIdx)
 {
-    SpellEffectEntry const* effectEntry = spellInfo->GetSpellEffect(effecIdx);
-    if(!effectEntry)
-        return false;
-    switch (effectEntry->Effect)
+    switch (spellInfo->Effect[effecIdx])
     {
         case SPELL_EFFECT_SCHOOL_DAMAGE:
         case SPELL_EFFECT_WEAPON_DAMAGE_NOSCHOOL:
@@ -167,11 +156,7 @@ inline bool IsEffectHandledOnDelayedSpellLaunch(SpellEntry const* spellInfo, Spe
 
 inline bool IsPeriodicRegenerateEffect(SpellEntry const* spellInfo, SpellEffectIndex effecIdx)
 {
-    SpellEffectEntry const* effectEntry = spellInfo->GetSpellEffect(effecIdx);
-    if(!effectEntry)
-        return false;
-
-    switch (AuraType(effectEntry->EffectApplyAuraName))
+    switch (AuraType(spellInfo->EffectApplyAuraName[effecIdx]))
     {
         case SPELL_AURA_PERIODIC_ENERGIZE:
         case SPELL_AURA_PERIODIC_HEAL:
@@ -188,21 +173,16 @@ inline bool IsSpellHaveAura(SpellEntry const* spellInfo, AuraType aura, uint32 e
 {
     for (int i = 0; i < MAX_EFFECT_INDEX; ++i)
         if (effectMask & (1 << i))
-            if(SpellEffectEntry const* effectEntry = spellInfo->GetSpellEffect(SpellEffectIndex(i)))
-                if(AuraType(effectEntry->EffectApplyAuraName) == aura)
-                    return true;
+            if(AuraType(spellInfo->EffectApplyAuraName[i]) == aura)
+                return true;
     return false;
 }
 
 inline bool IsSpellLastAuraEffect(SpellEntry const* spellInfo, SpellEffectIndex effecIdx)
 {
     for(int i = effecIdx+1; i < MAX_EFFECT_INDEX; ++i)
-    {
-        if(SpellEffectEntry const* effectEntry = spellInfo->GetSpellEffect(SpellEffectIndex(i)))
-            if(effectEntry->EffectApplyAuraName)
-                return false;
-    }
-
+        if(spellInfo->EffectApplyAuraName[i])
+            return false;
     return true;
 }
 
@@ -210,11 +190,10 @@ bool IsNoStackAuraDueToAura(uint32 spellId_1, uint32 spellId_2);
 
 inline bool IsSealSpell(SpellEntry const* spellInfo)
 {
-    SpellEffectEntry const* spellEffect = spellInfo->GetSpellEffect(EFFECT_INDEX_0);
     //Collection of all the seal family flags. No other paladin spell has any of those.
     return spellInfo->IsFitToFamily(SPELLFAMILY_PALADIN, uint64(0x26000C000A000000)) &&
         // avoid counting target triggered effect as seal for avoid remove it or seal by it.
-        spellEffect && spellEffect->EffectImplicitTargetA == TARGET_SELF;
+        spellInfo->EffectImplicitTargetA[EFFECT_INDEX_0] == TARGET_SELF;
 }
 
 inline bool IsAllowingDeadTarget(SpellEntry const* spellInfo)
@@ -230,24 +209,18 @@ inline bool IsElementalShield(SpellEntry const* spellInfo)
 
 inline bool IsExplicitDiscoverySpell(SpellEntry const* spellInfo)
 {
-    SpellEffectEntry const* spellEffect0 = spellInfo->GetSpellEffect(EFFECT_INDEX_0);
-    SpellEffectEntry const* spellEffect1 = spellInfo->GetSpellEffect(EFFECT_INDEX_1);
-    return ((spellEffect0 && (spellEffect0->Effect == SPELL_EFFECT_CREATE_RANDOM_ITEM ||
-        spellEffect0->Effect == SPELL_EFFECT_CREATE_ITEM_2) &&
-        (spellEffect1 && spellEffect1->Effect == SPELL_EFFECT_SCRIPT_EFFECT)) ||
-        spellInfo->Id == 64323);                         // Book of Glyph Mastery (Effect0==SPELL_EFFECT_SCRIPT_EFFECT without any other data)
+    return (((spellInfo->Effect[EFFECT_INDEX_0] == SPELL_EFFECT_CREATE_RANDOM_ITEM
+        || spellInfo->Effect[EFFECT_INDEX_0] == SPELL_EFFECT_CREATE_ITEM_2)
+        && spellInfo->Effect[EFFECT_INDEX_1] == SPELL_EFFECT_SCRIPT_EFFECT)
+        || spellInfo->Id == 64323);                     // Book of Glyph Mastery (Effect0==SPELL_EFFECT_SCRIPT_EFFECT without any other data)
 }
 
 inline bool IsLootCraftingSpell(SpellEntry const* spellInfo)
 {
-    SpellEffectEntry const* spellEffect0 = spellInfo->GetSpellEffect(EFFECT_INDEX_0);
-    if (!spellEffect0)
-        return false;
-
-    return spellEffect0->Effect == SPELL_EFFECT_CREATE_RANDOM_ITEM ||
+    return (spellInfo->Effect[EFFECT_INDEX_0] == SPELL_EFFECT_CREATE_RANDOM_ITEM ||
         // different random cards from Inscription (121==Virtuoso Inking Set category) or without explicit item or explicit spells
-        spellEffect0->Effect == SPELL_EFFECT_CREATE_ITEM_2 &&
-        (spellInfo->TotemCategory[0] != 0 || spellEffect0->EffectItemType == 0) || spellInfo->Id == 62941;
+        (spellInfo->Effect[EFFECT_INDEX_0] == SPELL_EFFECT_CREATE_ITEM_2 &&
+        (spellInfo->TotemCategory[0] != 0 || spellInfo->EffectItemType == 0 || spellInfo->Id == 62941)));
 }
 
 inline bool IsSpellEffectTriggerSpell(const SpellEntry* entry, SpellEffectIndex effIndex)
@@ -255,11 +228,7 @@ inline bool IsSpellEffectTriggerSpell(const SpellEntry* entry, SpellEffectIndex 
     if (!entry)
         return false;
 
-    SpellEffectEntry const* spellEffect = entry->GetSpellEffect(effIndex);
-    if (!spellEffect)
-        return false;
-
-    switch (spellEffect->Effect)
+    switch (entry->Effect[effIndex])
     {
         case SPELL_EFFECT_TRIGGER_MISSILE:
         case SPELL_EFFECT_TRIGGER_SPELL:
@@ -275,11 +244,7 @@ inline bool IsSpellEffectTriggerSpellByAura(const SpellEntry* entry, SpellEffect
     if (!entry || !IsAuraApplyEffect(entry, effIndex))
         return false;
 
-    SpellEffectEntry const* spellEffect = entry->GetSpellEffect(effIndex);
-    if (!spellEffect)
-        return false;
-
-    switch (spellEffect->EffectApplyAuraName)
+    switch (entry->EffectApplyAuraName[effIndex])
     {
         case SPELL_AURA_PERIODIC_TRIGGER_SPELL:
         case SPELL_AURA_PROC_TRIGGER_SPELL:
@@ -300,12 +265,7 @@ inline bool IsSpellTriggerSpellByAura(const SpellEntry* entry)
 
     for (uint32 i = EFFECT_INDEX_0; i < MAX_EFFECT_INDEX; ++i)
     {
-        SpellEffectEntry const* spellEffect = entry->GetSpellEffect(SpellEffectIndex(i));
-
-        if (!spellEffect)
-            return false;
-
-        if (spellEffect->Effect && IsSpellEffectTriggerSpellByAura(entry, SpellEffectIndex(i)))
+        if (entry->Effect[i] && IsSpellEffectTriggerSpellByAura(entry, SpellEffectIndex(i)))
             return true;
     }
     return false;
@@ -316,12 +276,7 @@ inline bool IsSpellEffectAbleToCrit(const SpellEntry* entry, SpellEffectIndex in
     if (!entry || entry->HasAttribute(SPELL_ATTR_EX2_CANT_CRIT))
         return false;
 
-    SpellEffectEntry const* spellEffect = entry->GetSpellEffect(index);
-
-    if (!spellEffect)
-        return false;
-
-    switch (spellEffect->Effect)
+    switch (entry->Effect[index])
     {
         case SPELL_EFFECT_SCHOOL_DAMAGE:
         case SPELL_EFFECT_HEAL:
@@ -331,7 +286,7 @@ inline bool IsSpellEffectAbleToCrit(const SpellEntry* entry, SpellEffectIndex in
         case SPELL_EFFECT_NORMALIZED_WEAPON_DMG:
             return true;
         case SPELL_EFFECT_ENERGIZE: // Mana Potion and similar spells, Lay on hands
-            return (spellEffect->EffectMiscValue == POWER_MANA && entry->SpellFamilyName && entry->DmgClass);
+            return (entry->EffectMiscValue[index] == POWER_MANA && entry->SpellFamilyName && entry->DmgClass);
     }
     return false;
 }
@@ -343,12 +298,7 @@ inline bool IsSpellAbleToCrit(const SpellEntry* entry)
 
     for (uint32 i = EFFECT_INDEX_0; i < MAX_EFFECT_INDEX; ++i)
     {
-        SpellEffectEntry const* spellEffect = entry->GetSpellEffect(SpellEffectIndex(i));
-
-        if (!spellEffect)
-            return false;
-
-        if (spellEffect->Effect && IsSpellEffectAbleToCrit(entry, SpellEffectIndex(i)))
+        if (entry->Effect[i] && IsSpellEffectAbleToCrit(entry, SpellEffectIndex(i)))
             return true;
     }
     return false;
@@ -390,16 +340,11 @@ inline bool IsAutocastable(uint32 spellId)
 
 inline bool IsSpellRemoveAllMovementAndControlLossEffects(SpellEntry const* spellProto)
 {
-    SpellEffectEntry const* spellEffect0 = spellProto->GetSpellEffect(EFFECT_INDEX_0);
-
-    if (!spellEffect0)
-        return false;
-
-    return spellEffect0->EffectApplyAuraName == SPELL_AURA_MECHANIC_IMMUNITY &&
-        spellEffect0->EffectMiscValue == 1 &&
-        spellProto->GetEffectApplyAuraNameByIndex(EFFECT_INDEX_1) == SPELL_AURA_NONE &&
-        spellProto->GetEffectApplyAuraNameByIndex(EFFECT_INDEX_2) == SPELL_AURA_NONE &&
-        spellProto->HasAttribute(SPELL_ATTR_EX_DISPEL_AURAS_ON_IMMUNITY)/* && -- all above selected spells have SPELL_ATTR_EX5_* mask
+    return spellProto->EffectApplyAuraName[EFFECT_INDEX_0] == SPELL_AURA_MECHANIC_IMMUNITY &&
+           spellProto->EffectMiscValue[EFFECT_INDEX_0] == 1 &&
+           spellProto->EffectApplyAuraName[EFFECT_INDEX_1] == SPELL_AURA_NONE &&
+           spellProto->EffectApplyAuraName[EFFECT_INDEX_2] == SPELL_AURA_NONE &&
+           spellProto->HasAttribute(SPELL_ATTR_EX_DISPEL_AURAS_ON_IMMUNITY)/* && -- all above selected spells have SPELL_ATTR_EX5_* mask
         ((spellProto->AttributesEx5 &
             (SPELL_ATTR_EX5_USABLE_WHILE_CONFUSED|SPELL_ATTR_EX5_USABLE_WHILE_FEARED|SPELL_ATTR_EX5_USABLE_WHILE_STUNNED)) ==
             (SPELL_ATTR_EX5_USABLE_WHILE_CONFUSED|SPELL_ATTR_EX5_USABLE_WHILE_FEARED|SPELL_ATTR_EX5_USABLE_WHILE_STUNNED))*/;
@@ -448,18 +393,16 @@ inline bool IsBinarySpell(SpellEntry const* spellInfo)
     uint32 mechmask = 0;    // A bitmask of effects: set bits are non-damage effects with additional mechanics
     for (uint32 i = EFFECT_INDEX_0; i < MAX_EFFECT_INDEX; ++i)
     {
-        SpellEffectEntry const* spellEffect = spellInfo->GetSpellEffect(SpellEffectIndex(i));
-
-        if (!spellEffect || !spellEffect->Effect || IsSpellEffectTriggerSpell(spellInfo, SpellEffectIndex(i)))
+        if (!spellInfo->Effect[i] || IsSpellEffectTriggerSpell(spellInfo, SpellEffectIndex(i)))
             continue;
 
         effectmask |= (1 << i);
 
         bool damage = false;
-        if (!spellEffect->EffectApplyAuraName)
+        if (!spellInfo->EffectApplyAuraName)
         {
             // If its not an aura effect, check for damage effects
-            switch (spellEffect->Effect)
+            switch (spellInfo->Effect[i])
             {
                 case SPELL_EFFECT_SCHOOL_DAMAGE:
                 case SPELL_EFFECT_ENVIRONMENTAL_DAMAGE:
@@ -476,7 +419,7 @@ inline bool IsBinarySpell(SpellEntry const* spellInfo)
         if (!damage)
         {
             nondmgmask |= (1 << i);
-            if (spellEffect->EffectMechanic)
+            if (spellInfo->EffectMechanic[i])
                 mechmask |= (1 << i);
         }
     }
@@ -492,9 +435,7 @@ inline bool IsBinarySpell(SpellEntry const* spellInfo)
     // Binary spells execution order detection
     for (uint32 i = EFFECT_INDEX_0; i < MAX_EFFECT_INDEX; ++i)
     {
-        SpellEffectEntry const* spellEffect0 = spellInfo->GetSpellEffect(SpellEffectIndex(i));
-
-        if (!spellEffect0->Effect)
+        if (!spellInfo->Effect[i])
             continue;
 
         // If effect is present and not a non-damage effect
@@ -504,15 +445,13 @@ inline bool IsBinarySpell(SpellEntry const* spellInfo)
             // Iterate over mechanics
             for (uint32 e = EFFECT_INDEX_0; e < MAX_EFFECT_INDEX; ++e)
             {
-                SpellEffectEntry const* spellEffect1 = spellInfo->GetSpellEffect(SpellEffectIndex(e));
-
-                if (!spellEffect1->Effect)
+                if (!spellInfo->Effect[e])
                     continue;
 
                 // If effect is extra mechanic on the same target as damage effect
                 if ((mechmask & (1 << e)) &&
-                    spellEffect0->EffectImplicitTargetA == spellEffect1->EffectImplicitTargetA &&
-                    spellEffect0->EffectImplicitTargetB == spellEffect1->EffectImplicitTargetB)
+                    spellInfo->EffectImplicitTargetA[i] == spellInfo->EffectImplicitTargetA[e] &&
+                    spellInfo->EffectImplicitTargetB[i] == spellInfo->EffectImplicitTargetB[e])
                 {
                     return (e > i); // Post-2.3: checks the order of application
                 }
@@ -556,15 +495,14 @@ inline bool IsSpellWithCasterSourceTargetsOnly(SpellEntry const* spellInfo)
 {
     for (int i = 0; i < MAX_EFFECT_INDEX; ++i)
     {
-        SpellEffectEntry const* effectEntry = spellInfo->GetSpellEffect(SpellEffectIndex(i));
-        if(!effectEntry)
+        if(!spellInfo->Effect[i])
             continue;
 
-        uint32 targetA = effectEntry->EffectImplicitTargetA;
+        uint32 targetA = spellInfo->EffectImplicitTargetA[i];
         if(targetA && !IsCasterSourceTarget(targetA))
             return false;
 
-        uint32 targetB = effectEntry->EffectImplicitTargetB;
+        uint32 targetB = spellInfo->EffectImplicitTargetB[i];
         if(targetB && !IsCasterSourceTarget(targetB))
             return false;
 
@@ -648,16 +586,13 @@ inline bool IsAreaEffectTarget(Targets target)
 
 inline bool IsAreaOfEffectSpell(SpellEntry const* spellInfo)
 {
-    SpellEffectEntry const* effectEntry = spellInfo->GetSpellEffect(EFFECT_INDEX_0);
-    if(effectEntry && (IsAreaEffectTarget(Targets(effectEntry->EffectImplicitTargetA)) || IsAreaEffectTarget(Targets(effectEntry->EffectImplicitTargetB))))
-        return true;
-    effectEntry = spellInfo->GetSpellEffect(EFFECT_INDEX_1);
-    if(effectEntry && (IsAreaEffectTarget(Targets(effectEntry->EffectImplicitTargetA)) || IsAreaEffectTarget(Targets(effectEntry->EffectImplicitTargetB))))
-        return true;
-    effectEntry = spellInfo->GetSpellEffect(EFFECT_INDEX_2);
-    if(effectEntry && (IsAreaEffectTarget(Targets(effectEntry->EffectImplicitTargetA)) || IsAreaEffectTarget(Targets(effectEntry->EffectImplicitTargetB))))
-        return true;
 
+    if (IsAreaEffectTarget(Targets(spellInfo->EffectImplicitTargetA[EFFECT_INDEX_0])) || IsAreaEffectTarget(Targets(spellInfo->EffectImplicitTargetB[EFFECT_INDEX_0])))
+        return true;
+    if (IsAreaEffectTarget(Targets(spellInfo->EffectImplicitTargetA[EFFECT_INDEX_1])) || IsAreaEffectTarget(Targets(spellInfo->EffectImplicitTargetB[EFFECT_INDEX_1])))
+        return true;
+    if (IsAreaEffectTarget(Targets(spellInfo->EffectImplicitTargetA[EFFECT_INDEX_2])) || IsAreaEffectTarget(Targets(spellInfo->EffectImplicitTargetB[EFFECT_INDEX_2])))
+        return true;
     return false;
 }
 
@@ -675,35 +610,22 @@ inline bool IsAreaAuraEffect(uint32 effect)
 
 inline bool HasAreaAuraEffect(SpellEntry const* spellInfo)
 {
-    for (int32 i = 0; i < MAX_EFFECT_INDEX; ++i)
-    {
-        SpellEffectEntry const* effectEntry = spellInfo->GetSpellEffect(SpellEffectIndex(i));
-        if(!effectEntry)
-            continue;
-        if (IsAreaAuraEffect(effectEntry->Effect))
+    for (unsigned int i : spellInfo->Effect)
+        if (IsAreaAuraEffect(i))
             return true;
-    }
     return false;
 }
 
-inline bool IsPersistentAuraEffect(SpellEffectEntry const* spellEffect)
+inline bool IsPersistentAuraEffect(uint32 effect)
 {
-    if (spellEffect->Effect == SPELL_EFFECT_PERSISTENT_AREA_AURA)
-        return true;
-    return false;
+    return effect == SPELL_EFFECT_PERSISTENT_AREA_AURA;
 }
 
 inline bool HasPersistentAuraEffect(SpellEntry const* spellInfo)
 {
-    for (int32 i = 0; i < MAX_EFFECT_INDEX; ++i)
-    {
-        SpellEffectEntry const* spellEffect = spellInfo->GetSpellEffect(SpellEffectIndex(i));
-        if (!spellEffect)
-            return false;
-
-        if (IsPersistentAuraEffect(spellEffect))
+    for (unsigned int i : spellInfo->Effect)
+        if (IsPersistentAuraEffect(i))
             return true;
-    }
     return false;
 }
 
@@ -711,11 +633,10 @@ inline bool IsOnlySelfTargeting(SpellEntry const* spellInfo)
 {
     for (int32 i = 0; i < MAX_EFFECT_INDEX; ++i)
     {
-        SpellEffectEntry const* effectEntry = spellInfo->GetSpellEffect(SpellEffectIndex(i));
-        if(!effectEntry)
-            continue;
+        if (!spellInfo->Effect[i])
+            return true;
 
-        switch (effectEntry->EffectImplicitTargetA)
+        switch (spellInfo->EffectImplicitTargetA[i])
         {
             case TARGET_SELF:
             case TARGET_SELF2:
@@ -723,7 +644,7 @@ inline bool IsOnlySelfTargeting(SpellEntry const* spellInfo)
             default:
                 return false;
         }
-        switch (effectEntry->EffectImplicitTargetB)
+        switch (spellInfo->EffectImplicitTargetB[i])
         {
             case TARGET_SELF:
             case TARGET_SELF2:
@@ -962,15 +883,10 @@ inline bool IsPositiveEffectTargetMode(const SpellEntry* entry, SpellEffectIndex
     if (!entry)
         return false;
 
-    SpellEffectEntry const* spellEffect = entry->GetSpellEffect(effIndex);
-
-    if (!spellEffect)
-        return false;;
-
     // Triggered spells case: prefer child spell via IsPositiveSpell()-like scan for triggered spell
     if (IsSpellEffectTriggerSpell(entry, effIndex))
     {
-        const uint32 spellid = spellEffect->EffectTriggerSpell;
+        const uint32 spellid = entry->EffectTriggerSpell[effIndex];
         // Its possible to go infinite cycle with triggered spells. We are interested to peek only at the first layer so far
         if (!recursive && spellid && (spellid != entry->Id))
         {
@@ -988,8 +904,8 @@ inline bool IsPositiveEffectTargetMode(const SpellEntry* entry, SpellEffectIndex
         return true;
     }
 
-    const uint32 a = spellEffect->EffectImplicitTargetA;
-    const uint32 b = spellEffect->EffectImplicitTargetB;
+    const uint32 a = entry->EffectImplicitTargetA[effIndex];
+    const uint32 b = entry->EffectImplicitTargetB[effIndex];
 
     if ((!a && !b) || IsEffectTargetPositive(a, b) || IsEffectTargetScript(a, b))
         return true;
@@ -1005,9 +921,9 @@ inline bool IsPositiveEffectTargetMode(const SpellEntry* entry, SpellEffectIndex
         return (IsPointEffectTarget(Targets(b ? b : a)) || IsNeutralEffectTargetPositive((b ? b : a), caster, target));
 
     // If we ever get to this point, we have unhandled target. Gotta say something about it.
-    if (spellEffect->Effect)
+    if (entry->Effect[effIndex])
         DETAIL_LOG("IsPositiveEffectTargetMode: Spell %u's effect %u has unhandled targets (A:%u B:%u)", entry->Id, effIndex,
-            spellEffect->EffectImplicitTargetA, spellEffect->EffectImplicitTargetB);
+            entry->EffectImplicitTargetA[effIndex], entry->EffectImplicitTargetB[effIndex]);
     return true;
 }
 
@@ -1016,12 +932,7 @@ inline bool IsPositiveEffect(const SpellEntry* spellproto, SpellEffectIndex effI
     if (!spellproto)
         return false;
 
-    SpellEffectEntry const* spellEffect = spellproto->GetSpellEffect(effIndex);
-
-    if (!spellEffect)
-        return false;
-
-    switch (spellEffect->Effect)
+    switch (spellproto->Effect[effIndex])
     {
         case SPELL_EFFECT_SEND_TAXI:                // Some NPCs that send taxis are neutral, so target mode fails
         case SPELL_EFFECT_QUEST_COMPLETE:           // TODO: Spells with these effects should be casted by a proper caster to meet target mode.
@@ -1063,7 +974,7 @@ inline bool IsPositiveEffect(const SpellEntry* spellproto, SpellEffectIndex effI
         case SPELL_EFFECT_APPLY_AURA:
         case SPELL_EFFECT_APPLY_AREA_AURA_FRIEND:
         {
-            switch (spellEffect->EffectApplyAuraName)
+            switch (spellproto->EffectApplyAuraName[effIndex])
             {
                 case SPELL_AURA_DUMMY:
                 {
@@ -1122,16 +1033,9 @@ inline bool IsPositiveSpellTargetModeForSpecificTarget(const SpellEntry* entry, 
     // spells with at least one negative effect are considered negative
     // some self-applied spells have negative effects but in self casting case negative check ignored.
     for (int i = 0; i < MAX_EFFECT_INDEX; ++i)
-    {
-        SpellEffectEntry const* spellEffect = entry->GetSpellEffect(SpellEffectIndex(i));
-
-        if (!spellEffect)
-            return false;
-
         if (effectMask & (1 << i))
-            if (spellEffect->Effect && !IsPositiveEffectTargetMode(entry, SpellEffectIndex(i), caster, target))
+            if (entry->Effect[i] && !IsPositiveEffectTargetMode(entry, SpellEffectIndex(i), caster, target))
                 return false;
-    }
     return true;
 }
 
@@ -1149,13 +1053,8 @@ inline bool IsPositiveSpellTargetMode(const SpellEntry* entry, const WorldObject
     // spells with at least one negative effect are considered negative
     // some self-applied spells have negative effects but in self casting case negative check ignored.
     for (int i = 0; i < MAX_EFFECT_INDEX; ++i)
-    {
-        SpellEffectEntry const* spellEffect = entry->GetSpellEffect(SpellEffectIndex(i));
-
-        if (!spellEffect || (spellEffect->Effect && !IsPositiveEffectTargetMode(entry, SpellEffectIndex(i), caster, target)))
+        if (entry->Effect[i] && !IsPositiveEffectTargetMode(entry, SpellEffectIndex(i), caster, target))
             return false;
-    }
-
     return true;
 }
 
@@ -1173,13 +1072,8 @@ inline bool IsPositiveSpell(const SpellEntry* entry, const WorldObject* caster =
     // spells with at least one negative effect are considered negative
     // some self-applied spells have negative effects but in self casting case negative check ignored.
     for (int i = 0; i < MAX_EFFECT_INDEX; ++i)
-    {
-        SpellEffectEntry const* spellEffect = entry->GetSpellEffect(SpellEffectIndex(i));
-
-        if (!spellEffect || (spellEffect->Effect && !IsPositiveEffect(entry, SpellEffectIndex(i), caster, target)))
+        if (entry->Effect[i] && !IsPositiveEffect(entry, SpellEffectIndex(i), caster, target))
             return false;
-    }
-
     return true;
 }
 
@@ -1287,12 +1181,8 @@ inline uint32 GetSpellMechanicMask(SpellEntry const* spellInfo, uint32 effectMas
         if (!(effectMask & (1 << i)))
             continue;
 
-        SpellEffectEntry const* effectEntry = spellInfo->GetSpellEffect(SpellEffectIndex(i));
-        if (!effectEntry)
-            continue;
-
-        if (effectEntry->EffectMechanic)
-            mask |= 1 << (effectEntry->EffectMechanic - 1);
+        if (spellInfo->EffectMechanic[i])
+            mask |= 1 << (spellInfo->EffectMechanic[i] - 1);
     }
 
     return mask;
@@ -1303,22 +1193,16 @@ inline uint32 GetAllSpellMechanicMask(SpellEntry const* spellInfo)
     uint32 mask = 0;
     if (spellInfo->Mechanic)
         mask |= 1 << (spellInfo->Mechanic - 1);
-
-    for (int i=0; i< MAX_EFFECT_INDEX; ++i)
-    {
-        SpellEffectEntry const* effectEntry = spellInfo->GetSpellEffect(SpellEffectIndex(i));
-        if (effectEntry && effectEntry->EffectMechanic)
-            mask |= 1 << (effectEntry->EffectMechanic-1);
-    }
-
+    for (unsigned int i : spellInfo->EffectMechanic)
+        if (i)
+            mask |= 1 << (i - 1);
     return mask;
 }
 
 inline Mechanics GetEffectMechanic(SpellEntry const* spellInfo, SpellEffectIndex effect)
 {
-    SpellEffectEntry const* effectEntry = spellInfo->GetSpellEffect(SpellEffectIndex(effect));
-    if (effectEntry && effectEntry->EffectMechanic)
-        return Mechanics(effectEntry->EffectMechanic);
+    if (spellInfo->EffectMechanic[effect])
+        return Mechanics(spellInfo->EffectMechanic[effect]);
     if (spellInfo->Mechanic)
         return Mechanics(spellInfo->Mechanic);
     return MECHANIC_NONE;

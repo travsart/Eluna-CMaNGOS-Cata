@@ -1509,13 +1509,9 @@ void Pet::_SaveAuras()
         for (int32 j = 0; j < MAX_EFFECT_INDEX; ++j)
         {
             SpellEntry const* spellInfo = holder->GetSpellProto();
-            SpellEffectEntry const* effectEntry = spellInfo->GetSpellEffect(SpellEffectIndex(j));
-            if(!effectEntry)
-                continue;
-
-            if (effectEntry->EffectApplyAuraName == SPELL_AURA_MOD_STEALTH ||
-                effectEntry->Effect == SPELL_EFFECT_APPLY_AREA_AURA_OWNER ||
-                effectEntry->Effect == SPELL_EFFECT_APPLY_AREA_AURA_PET )
+            if (spellInfo->EffectApplyAuraName[j] == SPELL_AURA_MOD_STEALTH ||
+                spellInfo->Effect[j] == SPELL_EFFECT_APPLY_AREA_AURA_OWNER ||
+                spellInfo->Effect[j] == SPELL_EFFECT_APPLY_AREA_AURA_PET)
             {
                 save = false;
                 break;

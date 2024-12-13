@@ -1744,47 +1744,6 @@ struct SpellDurationEntry
     int32     Duration[3];                                  // 1-3      m_duration, m_durationPerLevel, m_maxDuration
 };
 
-struct SpellEffectEntry
-{
-    //uint32    Id;                                           // 0        m_ID
-    uint32    Effect;                                       // 1        m_effect
-    float     EffectMultipleValue;                          // 2        m_effectAmplitude
-    uint32    EffectApplyAuraName;                          // 3        m_effectAura
-    uint32    EffectAmplitude;                              // 4        m_effectAuraPeriod
-    int32     EffectBasePoints;                             // 5        m_effectBasePoints (don't must be used in spell/auras explicitly, must be used cached Spell::m_currentBasePoints)
-    float     EffectBonusMultiplier;                        // 6        m_effectBonus
-    float     EffectDamageMultiplier;                       // 7        m_effectChainAmplitude
-    uint32    EffectChainTarget;                            // 8        m_effectChainTargets
-    int32     EffectDieSides;                               // 9        m_effectDieSides
-    uint32    EffectItemType;                               // 10       m_effectItemType
-    uint32    EffectMechanic;                               // 11       m_effectMechanic
-    int32     EffectMiscValue;                              // 12       m_effectMiscValue
-    int32     EffectMiscValueB;                             // 13       m_effectMiscValueB
-    float     EffectPointsPerComboPoint;                    // 14       m_effectPointsPerCombo
-    uint32    EffectRadiusIndex;                            // 15       m_effectRadiusIndex - spellradius.dbc
-    uint32    EffectRadiusMaxIndex;                         // 16       4.0.0
-    float     EffectRealPointsPerLevel;                     // 17       m_effectRealPointsPerLevel
-    ClassFamilyMask EffectSpellClassMask;                   // 18 19 20 m_effectSpellClassMask
-    uint32    EffectTriggerSpell;                           // 21       m_effectTriggerSpell
-    uint32    EffectImplicitTargetA;                        // 22       m_implicitTargetA
-    uint32    EffectImplicitTargetB;                        // 23       m_implicitTargetB
-    uint32    EffectSpellId;                                // 24       m_spellId - spell.dbc
-    uint32    EffectIndex;                                  // 25       m_spellEffectIdx
-    //uint32 unk;                                           // 26       4.2.0 only 0 or 1
-
-    // helpers
-
-    int32 CalculateSimpleValue() const { return EffectBasePoints; }
-
-    uint32 GetRadiusIndex() const
-    {
-        if (EffectRadiusIndex != 0)
-            return EffectRadiusIndex;
-
-        return EffectRadiusMaxIndex;
-    }
-};
-
 // SpellFocusObject.dbc
 struct SpellFocusObjectEntry
 {
@@ -1980,21 +1939,38 @@ struct SpellEntry
     uint32 Targets;                                         // 99       m_targets
     uint32 TotemCategory[MAX_SPELL_TOTEM_CATEGORIES];       // 100-101  m_requiredTotemCategoryID
     uint32 Totem[MAX_SPELL_TOTEMS];                         // 102-103  m_totem
-    //uint32 ResearchProjectId;                             // 104      ResearchProject.dbc
+    uint32 Effect[MAX_EFFECT_INDEX];                        // 104-106  m_effect
+    int32  EffectDieSides[MAX_EFFECT_INDEX];                // 107-109  m_effectDieSides
+    float  EffectRealPointsPerLevel[MAX_EFFECT_INDEX];      // 110-112  m_effectRealPointsPerLevel
+    int32  EffectBasePoints[MAX_EFFECT_INDEX];              // 113-115  m_effectBasePoints (don't must be used in spell/auras explicitly, must be used cached Spell::m_currentBasePoints)
+    float  EffectBonusMultiplier[MAX_EFFECT_INDEX];         // 116-118  m_effectBonus
+    uint32 EffectMechanic[MAX_EFFECT_INDEX];                // 119-121  m_effectMechanic
+    uint32 EffectImplicitTargetA[MAX_EFFECT_INDEX];         // 122-124  m_implicitTargetA
+    uint32 EffectImplicitTargetB[MAX_EFFECT_INDEX];         // 125-127  m_implicitTargetB
+    uint32 EffectRadiusIndex[MAX_EFFECT_INDEX];             // 128-130  m_effectRadiusIndex - spellradius.dbc
+    uint32 EffectRadiusMaxIndex[MAX_EFFECT_INDEX];          // 131-133  4.0.0
+    uint32 EffectApplyAuraName[MAX_EFFECT_INDEX];           // 134-136  m_effectAura
+    uint32 EffectAmplitude[MAX_EFFECT_INDEX];               // 137-139  m_effectAuraPeriod
+    float  EffectMultipleValue[MAX_EFFECT_INDEX];           // 140-142  m_effectAmplitude
+    float  EffectDamageMultiplier[MAX_EFFECT_INDEX];        // 143-145  m_effectChainAmplitude
+    uint32 EffectChainTarget[MAX_EFFECT_INDEX];             // 146-148  m_effectChainTargets
+    uint32 EffectItemType[MAX_EFFECT_INDEX];                // 149-151  m_effectItemType
+    int32  EffectMiscValue[MAX_EFFECT_INDEX];               // 152-154  m_effectMiscValue
+    int32  EffectMiscValueB[MAX_EFFECT_INDEX];              // 155-157  m_effectMiscValueB
+    uint32 EffectTriggerSpell[MAX_EFFECT_INDEX];            // 158-160  m_effectTriggerSpell
+    float  EffectPointsPerComboPoint[MAX_EFFECT_INDEX];     // 161-163  m_effectPointsPerCombo
+    ClassFamilyMask EffectSpellClassMask[MAX_EFFECT_INDEX]; // 164-172  m_effectSpellClassMaskA/B/C, effect 0/1/2
+    //uint32 ResearchProjectId;                             // 173      ResearchProject.dbc
 
     // helpers
-    int32 CalculateSimpleValue(SpellEffectIndex eff) const;
-    ClassFamilyMask const& GetEffectSpellClassMask(SpellEffectIndex eff) const;
+    int32 CalculateSimpleValue(SpellEffectIndex eff) const { return EffectBasePoints[eff]; }
+    ClassFamilyMask const& GetEffectSpellClassMask(SpellEffectIndex effect) const
+    {
+        return EffectSpellClassMask[effect];
+    }
 
     // struct access functions
-    SpellEffectEntry const* GetSpellEffect(SpellEffectIndex eff) const;
     SpellScalingEntry const* GetSpellScaling() const;
-
-    // single fields
-    uint32 GetSpellEffectIdByIndex(SpellEffectIndex index) const;
-    uint32 GetEffectImplicitTargetAByIndex(SpellEffectIndex index) const;
-    int32 GetEffectMiscValue(SpellEffectIndex index) const;
-    uint32 GetEffectApplyAuraNameByIndex(SpellEffectIndex index) const;
 
     bool IsFitToFamilyMask(uint64 familyFlags, uint32 familyFlags2 = 0) const
     {
@@ -2358,19 +2334,6 @@ struct TalentSpellPos
 };
 
 typedef std::map<uint32,TalentSpellPos> TalentSpellPosMap;
-
-struct SpellEffect
-{
-    SpellEffect()
-    {
-        effects[0] = NULL;
-        effects[1] = NULL;
-        effects[2] = NULL;
-    }
-    SpellEffectEntry const* effects[3];
-};
-
-typedef std::map<uint32, SpellEffect> SpellEffectMap;
 
 struct TaxiPathBySourceAndDestination
 {
