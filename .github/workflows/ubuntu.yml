@@ -29,7 +29,7 @@ jobs:
             COMPILER_CC: clang
             COMPILER_PP: clang++
             USE_PCH: ON
-            EXTRA_BUILD: "-DBUILD_AHBOT=ON -DBUILD_DEPRECATED_PLAYERBOT=ON "
+            EXTRA_BUILD: "-DBUILD_AHBOT=ON -DBUILD_DEPRECATED_PLAYERBOT=ON -DBUILD_EXTRACTORS=ON "
 
           - os: ubuntu-22.04
             COMPILER_CC: clang
