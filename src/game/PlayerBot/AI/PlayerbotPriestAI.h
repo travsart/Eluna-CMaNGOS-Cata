@@ -87,98 +87,107 @@ enum PriestSpells
     SILENCE_1                       = 15487,
     SMITE_1                         = 585,
     VAMPIRIC_EMBRACE_1              = 15286,
-    VAMPIRIC_TOUCH_1                = 34914
+    VAMPIRIC_TOUCH_1                = 34914,
+    WEAKNED_SOUL                    = 6788
 };
 //class Player;
 
 class PlayerbotPriestAI : PlayerbotClassAI
 {
-public:
-    PlayerbotPriestAI(Player * const master, Player * const bot, PlayerbotAI * const ai);
-    virtual ~PlayerbotPriestAI();
+    public:
+        PlayerbotPriestAI(Player& master, Player& bot, PlayerbotAI& ai);
+        virtual ~PlayerbotPriestAI();
 
-    // all combat actions go here
-    CombatManeuverReturns DoFirstCombatManeuver(Unit* pTarget);
-    CombatManeuverReturns DoNextCombatManeuver(Unit* pTarget);
+        // all combat actions go here
+        CombatManeuverReturns DoFirstCombatManeuver(Unit* pTarget) override;
+        CombatManeuverReturns DoNextCombatManeuver(Unit* pTarget) override;
+        uint32 Neutralize(uint8 creatureType) override;
 
-    // all non combat actions go here, ex buffs, heals, rezzes
-    void DoNonCombatActions();
+        // all non combat actions go here, ex buffs, heals, rezzes
+        void DoNonCombatActions() override;
 
-    // Utility Functions
-    bool CastHoTOnTank();
+        // Utility Functions
+        bool CastHoTOnTank();
 
-private:
-    CombatManeuverReturns DoFirstCombatManeuverPVE(Unit* pTarget);
-    CombatManeuverReturns DoNextCombatManeuverPVE(Unit* pTarget);
-    CombatManeuverReturns DoFirstCombatManeuverPVP(Unit* pTarget);
-    CombatManeuverReturns DoNextCombatManeuverPVP(Unit* pTarget);
+    private:
+        CombatManeuverReturns DoFirstCombatManeuverPVE(Unit* pTarget) override;
+        CombatManeuverReturns DoNextCombatManeuverPVE(Unit* pTarget) override;
+        CombatManeuverReturns DoFirstCombatManeuverPVP(Unit* pTarget) override;
+        CombatManeuverReturns DoNextCombatManeuverPVP(Unit* pTarget) override;
 
-    CombatManeuverReturns CastSpell(uint32 nextAction, Unit *pTarget = nullptr) { return CastSpellWand(nextAction, pTarget, SHOOT); }
+        CombatManeuverReturns CastSpell(uint32 nextAction, Unit* pTarget = nullptr) { return CastSpellWand(nextAction, pTarget, SHOOT); }
 
-    // Heals the target based off its hps
-    CombatManeuverReturns HealPlayer(Player* target);
+        // Heals the target based off its hps
+        CombatManeuverReturns HealPlayer(Player* target) override;
+        // Resurrects the target
+        CombatManeuverReturns ResurrectPlayer(Player* target) override;
+        // Dispel disease or negative magic effects from an internally selected target
+        CombatManeuverReturns DispelPlayer(Player* target = nullptr) override;
 
-    static bool BuffHelper(PlayerbotAI* ai, uint32 spellId, Unit *target);
+        static bool BuffHelper(PlayerbotAI* ai, uint32 spellId, Unit* target);
 
-    // holy
-    uint32 BINDING_HEAL,
-           CIRCLE_OF_HEALING,
-           CLEARCASTING,
-           DESPERATE_PRAYER,
-           FLASH_HEAL,
-           GREATER_HEAL,
-           HEAL,
-           HOLY_FIRE,
-           HOLY_NOVA,
-           LESSER_HEAL,
-           MANA_BURN,
-           PRAYER_OF_HEALING,
-           PRAYER_OF_MENDING,
-           RENEW,
-           RESURRECTION,
-           SMITE,
-           CURE_DISEASE;
-    // ranged
-    uint32 SHOOT;
+        // holy
+        uint32 BINDING_HEAL,
+               CIRCLE_OF_HEALING,
+               CLEARCASTING,
+               DESPERATE_PRAYER,
+               FLASH_HEAL,
+               GREATER_HEAL,
+               HEAL,
+               HOLY_FIRE,
+               HOLY_NOVA,
+               LESSER_HEAL,
+               MANA_BURN,
+               PRAYER_OF_HEALING,
+               PRAYER_OF_MENDING,
+               RENEW,
+               RESURRECTION,
+               SHACKLE_UNDEAD,
+               SMITE,
+               CURE_DISEASE,
+               ABOLISH_DISEASE,
+               PRIEST_DISPEL_MAGIC;
+        // ranged
+        uint32 SHOOT;
 
-    // shadowmagic
-    uint32 FADE,
-           SHADOW_WORD_PAIN,
-           MIND_BLAST,
-           SCREAM,
-           MIND_FLAY,
-           DEVOURING_PLAGUE,
-           SHADOW_PROTECTION,
-           VAMPIRIC_TOUCH,
-           PRAYER_OF_SHADOW_PROTECTION,
-           SHADOWFIEND,
-           MIND_SEAR,
-           SHADOWFORM,
-           VAMPIRIC_EMBRACE;
+        // shadowmagic
+        uint32 FADE,
+               SHADOW_WORD_PAIN,
+               MIND_BLAST,
+               SCREAM,
+               MIND_FLAY,
+               DEVOURING_PLAGUE,
+               SHADOW_PROTECTION,
+               VAMPIRIC_TOUCH,
+               PRAYER_OF_SHADOW_PROTECTION,
+               SHADOWFIEND,
+               MIND_SEAR,
+               SHADOWFORM,
+               VAMPIRIC_EMBRACE;
 
-    // discipline
-    uint32 POWER_WORD_SHIELD,
-           INNER_FIRE,
-           POWER_WORD_FORTITUDE,
-           PRAYER_OF_FORTITUDE,
-           FEAR_WARD,
-           POWER_INFUSION,
-           MASS_DISPEL,
-           PENANCE,
-           DIVINE_SPIRIT,
-           PRAYER_OF_SPIRIT,
-           INNER_FOCUS;
+        // discipline
+        uint32 POWER_WORD_SHIELD,
+               INNER_FIRE,
+               POWER_WORD_FORTITUDE,
+               PRAYER_OF_FORTITUDE,
+               FEAR_WARD,
+               POWER_INFUSION,
+               MASS_DISPEL,
+               PENANCE,
+               DIVINE_SPIRIT,
+               PRAYER_OF_SPIRIT,
+               INNER_FOCUS;
 
-    // racial
-    uint32 ARCANE_TORRENT,
-           GIFT_OF_THE_NAARU,
-           STONEFORM,
-           ESCAPE_ARTIST,
-           EVERY_MAN_FOR_HIMSELF,
-           SHADOWMELD,
-           WAR_STOMP,
-           BERSERKING,
-           WILL_OF_THE_FORSAKEN;
+        // racial
+        uint32 ARCANE_TORRENT,
+               GIFT_OF_THE_NAARU,
+               STONEFORM,
+               ESCAPE_ARTIST,
+               EVERY_MAN_FOR_HIMSELF,
+               SHADOWMELD,
+               WAR_STOMP,
+               BERSERKING,
+               WILL_OF_THE_FORSAKEN;
 };
 
 #endif

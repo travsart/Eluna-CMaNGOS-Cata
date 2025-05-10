@@ -77,6 +77,44 @@ enum PhaseMasks
     PHASEMASK_ANYWHERE = 0xFFFFFFFF
 };
 
+enum PlayPacketSettings
+{
+    PLAY_SET,
+    PLAY_TARGET,
+    PLAY_MAP,
+    PLAY_ZONE,
+    PLAY_AREA,
+};
+
+enum DistanceCalculation
+{
+    DIST_CALC_NONE,
+    DIST_CALC_BOUNDING_RADIUS,
+    DIST_CALC_COMBAT_REACH,
+    DIST_CALC_COMBAT_REACH_WITH_MELEE,
+};
+
+// Was in the WOTLK build
+// struct PlayPacketParameters
+// {
+//     PlayPacketParameters(PlayPacketSettings setting) : setting(setting) {}
+//     PlayPacketParameters(PlayPacketSettings setting, Player const* target) : setting(setting) { this->target.target = target; }
+//     PlayPacketParameters(PlayPacketSettings setting, uint32 id) : setting(setting) { this->areaOrZone.id = id; }
+//     PlayPacketSettings setting;
+//     union
+//     {
+//         struct
+//         {
+//             Player const* target;
+//         } target;
+
+//         struct
+//         {
+//             uint32 id;
+//         } areaOrZone;
+//     };
+// };
+
 class WorldPacket;
 class UpdateData;
 class WorldSession;
